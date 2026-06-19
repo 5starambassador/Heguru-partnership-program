@@ -63,40 +63,35 @@ export function CollapsibleSidebar({ navItems, user, logoutAction }: Collapsible
         <>
             {/* Sidebar */}
             <aside
-                className={`desktop-sidebar hidden xl:flex flex-col p-0 fixed top-0 left-0 bottom-0 z-40 transition-all duration-300 ease-in-out ${collapsed ? 'w-[64px]' : 'w-[280px]'} ${
-                    isAmbassador 
-                        ? 'bg-white border-r border-[var(--warm-gray)] shadow-sm' 
-                        : 'bg-gradient-to-br from-[#0f172a] via-[#111827] to-[#1e1b4b] border-r border-white/10 shadow-[20px_0_80px_rgba(0,0,0,0.8)]'
-                }`}
+                className={`desktop-sidebar hidden xl:flex flex-col p-0 fixed top-0 left-0 bottom-0 z-40 transition-all duration-300 ease-in-out border-r border-gray-200 bg-white shadow-sm ${collapsed ? 'w-[64px]' : 'w-[280px]'}`}
             >
-                {/* Royal accents */}
-                <div className={`absolute top-0 right-0 w-[1px] h-full ${isAmbassador ? 'bg-gray-100' : 'bg-gradient-to-b from-transparent via-white/20 to-transparent'}`} />
-                <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-transparent via-amber-500/40 to-transparent" />
+                {/* Top decorative accent */}
+                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500" />
 
                 {/* Logo area */}
-                <div className={`flex flex-col items-center pt-6 pb-4 transition-all duration-300 ${collapsed ? 'px-1' : 'px-2'}`}>
-                    <div className="relative group cursor-pointer hover:scale-105 transition-transform duration-500 mb-6">
-                        <div className={`absolute -inset-1 bg-gradient-to-r from-indigo-500 via-amber-500 to-red-500 blur opacity-25 group-hover:opacity-60 transition duration-1000 ${isAmbassador ? 'rounded-md' : 'rounded-2xl'}`} />
+                <div className={`flex flex-col items-center pt-8 pb-4 transition-all duration-300 ${collapsed ? 'px-1' : 'px-4'}`}>
+                    <div className="relative group cursor-pointer hover:scale-105 transition-transform duration-500 mb-4 flex items-center justify-center">
                         <img
                             src="/images/HEGURU-JAPAN-LOGO.jpeg"
                             alt="Heguru"
-                            className={`relative object-contain shadow-2xl transition-all duration-300 ${isAmbassador ? 'rounded-md' : ''} ${collapsed ? 'h-[40px] w-auto' : 'h-[80px] w-auto max-w-[180px]'}`}
+                            className={`relative object-contain transition-all duration-300 ${collapsed ? 'h-[36px] w-auto' : 'h-[64px] w-auto max-w-[140px]'}`}
                         />
                     </div>
                     {!collapsed && (
-                        <div className="text-center ">
-                            <h2 className={`text-md font-black tracking-tight  leading-tight ${isAmbassador ? 'text-[var(--deep-black)]' : 'text-white'}`}>Heguru Partnership Program</h2>
-                            {/* <p className={`text-[10px] font-bold uppercase tracking-widest mb-1 ${isAmbassador ? 'text-[var(--text-gray)]' : 'text-indigo-200/70'}`}>Partnership Program</p> */}
-                            {/* <p className={`text-[9px] uppercase tracking-[0.25em] font-black ${isAmbassador ? 'text-[var(--primary-orange)]' : 'text-amber-400'}`}>
-                                25<sup className="text-[0.6em]">th</sup> Year Celebration
-                            </p> */}
+                        <div className="text-center px-2">
+                            <h2 className="text-[13px] font-black tracking-tight text-gray-900 leading-tight">Heguru Partnership Program</h2>
+                            {!isAmbassador && (
+                                <span className="inline-block mt-1.5 px-3 py-0.5 rounded-full text-[9px] font-bold text-blue-600 bg-blue-50 border border-blue-100 uppercase tracking-widest">
+                                    Admin Panel
+                                </span>
+                            )}
                         </div>
                     )}
                 </div>
 
                 {/* Divider */}
                 <div className="px-4 mb-4">
-                    <div className={`h-px w-full ${isAmbassador ? 'bg-gray-200' : 'bg-gradient-to-r from-transparent via-white/20 to-transparent'}`} />
+                    <div className="h-px w-full bg-gray-100" />
                 </div>
 
                 {/* Nav Items */}
@@ -108,18 +103,11 @@ export function CollapsibleSidebar({ navItems, user, logoutAction }: Collapsible
                                 <Link
                                     href={item.href}
                                     className={`flex items-center gap-3 transition-all duration-200 relative overflow-hidden no-underline
-                                        ${collapsed ? 'justify-center px-0 py-3' : 'px-4 py-3'}
-                                        ${isAmbassador 
-                                            ? 'rounded-md' 
-                                            : 'rounded-2xl'
-                                        }
+                                        ${collapsed ? 'justify-center px-0 py-2.5' : 'px-4 py-2.5'}
+                                        rounded-xl
                                         ${active
-                                            ? isAmbassador 
-                                                ? 'text-[var(--primary-orange)] bg-[var(--primary-orange)]/5 font-black border border-[var(--primary-orange)]/15 shadow-sm'
-                                                : 'text-amber-500 bg-white/[0.06] font-black shadow-[inset_0_1px_1px_rgba(255,255,255,0.1)]'
-                                            : isAmbassador
-                                                ? 'text-[var(--text-gray)] hover:text-[var(--deep-black)] hover:bg-[var(--soft-gray)]'
-                                                : 'text-gray-400 hover:text-white hover:bg-white/[0.05]'
+                                            ? 'text-blue-600 bg-blue-50/70 font-extrabold border border-blue-100/50 shadow-sm'
+                                            : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50'
                                         }`}
                                     onMouseEnter={(e) => {
                                         if (collapsed) {
@@ -131,36 +119,24 @@ export function CollapsibleSidebar({ navItems, user, logoutAction }: Collapsible
                                 >
                                     {/* Active bar */}
                                     {!collapsed && (
-                                        <div className={`absolute left-0 top-1/2 -translate-y-1/2 w-1 h-7 transition-transform duration-500 
-                                            ${isAmbassador 
-                                                ? 'bg-[var(--primary-orange)] rounded-r-md shadow-[0_0_10px_rgba(242,110,33,0.4)]' 
-                                                : 'bg-amber-500 rounded-r-full shadow-[0_0_15px_rgba(245,158,11,0.8)]'
-                                            } ${active ? 'scale-y-100' : 'scale-y-0 group-hover/item:scale-y-100'}`} />
+                                        <div className={`absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-6 transition-transform duration-500 bg-blue-600 rounded-r-md ${active ? 'scale-y-100' : 'scale-y-0 group-hover/item:scale-y-100'}`} />
                                     )}
                                     {/* Icon */}
                                     {React.isValidElement(item.icon)
                                         ? React.cloneElement(item.icon as React.ReactElement<any>, {
-                                            size: 20,
+                                            size: 18,
                                             className: `flex-shrink-0 transition-all duration-300 relative z-10
                                                 ${active
-                                                    ? isAmbassador
-                                                        ? 'text-[var(--primary-orange)] scale-110'
-                                                        : 'text-amber-500 drop-shadow-[0_0_8px_rgba(245,158,11,0.5)] scale-110'
-                                                    : isAmbassador
-                                                        ? 'text-[var(--text-gray)] group-hover/item:text-[var(--deep-black)] group-hover/item:scale-110'
-                                                        : 'text-gray-500 group-hover/item:text-white group-hover/item:scale-110'}`
+                                                    ? 'text-blue-600 scale-105'
+                                                    : 'text-gray-400 group-hover/item:text-gray-700 group-hover/item:scale-105'}`
                                         })
                                         : item.icon}
                                     {/* Label */}
                                     {!collapsed && (
                                         <span className={`text-[11px] font-bold uppercase tracking-[0.05em] truncate relative z-10 transition-colors duration-200
                                             ${active 
-                                                ? isAmbassador
-                                                    ? 'text-[var(--primary-orange)]'
-                                                    : 'text-amber-500' 
-                                                : isAmbassador
-                                                    ? 'text-[var(--text-gray)] group-hover/item:text-[var(--deep-black)]'
-                                                    : 'text-slate-400 group-hover/item:text-white'}`}>
+                                                ? 'text-blue-600' 
+                                                : 'text-gray-500 group-hover/item:text-gray-900'}`}>
                                             {item.label}
                                         </span>
                                     )}
@@ -185,48 +161,36 @@ export function CollapsibleSidebar({ navItems, user, logoutAction }: Collapsible
 
                 {/* Footer */}
                 <div className={`md:hidden fixed inset-0 bg-black/50 z-[45] transition-opacity duration-300 ${!collapsed ? 'opacity-100' : 'opacity-0 pointer-events-none'}`} onClick={toggle} />
-                <div className={`mt-auto border-t transition-all duration-300 ${collapsed ? 'px-1 py-3' : 'px-4 py-4'} ${isAmbassador ? 'border-[var(--warm-gray)] bg-gray-50/50' : 'border-white/10 bg-black/20'}`}>
+                <div className={`mt-auto border-t transition-all duration-300 ${collapsed ? 'px-1 py-3' : 'px-4 py-4'} border-gray-100 bg-gray-50/50`}>
                     {collapsed ? (
                         // Collapsed footer: avatar only
                         <div className="flex flex-col items-center gap-2">
                             <Link href="/profile" className="no-underline" title={user.fullName}>
-                                <div className={`w-9 h-9 flex items-center justify-center text-sm font-black text-white shadow-xl ${isAmbassador ? 'rounded-md ring-2 ring-gray-150 bg-gradient-to-br from-[var(--primary-orange)] to-[var(--primary-orange-hover)]' : 'rounded-xl ring-2 ring-white/10 bg-gradient-to-br from-indigo-600 to-sky-500'}`}>
-                                    {user.fullName[0].toUpperCase()}
+                                <div className="w-9 h-9 flex items-center justify-center text-xs font-black text-white bg-blue-600 rounded-lg ring-2 ring-blue-100 shadow-md">
+                                    {user.fullName[0].toUpperCase()}{(user.role === 'Super Admin' ? 'A' : '')}
                                 </div>
                             </Link>
-                            <button
-                                onClick={async () => { await logoutAction(); window.location.href = '/' }}
-                                className={`w-full flex items-center justify-center p-2 transition-all ${isAmbassador ? 'rounded-md bg-white border border-[var(--warm-gray)] text-red-500 hover:bg-red-50' : 'rounded-xl bg-white/[0.03] text-red-500/60 hover:text-red-500 hover:bg-red-500/10 border border-white/10'}`}
-                                title="Logout"
-                            >
-                                <LogOut size={15} />
-                            </button>
                         </div>
                     ) : (
                         // Expanded footer
                         <div className="flex flex-col gap-3">
-                            <Link href="/profile" className={`flex items-center gap-3 transition-all no-underline text-inherit ${isAmbassador ? 'bg-white border border-[var(--warm-gray)] rounded-md p-3 shadow-sm hover:bg-gray-50' : 'bg-white/5 hover:bg-white/10 rounded-2xl p-3 border border-white/5'}`}>
-                                <div className={`w-10 h-10 flex items-center justify-center text-base font-black text-white shadow-xl flex-shrink-0 ${isAmbassador ? 'rounded-md ring-2 ring-gray-100 bg-gradient-to-br from-[var(--primary-orange)] to-[var(--primary-orange-hover)]' : 'rounded-xl ring-2 ring-white/10 bg-gradient-to-br from-indigo-600 to-sky-500'}`}>
-                                    {user.fullName[0].toUpperCase()}
+                            <Link href="/profile" className="flex items-center gap-3 transition-all no-underline text-inherit bg-white border border-gray-200 rounded-xl p-2.5 shadow-sm hover:bg-gray-50">
+                                <div className="w-9 h-9 flex items-center justify-center text-xs font-black text-white bg-blue-600 rounded-lg ring-2 ring-blue-100 shadow-md flex-shrink-0">
+                                    {user.fullName === 'Super Admin' ? 'SA' : user.fullName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)}
                                 </div>
                                 <div className="flex flex-col min-w-0 flex-1 overflow-hidden">
-                                    <span className={`font-black truncate text-sm tracking-tight leading-none ${isAmbassador ? 'text-[var(--deep-black)]' : 'text-white'}`}>{user.fullName}</span>
-                                    <div className="flex items-center gap-1.5 mt-1.5">
-                                        {user.fullName.toLowerCase() !== user.role.toLowerCase() && (
-                                            <>
-                                                <span className={`text-[10px] font-black uppercase tracking-widest ${isAmbassador ? 'text-[var(--primary-orange)]' : 'text-blue-400'}`}>{user.role}</span>
-                                                <div className={`w-1 h-1 rounded-full ${isAmbassador ? 'bg-gray-300' : 'bg-slate-700'}`} />
-                                            </>
-                                        )}
-                                        <span className={`text-[8px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded border ${isAmbassador ? 'text-emerald-700 bg-emerald-100/60 border-emerald-200' : 'text-emerald-500 bg-emerald-500/10 border-emerald-500/20'}`}>Verified</span>
-                                    </div>
+                                    <span className="font-extrabold truncate text-[12px] text-gray-900 leading-none">{user.fullName}</span>
+                                    <span className="text-[10px] text-gray-400 truncate mt-1 leading-none">
+                                        {user.fullName === 'Super Admin' ? 'superadmin@heguru.com' : `${user.fullName.toLowerCase().replace(' ', '')}@heguru.com`}
+                                    </span>
                                 </div>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400 flex-shrink-0"><path d="m6 9 6 6 6-6"/></svg>
                             </Link>
                             <button
                                 onClick={async () => { await logoutAction(); window.location.href = '/' }}
-                                className={`w-full flex items-center justify-center gap-2 px-4 py-2.5 transition-all text-[10px] font-black uppercase tracking-[0.2em] group ${isAmbassador ? 'rounded-md bg-white border border-[var(--warm-gray)] text-[var(--text-gray)] hover:text-red-600 hover:bg-red-50 shadow-sm' : 'rounded-2xl bg-white/[0.03] text-blue-200 hover:text-white hover:bg-red-500/20 border border-white/10'}`}
+                                className="w-full flex items-center justify-center gap-2 px-4 py-2.5 transition-all text-[9px] font-black uppercase tracking-[0.2em] rounded-xl bg-white border border-gray-200 text-gray-500 hover:text-red-600 hover:bg-red-50 shadow-sm"
                             >
-                                <LogOut size={14} className="text-red-500/60 group-hover:text-red-500 transition-colors" />
+                                <LogOut size={12} className="text-red-500" />
                                 <span>Logout</span>
                             </button>
                         </div>
@@ -237,7 +201,7 @@ export function CollapsibleSidebar({ navItems, user, logoutAction }: Collapsible
                 {collapsed ? (
                     <button
                         onClick={toggle}
-                        className={`absolute -right-3 top-1/2 -translate-y-1/2 w-6 h-12 flex items-center justify-center transition-all shadow-lg z-30 ${isAmbassador ? 'bg-white border border-[var(--warm-gray)] rounded-r-md text-[var(--text-gray)] hover:text-[var(--primary-orange)] hover:bg-gray-50' : 'bg-[#1e293b] border border-white/20 rounded-r-xl text-gray-400 hover:text-amber-400 hover:bg-[#334155]'}`}
+                        className="absolute -right-3 top-1/2 -translate-y-1/2 w-6 h-12 flex items-center justify-center transition-all bg-white border border-gray-200 rounded-r-md text-gray-400 hover:text-blue-600 hover:bg-gray-50 shadow-md z-30"
                         title="Expand sidebar"
                         aria-label="Expand sidebar"
                         aria-expanded="false"
@@ -247,7 +211,7 @@ export function CollapsibleSidebar({ navItems, user, logoutAction }: Collapsible
                 ) : (
                     <button
                         onClick={toggle}
-                        className={`absolute -right-3 top-1/2 -translate-y-1/2 w-6 h-12 flex items-center justify-center transition-all shadow-lg z-30 ${isAmbassador ? 'bg-white border border-[var(--warm-gray)] rounded-r-md text-[var(--text-gray)] hover:text-[var(--primary-orange)] hover:bg-gray-50' : 'bg-[#1e293b] border border-white/20 rounded-r-xl text-gray-400 hover:text-amber-400 hover:bg-[#334155]'}`}
+                        className="absolute -right-3 top-1/2 -translate-y-1/2 w-6 h-12 flex items-center justify-center transition-all bg-white border border-gray-200 rounded-r-md text-gray-400 hover:text-blue-600 hover:bg-gray-50 shadow-md z-30"
                         title="Collapse sidebar"
                         aria-label="Collapse sidebar"
                         aria-expanded="true"
@@ -256,7 +220,6 @@ export function CollapsibleSidebar({ navItems, user, logoutAction }: Collapsible
                     </button>
                 )}
             </aside>
-
             {/* Spacer that matches sidebar width */}
             <div className={`hidden xl:block transition-all duration-300 ease-in-out flex-shrink-0 ${collapsed ? 'w-[64px]' : 'w-[280px]'}`} />
         </>

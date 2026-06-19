@@ -260,10 +260,10 @@ export function ReportsPanel({
             count: 'Admin accountability',
             desc: 'Chronological log of critical system actions and permission changes.',
             icon: ShieldCheck,
-            color: 'from-slate-500 to-slate-600',
-            bg: 'bg-slate-50',
-            text: 'text-slate-700',
-            border: 'border-slate-200',
+            color: 'from-gray-500 to-gray-600',
+            bg: 'bg-gray-50',
+            text: 'text-gray-700',
+            border: 'border-gray-200',
             action: generateAuditTrailReport,
             canEmail: false
         },
@@ -349,20 +349,20 @@ export function ReportsPanel({
                 <div className="flex flex-wrap items-center gap-4">
                     <button
                         onClick={() => setShowVisualSummary(!showVisualSummary)}
-                        className={`flex items-center gap-2 px-6 py-3 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all shadow-lg ${showVisualSummary ? 'bg-amber-500 text-white shadow-amber-200' : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-50'}`}
+                        className={`flex items-center gap-2 px-6 py-3 rounded-md font-semibold text-[10px] uppercase tracking-widest transition-all shadow-sm ${showVisualSummary ? 'bg-amber-500 text-white shadow-amber-200' : 'bg-white text-gray-700 border border-gray-200 hover:bg-gray-50'}`}
                     >
                         <LayoutDashboard size={14} />
                         {showVisualSummary ? 'Switch to Export List' : 'Daily Achievement Summary'}
                     </button>
 
-                    <div className="bg-white p-1 rounded-2xl border border-gray-200 shadow-sm flex items-center gap-2">
-                        <div className="px-3 py-1 bg-gray-50 rounded-xl border border-gray-100 flex flex-col">
-                            <label htmlFor="report-start-date" className="text-[9px] font-bold text-gray-400 uppercase tracking-wider">Analysis Period</label>
+                    <div className="bg-white p-1 rounded-md border border-gray-200 shadow-sm flex items-center gap-2">
+                        <div className="px-3 py-1 bg-gray-50 rounded-md border border-gray-100 flex flex-col">
+                            <label htmlFor="report-start-date" className="text-[9px] font-semibold text-gray-400 uppercase tracking-wider">Analysis Period</label>
                             <div className="flex items-center gap-2 mt-0.5">
                                 <input
                                     id="report-start-date"
                                     type="date"
-                                    className="bg-transparent text-[11px] font-bold text-gray-700 focus:outline-none w-24"
+                                    className="bg-transparent text-[11px] font-medium text-gray-700 focus:outline-none w-24"
                                     value={dateRange.start}
                                     onChange={(e) => setDateRange(prev => ({ ...prev, start: e.target.value }))}
                                     suppressHydrationWarning
@@ -372,7 +372,7 @@ export function ReportsPanel({
                                 <input
                                     id="report-end-date"
                                     type="date"
-                                    className="bg-transparent text-[11px] font-bold text-gray-700 focus:outline-none w-24"
+                                    className="bg-transparent text-[11px] font-medium text-gray-700 focus:outline-none w-24"
                                     value={dateRange.end}
                                     onChange={(e) => setDateRange(prev => ({ ...prev, end: e.target.value }))}
                                     suppressHydrationWarning
@@ -381,12 +381,12 @@ export function ReportsPanel({
                         </div>
                     </div>
 
-                    <div className="bg-white p-1 rounded-2xl border border-gray-200 shadow-sm flex items-center">
-                        <div className="px-3 py-1 bg-gray-50 rounded-xl border border-gray-100 flex flex-col">
-                            <label htmlFor="report-campus-select" className="text-[9px] font-bold text-gray-400 uppercase tracking-wider">Campus View</label>
+                    <div className="bg-white p-1 rounded-md border border-gray-200 shadow-sm flex items-center">
+                        <div className="px-3 py-1 bg-gray-50 rounded-md border border-gray-100 flex flex-col">
+                            <label htmlFor="report-campus-select" className="text-[9px] font-semibold text-gray-400 uppercase tracking-wider">Campus View</label>
                             <select
                                 id="report-campus-select"
-                                className="bg-transparent text-[11px] font-bold text-gray-700 focus:outline-none mt-0.5 min-w-[140px] cursor-pointer"
+                                className="bg-transparent text-[11px] font-medium text-gray-700 focus:outline-none mt-0.5 min-w-[140px] cursor-pointer"
                                 value={selectedCampus}
                                 onChange={(e) => setSelectedCampus(e.target.value)}
                                 suppressHydrationWarning
@@ -399,12 +399,12 @@ export function ReportsPanel({
                         </div>
                     </div>
 
-                    <div className="bg-white p-1 rounded-2xl border border-gray-200 shadow-sm flex items-center">
-                        <div className="px-3 py-1 bg-gray-50 rounded-xl border border-gray-100 flex flex-col">
-                            <label htmlFor="report-year-select" className="text-[9px] font-bold text-gray-400 uppercase tracking-wider">Academic Year</label>
+                    <div className="bg-white p-1 rounded-md border border-gray-200 shadow-sm flex items-center">
+                        <div className="px-3 py-1 bg-gray-50 rounded-md border border-gray-100 flex flex-col">
+                            <label htmlFor="report-year-select" className="text-[9px] font-semibold text-gray-400 uppercase tracking-wider">Academic Year</label>
                             <select
                                 id="report-year-select"
-                                className="bg-transparent text-[11px] font-bold text-gray-700 focus:outline-none mt-0.5 min-w-[100px] cursor-pointer"
+                                className="bg-transparent text-[11px] font-medium text-gray-700 focus:outline-none mt-0.5 min-w-[100px] cursor-pointer"
                                 value={academicYear}
                                 onChange={(e) => setAcademicYear(e.target.value)}
                                 suppressHydrationWarning
@@ -438,7 +438,7 @@ export function ReportsPanel({
                                 </div>
 
                                 <h3 className="text-lg font-bold text-gray-900 mb-1 leading-tight">{group.title}</h3>
-                                <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">{group.count}</p>
+                                <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">{group.count}</p>
                                 <p className="text-sm text-gray-500 leading-relaxed mb-6 flex-1">{group.desc}</p>
 
                                 <div className="grid grid-cols-2 gap-3 mt-auto">
@@ -447,7 +447,7 @@ export function ReportsPanel({
                                         disabled={!!isExportingId}
                                         suppressHydrationWarning
                                         aria-label={`Download ${group.title} as CSV`}
-                                        className="col-span-1 px-4 py-2.5 rounded-xl bg-gray-50 hover:bg-white text-gray-700 hover:text-gray-900 border border-gray-200 hover:border-gray-300 font-bold text-xs flex items-center justify-center gap-2 transition-all shadow-sm hover:shadow-md disabled:opacity-50"
+                                        className="col-span-1 px-4 py-2.5 rounded-md bg-gray-50 hover:bg-white text-gray-700 hover:text-gray-900 border border-gray-200 hover:border-gray-300 font-semibold text-xs flex items-center justify-center gap-2 transition-all shadow-sm hover:shadow-md disabled:opacity-50"
                                     >
                                         {isExportingId === group.id ? (
                                             <Loader2 size={14} className="animate-spin text-blue-600" />
@@ -462,7 +462,7 @@ export function ReportsPanel({
                                         disabled={emailingId === group.id}
                                         suppressHydrationWarning
                                         aria-label={`Email ${group.title} Report`}
-                                        className="col-span-1 px-4 py-2.5 rounded-xl bg-gray-900 hover:bg-black text-white font-bold text-xs flex items-center justify-center gap-2 transition-all shadow-sm hover:shadow-md disabled:opacity-50"
+                                        className="col-span-1 px-4 py-2.5 rounded-md bg-gray-900 hover:bg-black text-white font-semibold text-xs flex items-center justify-center gap-2 transition-all shadow-sm disabled:opacity-50"
                                     >
                                         {emailingId === group.id ? (
                                             <Loader2 size={14} className="animate-spin" />

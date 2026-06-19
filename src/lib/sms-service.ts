@@ -15,7 +15,7 @@ export type OTPFlow = 'registration' | 'forgot-password' | 'referral'
 
 const MSG91_CONFIG = {
     authKey: process.env.MSG91_AUTH_KEY || "",
-    senderId: process.env.MSG91_SENDER_ID || "ACHAPP",
+    senderId: process.env.MSG91_SENDER_ID || "HEGAPP",
     templates: {
         registration: process.env.MSG91_TEMPLATE_ID_REGISTRATION || "",
         "forgot-password": process.env.MSG91_TEMPLATE_ID_FORGOT_PASSWORD || "",
@@ -85,14 +85,15 @@ class SMSService {
             const finalMobile = '91' + sanitizedMobile
 
             // MSG91 v5 OTP API - Send OTP using template
-            const url = 'https://control.msg91.com/api/v5/otp'
-
-            const payload = {
+            // We construct query string parameters mapping both 'otp' and 'OTP' casing to prevent silent delivery drops.
+            const queryParams = new URLSearchParams({
                 template_id: templateId,
                 mobile: finalMobile,
                 authkey: MSG91_CONFIG.authKey,
-                otp: otp  // Variable for ##OTP## placeholder
-            }
+                otp: otp,
+                OTP: otp
+            })
+            const url = `https://control.msg91.com/api/v5/otp?${queryParams.toString()}`
 
             console.log('📤 [MSG91] Sending OTP:', {
                 flow,
@@ -106,8 +107,7 @@ class SMSService {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(payload)
+                }
             })
 
             const data = await response.json()

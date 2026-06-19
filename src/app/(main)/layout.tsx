@@ -84,9 +84,6 @@ export default async function MainLayout({ children }: { children: React.ReactNo
         if (permissions.adminManagement.access) navItems.push({ label: 'Admin Management', href: `${baseAdminPath}?view=admins`, icon: <UserCog /> })
         if (permissions.reports.access) navItems.push({ label: 'Reports', href: `${baseAdminPath}?view=reports`, icon: <FileDown /> })
         
-        // Dedicated Leaderboard War Room
-        if (permissions.campusPerformance.access) navItems.push({ label: 'War Room', href: '/leaderboard', icon: <Trophy className="text-amber-500" /> })
-
         // Unified Referral Pipeline / Tracking Link
 
         if (permissions.referralTracking.access && !isAmbassadorRole) {

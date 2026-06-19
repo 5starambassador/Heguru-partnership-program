@@ -329,30 +329,30 @@ export default function SuperadminClient({ analytics, campusComparison = [], use
     }
 
     return (
-        <div className="bg-slate-50/50 min-h-screen">
+        <div className="bg-gray-50 min-h-screen">
             <div className={`${['program-leads', 'permissions'].includes(selectedView) ? 'max-w-full px-2' : 'max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-10'} py-10 space-y-10`}>
 
                 {(selectedView === 'analytics' || selectedView === 'home') && (
                     <div className="space-y-10">
                         {/* Data Integrity / Maintenance Section */}
                         {(analyticsData?.missingStudentCount || 0) > 0 && (
-                            <div className="bg-gradient-to-br from-indigo-600 to-violet-700 p-8 rounded-3xl shadow-2xl shadow-indigo-100 border border-indigo-400/20 text-white animate-in slide-in-from-top-4 duration-700 relative overflow-hidden group">
+                            <div className="bg-blue-600 p-8 rounded-xl shadow-sm text-white animate-in slide-in-from-top-4 duration-700 relative overflow-hidden group">
                                 <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full translate-x-32 -translate-y-32 group-hover:scale-110 transition-transform duration-1000" />
                                 <div className="flex flex-col md:flex-row items-center justify-between gap-8 relative z-10">
                                     <div className="flex items-center gap-6">
-                                        <div className="w-16 h-16 bg-white/20 backdrop-blur-md rounded-[24px] flex items-center justify-center border border-white/30 shadow-inner group-hover:rotate-12 transition-transform">
+                                        <div className="w-16 h-16 bg-white/20 backdrop-blur-md rounded-xl flex items-center justify-center border border-white/30 shadow-inner group-hover:rotate-12 transition-transform">
                                             <RefreshCw size={32} className="text-white animate-spin-slow" />
                                         </div>
                                         <div>
-                                            <h3 className="text-2xl font-black tracking-tight italic uppercase">Data Sync Required</h3>
-                                            <p className="text-indigo-100 text-sm font-bold mt-1 max-w-md leading-relaxed">
+                                            <h3 className="text-2xl font-black tracking-tight uppercase">Data Sync Required</h3>
+                                            <p className="text-blue-100 text-sm font-semibold mt-1 max-w-md leading-relaxed">
                                                 We found <span className="text-white underline underline-offset-4 decoration-2">{analyticsData.missingStudentCount} confirmed leads</span> that need to be synchronized with the master student database.
                                             </p>
                                         </div>
                                     </div>
                                     <button
                                         onClick={handleSyncLegacy}
-                                        className="w-full md:w-auto px-10 py-4 bg-white text-indigo-700 rounded-2xl font-black text-xs shadow-2xl hover:shadow-white/20 hover:-translate-y-1 active:scale-95 transition-all flex items-center justify-center gap-3 uppercase tracking-widest group/btn"
+                                        className="w-full md:w-auto px-10 py-4 bg-white text-blue-600 rounded-md font-semibold text-xs shadow-sm hover:-translate-y-1 active:scale-95 transition-all flex items-center justify-center gap-3 uppercase tracking-widest group/btn"
                                     >
                                         <CheckCircle size={18} className="group-hover/btn:scale-110 transition-transform" />
                                         Repair Records Now
@@ -430,10 +430,10 @@ export default function SuperadminClient({ analytics, campusComparison = [], use
                 {selectedView === 'permissions' && (
                     <div className="space-y-6 animate-fade-in w-full">
                         {/* Tab Header */}
-                        <div className="flex p-1 bg-slate-50 rounded-2xl border border-slate-100 w-fit mb-8">
+                        <div className="flex p-1 bg-white rounded-md border border-gray-200 w-fit mb-8 shadow-sm">
                             <button
                                 onClick={() => setActivePermissionTab('matrix')}
-                                className={`px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${activePermissionTab === 'matrix' ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+                                className={`px-6 py-2.5 rounded-md text-xs font-semibold uppercase tracking-widest transition-all ${activePermissionTab === 'matrix' ? 'bg-blue-600 text-white shadow-sm' : 'text-gray-400 hover:text-gray-600'}`}
                             >
                                 <div className="flex items-center gap-2">
                                     <Shield className="h-4 w-4" />
@@ -457,25 +457,25 @@ export default function SuperadminClient({ analytics, campusComparison = [], use
                 {/* Revenue & Settlements View */}
                 {selectedView === 'settlements' && (
                     <div className="space-y-8 animate-fade-in">
-                        <h2 className="text-3xl font-black italic text-gray-900 tracking-tight uppercase">Settlement Management</h2>
+                        <h2 className="text-3xl font-black text-gray-900 tracking-tight uppercase">Settlement Management</h2>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm shadow-gray-200/50">
-                                <p className="text-[11px] font-black text-gray-400 uppercase tracking-widest mb-1">Total Payouts (Processed)</p>
+                            <div className="bg-white p-8 rounded-xl border border-gray-200 shadow-sm">
+                                <p className="text-[11px] font-semibold text-gray-500 uppercase tracking-widest mb-1">Total Payouts (Processed)</p>
                                 <p className="text-4xl font-black text-gray-900">₹{settlements.filter(s => s.status === 'Processed').reduce((acc, s) => acc + (s.amount || 0), 0).toLocaleString()}</p>
                             </div>
-                            <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-sm shadow-gray-200/50">
-                                <p className="text-[11px] font-black text-gray-400 uppercase tracking-widest mb-1">Pending Liabilities</p>
+                            <div className="bg-white p-8 rounded-xl border border-gray-200 shadow-sm">
+                                <p className="text-[11px] font-semibold text-gray-500 uppercase tracking-widest mb-1">Pending Liabilities</p>
                                 <p className="text-4xl font-black text-amber-500">₹{settlements.filter(s => s.status === 'Pending').reduce((acc, s) => acc + (s.amount || 0), 0).toLocaleString()}</p>
                             </div>
                         </div>
 
                         <div className="space-y-4">
                             <div className="flex justify-between items-center px-2">
-                                <h3 className="text-lg font-black italic text-gray-800 uppercase tracking-tight">Recent Payouts</h3>
+                                <h3 className="text-lg font-black text-gray-800 uppercase tracking-tight">Recent Payouts</h3>
                                 <button
                                     onClick={() => setShowCalcModal(true)}
-                                    className="px-5 py-2.5 bg-violet-600 text-white text-xs font-black italic rounded-xl hover:bg-violet-700 transition-all shadow-lg shadow-violet-100 flex items-center gap-2 uppercase tracking-tight"
+                                    className="px-5 py-2.5 bg-blue-600 text-white text-xs font-semibold rounded-md hover:bg-blue-700 transition-all shadow-sm flex items-center gap-2 uppercase tracking-tight"
                                 >
                                     <Calculator size={16} /> New Settlement Request
                                 </button>
@@ -497,7 +497,7 @@ export default function SuperadminClient({ analytics, campusComparison = [], use
 
                         <div className="pt-8 border-t border-gray-100">
                             <div className="flex justify-between items-center mb-6 px-2">
-                                <h3 className="text-lg font-black italic text-gray-800 uppercase tracking-tight">Benefit Distribution Rules</h3>
+                                <h3 className="text-lg font-black text-gray-800 uppercase tracking-tight">Benefit Distribution Rules</h3>
                             </div>
                             <BenefitSlabTable
                                 slabs={slabs}
@@ -534,8 +534,8 @@ export default function SuperadminClient({ analytics, campusComparison = [], use
                 {/* Support Desk View */}
                 {selectedView === 'support' && (
                     <div className="space-y-6 animate-fade-in">
-                        <div className="bg-white rounded-xl border border-slate-100 overflow-hidden">
-                            <div className="p-10 text-center text-slate-400">
+                        <div className="bg-white rounded-md border border-gray-200 overflow-hidden">
+                            <div className="p-10 text-center text-gray-400">
                                 <MessageSquare size={48} className="mx-auto mb-3 opacity-20" />
                                 <p>No active support cases. Ambassadors are happy!</p>
                             </div>
@@ -555,14 +555,14 @@ export default function SuperadminClient({ analytics, campusComparison = [], use
                         <div className="flex gap-4">
                             <button
                                 onClick={() => setShowBenefitModal(false)}
-                                className="flex-1 py-4 bg-gray-100 text-gray-900 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] hover:bg-gray-200 transition-all"
+                                className="flex-1 py-4 bg-gray-100 text-gray-900 rounded-md font-semibold text-[10px] uppercase tracking-[0.2em] hover:bg-gray-200 transition-all"
                             >
                                 Cancel
                             </button>
                             <button
                                 onClick={handleSaveSlab}
                                 disabled={loading}
-                                className="flex-1 py-4 bg-blue-600 text-white rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] shadow-lg shadow-blue-200 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2"
+                                className="flex-1 py-4 bg-blue-600 text-white rounded-md font-semibold text-[10px] uppercase tracking-[0.2em] shadow-sm hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2"
                             >
                                 {loading ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
                                 {editingSlab ? 'Commit Changes' : 'Ignite Slab'}
@@ -572,10 +572,10 @@ export default function SuperadminClient({ analytics, campusComparison = [], use
                 >
                     <div className="space-y-6">
                         <div className="space-y-2">
-                            <label htmlFor="slab-tier-name" className="block text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">Tier Designation</label>
+                            <label htmlFor="slab-tier-name" className="block text-[10px] font-semibold text-gray-500 uppercase tracking-widest px-1">Tier Designation</label>
                             <input
                                 id="slab-tier-name"
-                                className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-5 py-3 text-sm font-bold text-gray-900 focus:outline-none focus:ring-4 focus:ring-blue-50 focus:border-blue-200 transition-all placeholder:text-gray-300"
+                                className="w-full bg-gray-50 border border-gray-200 rounded-md px-5 py-3 text-sm font-semibold text-gray-900 focus:outline-none focus:ring-4 focus:ring-blue-50 focus:border-blue-200 transition-all placeholder:text-gray-300"
                                 placeholder="e.g. Platinum Elite"
                                 value={slabForm.tierName || ''}
                                 onChange={e => setSlabForm({ ...slabForm, tierName: e.target.value })}
@@ -584,26 +584,26 @@ export default function SuperadminClient({ analytics, campusComparison = [], use
 
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
-                                <label htmlFor="slab-referral-threshold" className="block text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">Referral Threshold</label>
+                                <label htmlFor="slab-referral-threshold" className="block text-[10px] font-semibold text-gray-500 uppercase tracking-widest px-1">Referral Threshold</label>
                                 <div className="relative">
                                     <Target className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300" size={16} />
                                     <input
                                         id="slab-referral-threshold"
                                         type="number"
-                                        className="w-full bg-gray-50 border border-gray-100 rounded-2xl pl-12 pr-5 py-3 text-sm font-bold text-gray-900 focus:outline-none focus:ring-4 focus:ring-blue-50 focus:border-blue-200 transition-all"
+                                        className="w-full bg-gray-50 border border-gray-200 rounded-md pl-12 pr-5 py-3 text-sm font-semibold text-gray-900 focus:outline-none focus:ring-4 focus:ring-blue-50 focus:border-blue-200 transition-all"
                                         value={slabForm.referralCount || 0}
                                         onChange={e => setSlabForm({ ...slabForm, referralCount: Number(e.target.value) })}
                                     />
                                 </div>
                             </div>
                             <div className="space-y-2">
-                                <label htmlFor="slab-base-benefit" className="block text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">Base Benefit (%)</label>
+                                <label htmlFor="slab-base-benefit" className="block text-[10px] font-semibold text-gray-500 uppercase tracking-widest px-1">Base Benefit (%)</label>
                                 <div className="relative">
                                     <IndianRupee className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300" size={16} />
                                     <input
                                         id="slab-base-benefit"
                                         type="number"
-                                        className="w-full bg-gray-50 border border-gray-100 rounded-2xl pl-12 pr-5 py-3 text-sm font-bold text-gray-900 focus:outline-none focus:ring-4 focus:ring-blue-50 focus:border-blue-200 transition-all"
+                                        className="w-full bg-gray-50 border border-gray-200 rounded-md pl-12 pr-5 py-3 text-sm font-semibold text-gray-900 focus:outline-none focus:ring-4 focus:ring-blue-50 focus:border-blue-200 transition-all"
                                         value={slabForm.yearFeeBenefitPercent || 0}
                                         onChange={e => setSlabForm({ ...slabForm, yearFeeBenefitPercent: Number(e.target.value) })}
                                     />
@@ -611,14 +611,14 @@ export default function SuperadminClient({ analytics, campusComparison = [], use
                             </div>
                         </div>
 
-                        <div className="p-4 bg-blue-50 rounded-2xl border border-blue-100">
+                        <div className="p-4 bg-blue-50 rounded-md border border-blue-100">
                             <div className="flex items-center gap-3">
                                 <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center text-blue-600 shadow-sm">
                                     <TrendingUp size={16} />
                                 </div>
                                 <div>
-                                    <p className="text-[10px] font-black text-blue-900 uppercase tracking-tight italic">Yield Potential</p>
-                                    <p className="text-[11px] font-bold text-blue-600 tracking-wide">This slab triggers at {slabForm.referralCount} successfully confirmed referrals.</p>
+                                    <p className="text-[10px] font-semibold text-blue-900 uppercase tracking-tight">Yield Potential</p>
+                                    <p className="text-[11px] font-semibold text-blue-600 tracking-wide">This slab triggers at {slabForm.referralCount} successfully confirmed referrals.</p>
                                 </div>
                             </div>
                         </div>

@@ -30,19 +30,29 @@ class WhatsAppService {
     private getAuthKey() {
         try {
             // ✅ ULTIMATE CACHE KILLER: Read directly from DISK to bypass process.env memory
-            const envPath = path.resolve(process.cwd(), '.env.local')
-            if (fs.existsSync(envPath)) {
-                const envContent = fs.readFileSync(envPath, 'utf8')
-                const match = envContent.match(/MSG91_AUTH_KEY=["']?([^"'\s\n\r]+)["']?/)
-                if (match && match[1]) {
-                    console.log(`[AUTH_PROBE] Pulled Key from DISK ending in: ${match[1].slice(-4)}`)
-                    return match[1]
+            const filenames = ['.env.local', '.env']
+            for (const filename of filenames) {
+                const envPath = path.resolve(process.cwd(), filename)
+                if (fs.existsSync(envPath)) {
+                    const envContent = fs.readFileSync(envPath, 'utf8')
+                    // 1. Try to get WhatsApp specific key first
+                    const waMatch = envContent.match(/MSG91_WHATSAPP_AUTH_KEY=["']?([^"'\s\n\r]+)["']?/)
+                    if (waMatch && waMatch[1]) {
+                        console.log(`[AUTH_PROBE] Pulled WhatsApp Auth Key from DISK (${filename}) ending in: ${waMatch[1].slice(-4)}`)
+                        return waMatch[1]
+                    }
+                    // 2. Fallback to standard key
+                    const authMatch = envContent.match(/MSG91_AUTH_KEY=["']?([^"'\s\n\r]+)["']?/)
+                    if (authMatch && authMatch[1]) {
+                        console.log(`[AUTH_PROBE] Pulled Standard Auth Key from DISK (${filename}) ending in: ${authMatch[1].slice(-4)}`)
+                        return authMatch[1]
+                    }
                 }
             }
         } catch (e) {
             console.error('[AUTH_PROBE] Disk read failed, falling back to process.env')
         }
-        return process.env.MSG91_AUTH_KEY || ""
+        return process.env.MSG91_WHATSAPP_AUTH_KEY || process.env.MSG91_AUTH_KEY || ""
     }
 
     /**
