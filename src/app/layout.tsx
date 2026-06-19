@@ -1,0 +1,137 @@
+import type { Metadata } from "next";
+import { outfit } from "@/lib/fonts";
+import "./fonts.css";
+import "./globals.css";
+import { Toaster } from "sonner";
+import { ThemeProvider } from "@/components/ThemeProvider";
+import { SWRegistration } from "@/components/SWRegistration";
+import { OfflineSync } from "@/components/OfflineSync";
+import { VersionStability } from "@/components/VersionStability";
+
+// Font imported from @/lib/fonts
+
+import type { Viewport } from 'next'
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  themeColor: '#0f172a',
+  viewportFit: 'cover',
+}
+
+export const metadata: Metadata = {
+  metadataBase: new URL('https://5starambassador.com'),
+  title: "Heguru Partnership Program (HPP) | Japan Design Language",
+  description: "Join the Heguru Partnership Program (HPP). Refer students, earn rewards, and be part of our Heguru journey.",
+  keywords: ["Heguru", "HPP", "Partnership Program", "School Admission", "Referral Program", "Education", "Pondicherry", "5 Star", "Japan Design"],
+  authors: [{ name: "HEGURU WORLD CLASS EDUCATION" }],
+  creator: "HEGURU WORLD CLASS EDUCATION",
+  publisher: "HEGURU WORLD CLASS EDUCATION",
+  openGraph: {
+    type: "website",
+    locale: "en_IN",
+    url: "https://5starambassador.com",
+    title: "Heguru Partnership Program (HPP)",
+    description: "Join the Heguru Partnership Program (HPP). Refer students, earn rewards, and be part of our Heguru journey.",
+    siteName: "Heguru Partnership Program (HPP)",
+    images: [
+      {
+        url: "/images/HEGURU-JAPAN-LOGO.jpeg",
+        width: 1200,
+        height: 630,
+        alt: "Heguru Partnership Program (HPP)",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Heguru Partnership Program (HPP)",
+    description: "Join the Heguru Partnership Program (HPP). Refer students, earn rewards, and be part of our Heguru journey.",
+    images: ["/images/HEGURU-JAPAN-LOGO.jpeg"],
+  },
+  icons: {
+    icon: [
+      { url: "/favicon/favicon.ico" },
+      { url: "/favicon/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+      { url: "/favicon/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+    ],
+    apple: [
+      { url: "/favicon/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
+    ],
+    other: [
+      { url: "/favicon/android-chrome-192x192.png", sizes: "192x192", type: "image/png" },
+      { url: "/favicon/android-chrome-512x512.png", sizes: "512x512", type: "image/png" },
+    ],
+  },
+  manifest: "/manifest.json",
+};
+
+import { getSystemSettings } from "@/app/settings-actions";
+import { getCurrentUser } from "@/lib/auth-service";
+import { headers } from "next/headers";
+
+export default async function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  let settings;
+  try {
+    settings = await getSystemSettings();
+  } catch (error) {
+    console.error('RootLayout: Failed to load settings', error);
+    settings = { maintenanceMode: false }; // Fallback
+  }
+
+  const user = await getCurrentUser().catch(() => null);
+  const headersList = await headers();
+  const pathname = headersList.get("x-invoke-path") || "";
+
+  // Maintenance Mode Logic
+  // 1. If Maintenance Mode is active
+  // 2. AND user is NOT a Super Admin
+  // 3. AND they are not accessing a superadmin path
+  const isMaintenanceActive = settings?.maintenanceMode;
+  const isSuperAdmin = user?.role === "Super Admin";
+  const isSuperAdminPath = pathname.includes("/superadmin");
+
+  if (isMaintenanceActive && !isSuperAdmin && !isSuperAdminPath) {
+    return (
+      <html lang="en">
+        <body className={`${outfit.variable} antialiased font-sans bg-slate-950 flex items-center justify-center min-h-screen p-4`}>
+          <div className="max-w-md w-full bg-white/5 backdrop-blur-xl border border-white/10 p-10 rounded-[40px] text-center shadow-2xl">
+            <div className="w-20 h-20 bg-red-600/20 rounded-full flex items-center justify-center mx-auto mb-8 animate-pulse">
+              <div className="w-12 h-12 bg-red-600 rounded-full flex items-center justify-center">
+                <span className="text-white font-black text-2xl">!</span>
+              </div>
+            </div>
+            <h1 className="text-3xl font-black text-white mb-4 tracking-tight uppercase">System Maintenance</h1>
+            <p className="text-slate-400 font-medium leading-relaxed mb-10">
+              The Heguru HPP Engine is currently undergoing scheduled maintenance to improve your experience. We&apos;ll be back online shortly.
+            </p>
+            <div className="h-1 w-full bg-slate-800 rounded-full overflow-hidden">
+              <div className="h-full bg-red-600 w-1/3 animate-[shimmer_2s_infinite]" />
+            </div>
+            <p className="mt-8 text-[10px] text-slate-500 font-bold uppercase tracking-[0.2em]">Heguru IT Operations</p>
+          </div>
+        </body>
+      </html>
+    );
+  }
+
+  return (
+    <html lang="en" suppressHydrationWarning>
+      <body className={`${outfit.variable} antialiased font-sans`} suppressHydrationWarning>
+        <ThemeProvider>
+          <Toaster position="top-center" richColors />
+          <VersionStability />
+          <SWRegistration />
+          <OfflineSync />
+          {children}
+        </ThemeProvider>
+      </body>
+    </html>
+  );
+}

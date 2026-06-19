@@ -1,0 +1,1125 @@
+'use server'
+
+import prisma from "@/lib/prisma"
+import { getCurrentUser } from "@/lib/auth-service"
+import { generateSmartReferralCode } from "@/lib/referral-service"
+import { UserRole, Prisma } from "@prisma/client"
+import { revalidatePath } from "next/cache"
+import { logAction } from "@/lib/audit-logger"
+import { syncUserStats, revalidateDashboard } from "./sync-actions"
+import { toUserRole, toLeadStatus } from "@/lib/enum-utils"
+import { normalizeScientificNotation, normalizeAcademicYear, normalizeGrade } from "@/lib/utils"
+
+// --- Helper: Simple CSV Parser ---
+// --- Helper: Simple CSV Parser ---
+function parseCSV(csvText: string) {
+    // Remove BOM if present
+    const cleanText = csvText.replace(/^\uFEFF/, '')
+    const lines = cleanText.split(/\r?\n/).filter(line => line.trim() !== '')
+    // if (lines.length < 2) return [] // Removed to allow empty file check later if needed, but parser needs headers
+    if (lines.length < 1) return []
+
+    // Parse Headers: Trim and Lowercase for consistent matching
+    const headers = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g, '').toLowerCase())
+
+    if (lines.length < 2) return []
+
+    return lines.slice(1).map(line => {
+        // Handle quoted values correctly
+        const values: string[] = []
+        let inQuotes = false
+        let currentValue = ''
+
+        for (let i = 0; i < line.length; i++) {
+            const char = line[i]
+            if (char === '"') {
+                inQuotes = !inQuotes
+            } else if (char === ',' && !inQuotes) {
+                values.push(currentValue.trim())
+                currentValue = ''
+            } else {
+                currentValue += char
+            }
+        }
+        values.push(currentValue.trim())
+
+        // Map headers to values
+        const row: any = {}
+        headers.forEach((h, i) => {
+            let value = values[i] || ''
+            // Remove quotes from value if present
+            if (value.startsWith('"') && value.endsWith('"')) {
+                value = value.slice(1, -1)
+            }
+            row[h] = value
+        })
+        return row
+    })
+}
+
+
+// --- Import Fees ---
+export async function importFees(csvData: string) {
+    const admin = await getCurrentUser()
+    if (!admin || !admin.role.includes('Admin')) return { success: false, error: 'Unauthorized' }
+
+    try {
+        const rows = parseCSV(csvData)
+        let processed = 0
+        let errors: string[] = []
+        let results: any[] = []
+
+        // Fetch all campuses mapping
+        const campuses = await prisma.campus.findMany()
+        const campusMap = new Map(campuses.map(c => [c.campusName.toLowerCase(), c.id]))
+
+        // Helper for partial updates
+        const parseFee = (val: any) => {
+            if (val === undefined || val === null || val === '') return null
+            const num = parseInt(val.toString().replace(/[^0-9]/g, ''))
+            return isNaN(num) ? null : num
+        }
+
+        if (rows.length > 0) {
+            console.log('[DEBUG] Fee Import Headers found:', Object.keys(rows[0]))
+        }
+
+        for (const [index, row] of rows.entries()) {
+            if (!row || Object.keys(row).length === 0) continue
+
+            const campusName = (row.campus || row.campusname || row['campus name'] || row.branch || row.center)?.trim()
+            const grade = (row.grade || row.class || row['class name'])?.trim()
+            const academicYear = normalizeAcademicYear((row.academicyear || row['academic year'] || row.ay || row.year || '2025-2026')?.trim())
+
+            const rawOtp = row.annualfee_otp || row['annual fee otp'] || row['annual fee (otp)'] || row['otp fee'] || row.otp
+            const rawWotp = row.annualfee_wotp || row['annual fee wotp'] || row['annual fee (wotp)'] || row['wotp fee'] || row.wotp
+
+            const annualFee_otp = parseFee(rawOtp)
+            const annualFee_wotp = parseFee(rawWotp)
+
+            if (!campusName || !grade || (annualFee_otp === null && annualFee_wotp === null)) {
+                let missing = []
+                if (!campusName) missing.push('Campus')
+                if (!grade) missing.push('Grade')
+                if (annualFee_otp === null && annualFee_wotp === null) missing.push('Fee Amounts')
+                const msg = `Missing: ${missing.join(', ')}`
+                errors.push(`Row ${index + 2}: ${msg}`)
+                results.push({ row: index + 2, data: row, status: 'Failed', reason: msg })
+                continue
+            }
+
+            const campusId = campusMap.get(campusName.toLowerCase())
+            if (!campusId) {
+                const msg = `Campus '${campusName}' not found`
+                errors.push(`Row ${index + 2}: ${msg}`)
+                results.push({ row: index + 2, data: row, status: 'Failed', reason: msg })
+                continue
+            }
+
+            // --- 100% SAFETY: Handle Partial Updates ---
+            const updateData: any = {}
+            if (annualFee_otp !== null) updateData.annualFee_otp = annualFee_otp
+            if (annualFee_wotp !== null) updateData.annualFee_wotp = annualFee_wotp
+
+            await prisma.gradeFee.upsert({
+                where: {
+                    campusId_grade_academicYear: {
+                        campusId,
+                        grade,
+                        academicYear
+                    }
+                },
+                update: updateData,
+                create: {
+                    campusId,
+                    grade,
+                    academicYear,
+                    annualFee_otp: annualFee_otp || 0,
+                    annualFee_wotp: annualFee_wotp || 0
+                } as any
+            })
+
+            // Audit Trail
+            await logAction(
+                'IMPORT',
+                'FEE_STRUCTURE',
+                `Bulk import fee for ${grade} (${academicYear}): OTP=${annualFee_otp ?? 'UNCHANGED'}, WOTP=${annualFee_wotp ?? 'UNCHANGED'}`,
+                `${campusId}-${grade}`,
+                (admin as any).adminId || admin.userId
+            )
+
+            processed++
+            results.push({ row: index + 2, data: row, status: 'Success', reason: 'Imported' })
+        }
+
+        return { success: true, processed, errors, results }
+    } catch (error: any) {
+        console.error('Import Fees Error:', error)
+        return { success: false, error: error.message }
+    }
+}
+
+// --- Import Ambassadors ---
+export async function importAmbassadors(csvData: string) {
+    const admin = await getCurrentUser()
+    if (!admin || !admin.role.includes('Admin')) return { success: false, error: 'Unauthorized' }
+
+    try {
+        const rows = parseCSV(csvData)
+        let processed = 0
+        let errors: string[] = []
+        let results: any[] = []
+
+        // Pre-fetch campuses for ID resolution
+        const allCampuses = await prisma.campus.findMany({ select: { id: true, campusName: true } })
+        const campusLookup = new Map(allCampuses.map(c => [c.campusName.toLowerCase(), c.id]))
+
+        for (const [index, row] of rows.entries()) {
+            // Flexible Headers (Basic Info)
+            const fullName = row.fullname || row.fullName || row['full name']
+            const mobileNumber = row.mobilenumber || row.mobileNumber || row['mobile number'] || row['phone number'] || row['phone']
+            const email = row.email || row.Email || ''
+            const role = toUserRole(row.role || row.Role || 'Parent')
+            const assignedCampus = row.assignedcampus || row.assignedCampus || row['assigned campus'] || row['campus'] || ''
+            const empId = row.empid || row['emp id'] || row.emp_id || ''
+            const childEprNo = row.childeprno || row['child erp no'] || row['child erp'] || row['student erp'] || ''
+            const referralCode = row.referralcode || row.referralCode || row['referral code'] || ''
+            const academicYear = normalizeAcademicYear(row.academicyear || row.academicYear || row['academic year'] || '2025-2026')
+            const password = row.password || row.Password || null
+            const childInHeguru = (row.childinheguru || row['child in heguru'])?.toLowerCase() === 'yes'
+            const benefitStatus = row.benefitstatus || row.benefitStatus || row['benefit status'] || 'Pending'
+
+            // Mapping additional fields (Advanced Info)
+            const aadharNo = row.aadharno || row['aadhar no'] || null
+            const address = row.address || row['address'] || null
+            const bankName = row.bankname || row['bank name'] || null
+            const accountNumber = row.accountnumber || row['account number'] || null
+            const ifscCode = row.ifsccode || row['ifsc code'] || null
+            const bankAccountDetails = row.bankaccountdetails || row['bank account details'] || null
+            const grade = row.grade || row['grade'] || null
+            const childName = row.childname || row['child name'] || null
+            const isFiveStarMember = (row.isfivestarmember || row['is 5-star member'])?.toLowerCase() === 'yes'
+            const yearFeeBenefitPercent = parseFloat(row.yearfeebenefitpercent || row['year benefit %'] || row['year_benefit']) || 0
+            const longTermBenefitPercent = parseFloat(row.longtermbenefitpercent || row['long term benefit %'] || row['long_term_benefit']) || 0
+
+            // Basic Validation
+            if (!fullName || !mobileNumber || !role) {
+                const msg = `Missing required fields (Name, Mobile, or Role)`
+                errors.push(`Row ${index + 2}: ${msg}`)
+                results.push({ row: index + 2, data: row, status: 'Failed', reason: msg })
+                continue
+            }
+
+            // Generate Code if not provided
+            const finalReferralCode = referralCode || await generateSmartReferralCode(role, academicYear)
+
+            // Upsert User
+            const userData = {
+                fullName,
+                mobileNumber,
+                role,
+                email,
+                assignedCampus,
+                campusId: campusLookup.get(assignedCampus.toLowerCase()) || null,
+                referralCode: finalReferralCode,
+                empId,
+                childEprNo,
+                childInHeguru: role === 'Parent' ? true : childInHeguru,
+                childName,
+                grade,
+                benefitStatus: benefitStatus as any,
+                password: password || null,
+                registrationSource: 'Manual_Import',
+                academicYear,
+                aadharNo,
+                address,
+                bankName,
+                accountNumber,
+                ifscCode,
+                bankAccountDetails,
+                isFiveStarMember,
+                yearFeeBenefitPercent,
+                longTermBenefitPercent
+            }
+
+            await prisma.user.upsert({
+                where: { mobileNumber },
+                update: userData,
+                create: userData
+            })
+
+            // Re-sync if it was an update to ensure stats are fresh
+            const existing = await prisma.user.findUnique({ where: { mobileNumber } })
+            if (existing) {
+                await syncUserStats(existing.userId)
+            }
+
+            processed++
+            results.push({ row: index + 2, data: row, status: 'Success', reason: 'Imported' })
+        }
+
+        return { success: true, processed, errors, results }
+
+    } catch (error: any) {
+        return { success: false, error: error.message }
+    }
+}
+
+// --- Import Students ---
+export async function importStudents(csvData: string) {
+    const admin = await getCurrentUser()
+    if (!admin || !admin.role.includes('Admin')) return { success: false, error: 'Unauthorized' }
+
+    try {
+        const rows = parseCSV(csvData)
+        let processed = 0
+        let errors: string[] = []
+        let results: any[] = []
+        let autoVerifiedCount = 0
+        const usersToSync = new Set<number>()
+
+        // Campuses map
+        const campuses = await prisma.campus.findMany()
+        const campusMap = new Map(campuses.map(c => [c.campusName.toLowerCase(), c.id]))
+
+        // Keep track of ambassadors to update stats for
+        const ambassadorsToUpdate = new Set<number>()
+
+        for (const [index, row] of rows.entries()) {
+            try {
+                // Flexible Headers
+                const parentMobile = normalizeScientificNotation(row.parentmobile || row['parent mobile'])
+                const parentName = row.parentname || row['parent name']
+                const fullName = row.studentname || row.fullname || row['student name'] || row['full name']
+                const grade = row.grade || row['grade']
+                const campusName = row.campusname || row['campus name studying'] || row['campus name']
+                const section = row.section || row['section'] || null
+                const admissionNumber = normalizeScientificNotation(row.admissionnumber || row.admissionNumber || row['erp number'] || row['erp no'] || row['erp no.'] || row['admission number'] || null)
+                const rollNumber = row.rollnumber || row['roll number'] || null
+                const ambassadorMobile = normalizeScientificNotation(row.ambassadormobile || row['ambassador mobile'] || null)
+
+                // Read Feeplan from CSV (support both 'feeplan' and 'feetype' columns)
+                const feeplanRaw = row.feeplan || row.Feeplan || row.feetype || row['fee type'] || row['fee plan'] || ''
+                const selectedFeeType = feeplanRaw.toString().trim().toUpperCase() === 'OTP' ? 'OTP' : 'WOTP'
+
+                const studentStatus = row.status || row['status'] || 'Active'
+                const academicYearForRecord = normalizeAcademicYear(row.academicyear || row['academic year'] || row.academicYear || '2025-2026')
+
+                // SENIOR EXPERT: Capture Admission & Donation Fees from Import
+                const admissionFee = parseFloat(row.admissionfee || row['admission fee'] || row.admissionFee || row['admission collected'] || '0')
+                const donationFee = parseFloat(row.donationfee || row['donation fee'] || row.donationFee || row['donation collected'] || '0')
+
+                if (!parentMobile || !fullName || !grade || !campusName) {
+                    const msg = `Missing required fields`
+                    errors.push(`Row ${index + 2}: ${msg}`)
+                    results.push({ row: index + 2, data: row, status: 'Failed', reason: msg })
+                    continue
+                }
+
+                // 3. Parent Lookup (No Creation)
+                let parent = await prisma.user.findUnique({ where: { mobileNumber: parentMobile } })
+                if (parent) {
+                    // Sync Name if exists
+                    if (parentName && parent.fullName !== parentName) {
+                        await prisma.user.update({
+                            where: { userId: parent.userId },
+                            data: { fullName: parentName }
+                        })
+                    }
+                    usersToSync.add(parent.userId)
+                }
+
+                // Find Campus
+                const campusId = campusMap.get(campusName.toLowerCase())
+                if (!campusId) {
+                    const msg = `Campus '${campusName}' not found`
+                    errors.push(`Row ${index + 2}: ${msg}`)
+                    results.push({ row: index + 2, data: row, status: 'Failed', reason: msg })
+                    continue
+                }
+
+                // Find Ambassador
+                let ambassadorId: number | null = null
+
+                // 1. Try Mobile First (Primary Key)
+                if (ambassadorMobile) {
+                    const amb = await prisma.user.findUnique({ where: { mobileNumber: ambassadorMobile } })
+                    if (amb) {
+                        ambassadorId = amb.userId
+                    }
+                }
+
+                // 2. Try Name Second (if mobile not provided or not found)
+                if (!ambassadorId) {
+                    const ambassadorName = row.ambassadorname || row.ambassadorName || row['ambassador name'] || null
+
+                    if (ambassadorName) {
+                        // Search by name (insensitive)
+                        const matches = await prisma.user.findMany({
+                            where: {
+                                fullName: { equals: ambassadorName, mode: 'insensitive' },
+                                role: { not: 'Parent' } // Ambassadors are usually Staff or Alumni, but definitely not students (though student role doesn't exist in UserRole enum)
+                            }
+                        })
+
+                        if (matches.length === 1) {
+                            ambassadorId = matches[0].userId
+                        }
+                        // If multiple matches, we can't safely assign. 
+                    }
+                }
+
+                // Fetch Fee from GradeFee table based on selected plan
+                let annualFeeAmount = 0
+                let baseFeeValue = 0
+
+                // Normalize the student's grade for matching
+                const normalizedStudentGrade = normalizeGrade(grade)
+
+                // Find GradeFee with normalized grade matching
+                const allGradeFees = await prisma.gradeFee.findMany({
+                    where: {
+                        campusId,
+                        academicYear: academicYearForRecord
+                    }
+                })
+
+                // Find matching GradeFee by normalized grade
+                const feeRule = allGradeFees.find(gf =>
+                    normalizeGrade(gf.grade) === normalizedStudentGrade
+                )
+
+                if (feeRule) {
+                    const rule = feeRule as any
+                    // Get the fee based on OTP or WOTP plan
+                    annualFeeAmount = selectedFeeType === 'OTP'
+                        ? (rule.annualFee_otp || 0)
+                        : (rule.annualFee_wotp || 0)
+                    baseFeeValue = annualFeeAmount
+                    console.log(`[IMPORT] Matched GradeFee: Student grade "${grade}" -> GradeFee grade "${feeRule.grade}" -> Fee: ${annualFeeAmount}`)
+                } else {
+                    // No GradeFee found - leave as 0 to show N/A
+                    console.log(`[IMPORT] No GradeFee found for Campus ${campusId}, Grade ${grade} (normalized: ${normalizedStudentGrade}), Year ${academicYearForRecord}`)
+                    annualFeeAmount = 0
+                    baseFeeValue = 0
+                }
+
+                // --- AUTO-VERIFICATION Check ---
+                // If parent exists and child record found, we mark for sync which handles activation
+                // Also auto-verify 'Pending' parents who haven't claimed child yet
+                if (parent) {
+                    // AS SENIOR EXPERT: Always sync child details from ERP to keep dashboard/queue accurate
+                    // We trust ERP data (Import) over User Input (Profile)
+                    const isPending = parent.status === 'Pending' || parent.benefitStatus === 'Pending'
+                    const needsVerification = parent.benefitStatus === 'PendingVerification'
+
+                    await prisma.user.update({
+                        where: { userId: parent.userId },
+                        data: {
+                            childInHeguru: true, // ERP presence confirms they have a child
+                            childName: fullName,
+                            childEprNo: admissionNumber || parent.childEprNo,
+                            grade: grade,
+                            campusId: campusId,
+                            assignedCampus: campusName,
+                            // Only update status if it's currently pending
+                            ...( (isPending || needsVerification) && { benefitStatus: 'PendingVerification' })
+                        }
+                    })
+                    console.log(`[IMPORT] Synced record for ${parent.mobileNumber}: Grade ${grade}, Child ${fullName}`)
+                    usersToSync.add(parent.userId)
+                }
+
+                // 4. Handle Referral Logic (Create/Update Confirmed Lead)
+                let leadId: number | null = null
+                if (ambassadorId) {
+                    const existingLead = await prisma.referralLead.findFirst({
+                        where: { userId: ambassadorId, parentMobile: parentMobile }
+                    })
+
+                    if (existingLead) {
+                        const updateData: any = {
+                            studentName: fullName,
+                            gradeInterested: grade,
+                            campusId,
+                            campus: campusName,
+                            admissionNumber: admissionNumber,
+                            selectedFeeType: selectedFeeType,
+                            annualFee: annualFeeAmount || (existingLead as any).annualFee,
+                            admissionFeeCollected: admissionFee || (existingLead as any).admissionFeeCollected,
+                            donationFeeCollected: donationFee || (existingLead as any).donationFeeCollected
+                        }
+                        if (existingLead.leadStatus !== 'Admitted' && existingLead.leadStatus !== 'Rejected') {
+                            updateData.leadStatus = 'Admitted'
+                            updateData.confirmedDate = new Date()
+                            usersToSync.add(ambassadorId)
+                        }
+                        const updatedLead = await prisma.referralLead.update({
+                            where: { leadId: existingLead.leadId },
+                            data: {
+                                ...updateData,
+                                academicYear: academicYearForRecord
+                            } as any
+                        })
+                        leadId = updatedLead.leadId
+                    } else {
+                        // Create New Confirmed Lead
+                        const newLead = await prisma.referralLead.create({
+                            data: {
+                                userId: ambassadorId,
+                                parentName: parent?.fullName || parentName || 'Imported Parent',
+                                parentMobile,
+                                studentName: fullName,
+                                gradeInterested: grade,
+                                campusId,
+                                campus: campusName,
+                                leadStatus: 'Admitted',
+                                confirmedDate: new Date(),
+                                admittedYear: academicYearForRecord,
+                                admissionNumber: admissionNumber,
+                                selectedFeeType: selectedFeeType,
+                                annualFee: annualFeeAmount,
+                                admissionFeeCollected: admissionFee,
+                                donationFeeCollected: donationFee,
+                                academicYear: academicYearForRecord
+                            } as any
+                        })
+                        leadId = newLead.leadId
+                        usersToSync.add(ambassadorId)
+                    }
+                }
+
+                // 5. SAVE TO STAGING AREA (Safe, No "Global" User Impact)
+                if (admissionNumber) {
+                    await (prisma as any).erpStudentData.upsert({
+                        where: { admissionNumber },
+                        update: {
+                            fullName,
+                            parentMobile,
+                            parentName: parentName || parent?.fullName || null,
+                            grade,
+                            campusName,
+                            academicYear: academicYearForRecord
+                        },
+                        create: {
+                            fullName,
+                            admissionNumber,
+                            parentMobile,
+                            parentName: parentName || parent?.fullName || null,
+                            grade,
+                            campusName,
+                            academicYear: academicYearForRecord
+                        }
+                    })
+                    console.log(`[IMPORT] Saved to Staging: ${fullName} (${admissionNumber})`)
+                }
+                
+                processed++
+                results.push({ row: index + 2, data: row, status: 'Success', reason: 'Staged for Verification' })
+            } catch (err: any) {
+                errors.push(`Row ${index + 2}: ${err.message}`)
+                results.push({ row: index + 2, data: row, status: 'Failed', reason: err.message })
+            }
+        }
+
+        // --- Post-Processing: Decentralized Sync Stat Updates ---
+        if (usersToSync.size > 0) {
+            for (const userId of usersToSync) {
+                await syncUserStats(userId)
+            }
+        }
+
+        await revalidateDashboard()
+
+        return { success: true, processed, errors, results }
+    } catch (error: any) {
+        return { success: false, error: error.message }
+    }
+}
+// --- Import Campuses ---
+export async function importCampuses(csvData: string) {
+    const admin = await getCurrentUser()
+    if (!admin || !admin.role.includes('Admin')) return { success: false, error: 'Unauthorized' }
+
+    try {
+        const rows = parseCSV(csvData)
+        let processed = 0
+        let errors: string[] = []
+        let results: any[] = []
+
+        for (const [index, row] of rows.entries()) {
+            const campusName = row.campusname || row.campusName || row['campus name']
+            const campusCode = row.campuscode || row.campusCode || row['campus code']
+            const location = row.location
+            const grades = row.grades // Expected as "Pre-Mont, Mont-1, Grade 1" etc.
+            const maxCapacity = parseInt(row.maxcapacity || row.maxCapacity || row['max capacity']) || 500
+
+            // Validation
+            if (!campusName || !campusCode || !location) {
+                const msg = `Missing required fields`
+                errors.push(`Row ${index + 2}: ${msg}`)
+                results.push({ row: index + 2, data: row, status: 'Failed', reason: msg })
+                continue
+            }
+
+            // Check existing
+            const existing = await prisma.campus.findFirst({
+                where: { OR: [{ campusName }, { campusCode }] }
+            })
+
+            if (existing) {
+                const msg = `Campus ${campusName} (${campusCode}) already exists`
+                errors.push(`Row ${index + 2}: ${msg}`)
+                results.push({ row: index + 2, data: row, status: 'Failed', reason: msg })
+                continue
+            }
+
+            await prisma.campus.create({
+                data: {
+                    campusName,
+                    campusCode,
+                    location,
+                    grades: grades || '',
+                    maxCapacity,
+                    currentEnrollment: 0,
+                    isActive: true
+                }
+            })
+            processed++
+            results.push({ row: index + 2, data: row, status: 'Success', reason: 'Imported' })
+        }
+
+        return { success: true, processed, errors, results }
+    } catch (error: any) {
+        return { success: false, error: error.message }
+    }
+}
+
+// --- Import Referrals (Leads Only) ---
+export async function importReferrals(csvData: string) {
+    const admin = await getCurrentUser()
+    if (!admin || !admin.role.includes('Admin')) return { success: false, error: 'Unauthorized' }
+
+    try {
+        const rows = parseCSV(csvData)
+        let processed = 0
+        let errors: string[] = []
+        let results: any[] = []
+
+        // Campuses map
+        const campuses = await prisma.campus.findMany()
+        const campusMap = new Map(campuses.map(c => [c.campusName.toLowerCase(), c.id]))
+
+        // Keep track of ambassadors to update stats for
+        const ambassadorsToUpdate = new Set<number>()
+
+        // Debug Log
+        if (rows.length > 0) {
+            console.log('First Row Keys:', Object.keys(rows[0]))
+        }
+
+        for (const [index, row] of rows.entries()) {
+            const parentName = row.parentname || row.parentName || row['parent name']
+            const parentMobile = normalizeScientificNotation(row.parentmobile || row.parentMobile || row['parent mobile'])
+            const grade = row.grade || row['grade']
+            const section = row.section || row['section'] || null
+            const campusName = row.campusname || row.campusName || row['campus name'] || row['campus']
+            const ambassadorMobile = normalizeScientificNotation(row.ambassadormobile || row.ambassadorMobile || row['ambassador mobile'])
+            const ambassadorName = row.ambassadorname || row.ambassadorName || row['ambassador name'] || null
+            const admissionNumber = normalizeScientificNotation(row.admissionnumber || row.admissionNumber || row['erp no'] || row['admission number'] || null)
+
+            // Auto-Admit if ERP number is present, otherwise default to status column or 'Confirmed'
+            let rawStatus = row.status || row['status'] || 'Confirmed'
+            if (admissionNumber && !row.status) {
+                rawStatus = 'Admitted'
+            }
+            const status = toLeadStatus(rawStatus)
+
+            if (!parentName || !parentMobile || !grade || !campusName) {
+                const missing = []
+                if (!parentName) missing.push('Parent Name')
+                if (!parentMobile) missing.push('Parent Mobile')
+                if (!grade) missing.push('Grade')
+                if (!campusName) missing.push('Campus Name')
+
+                // Debugging: Show what keys were found
+                const foundKeys = Object.keys(row).join(', ')
+                const msg = `Missing required fields: ${missing.join(', ')}. Found keys: [${foundKeys}]`
+                errors.push(`Row ${index + 2}: ${msg}`)
+                results.push({ row: index + 2, data: row, status: 'Failed', reason: msg })
+                continue
+            }
+
+            // Find Campus
+            const campusId = campusMap.get(campusName.toLowerCase())
+            if (!campusId) {
+                const msg = `Campus '${campusName}' not found`
+                errors.push(`Row ${index + 2}: ${msg}`)
+                results.push({ row: index + 2, data: row, status: 'Failed', reason: msg })
+                continue
+            }
+
+            // Find Ambassador
+            let ambassadorId: number | null = null
+
+            // 1. Try Mobile First
+            if (ambassadorMobile) {
+                const amb = await prisma.user.findUnique({ where: { mobileNumber: ambassadorMobile } })
+                if (amb) ambassadorId = amb.userId
+            }
+
+            // 2. Try Name Second
+            if (!ambassadorId) {
+                const ambassadorName = row.ambassadorName || row['Ambassador Name'] || null
+                if (ambassadorName) {
+                    const matches = await prisma.user.findMany({
+                        where: {
+                            fullName: { equals: ambassadorName, mode: 'insensitive' },
+                            role: { not: 'Parent' }
+                        }
+                    })
+                    if (matches.length === 1) ambassadorId = matches[0].userId
+                }
+            }
+
+            if (!ambassadorId) {
+                const msg = `Ambassador not found (provide valid Mobile or Unique Name)`
+                errors.push(`Row ${index + 2}: ${msg}`)
+                results.push({ row: index + 2, data: row, status: 'Failed', reason: msg })
+                continue
+            }
+
+            // Check if Lead Exists
+            let existingLead = null
+
+            if (admissionNumber) {
+                // Strict check: If ERP number provided, that is the unique identifier for a confirmed referral
+                // We check globally to ensure no one else has claimed this ERP
+                existingLead = await prisma.referralLead.findFirst({
+                    where: { admissionNumber }
+                })
+            } else {
+                // Fallback for New Leads (No ERP): Ambassador + Parent + Student Name
+                const studentName = row.studentname || row.studentName || row['student name'] || null
+                const whereClause: any = {
+                    userId: ambassadorId,
+                    parentMobile: parentMobile
+                }
+                if (studentName) {
+                    whereClause.studentName = { equals: studentName, mode: 'insensitive' }
+                }
+                existingLead = await prisma.referralLead.findFirst({ where: whereClause })
+            }
+
+            if (existingLead) {
+                const msg = admissionNumber
+                    ? `Referral with ERP No ${admissionNumber} already exists specified`
+                    : `Referral already exists for this Parent + Ambassador + Student`
+                errors.push(`Row ${index + 2}: ${msg}`)
+                results.push({ row: index + 2, data: row, status: 'Failed', reason: msg })
+                continue
+            }
+
+            const selectedFeeType = (row.feetype || row.feeType || row['fee type'] || '').toString().toUpperCase() as 'OTP' | 'WOTP' || null
+
+            // Enforce ERP and Fee selection for confirmed leads
+            if (status === 'Confirmed') {
+                if (!admissionNumber) {
+                    const msg = `ERP Number is mandatory for Confirmed status`
+                    errors.push(`Row ${index + 2}: ${msg}`)
+                    results.push({ row: index + 2, data: row, status: 'Failed', reason: msg })
+                    continue
+                }
+                if (!selectedFeeType || !['OTP', 'WOTP'].includes(selectedFeeType)) {
+                    const msg = `Fee Type (OTP or WOTP) is mandatory for Confirmed status`
+                    errors.push(`Row ${index + 2}: ${msg}`)
+                    results.push({ row: index + 2, data: row, status: 'Failed', reason: msg })
+                    continue
+                }
+            }
+
+            // Fetch Fee Snapshot if needed
+            let annualFeeAmount = 0
+            if (status === 'Confirmed') {
+                const feeRule = await prisma.gradeFee.findFirst({
+                    where: {
+                        campusId,
+                        grade,
+                        academicYear: row.academicYear || '2025-2026'
+                    }
+                })
+                if (feeRule) {
+                    const rule = feeRule as any
+                    annualFeeAmount = selectedFeeType === 'OTP' ? (rule.annualFee_otp || 0) : (rule.annualFee_wotp || 0)
+                }
+            }
+
+            // Create Referral Lead
+            const newLead = await prisma.referralLead.create({
+                data: {
+                    userId: ambassadorId,
+                    parentName,
+                    parentMobile,
+                    studentName: row.studentname || row.studentName || row['student name'] || null, // Optional
+                    gradeInterested: grade,
+                    section: section,
+                    campusId,
+                    campus: campusName,
+                    leadStatus: status, // Typically 'Confirmed'
+                    confirmedDate: status === 'Confirmed' ? new Date() : null,
+                    admittedYear: normalizeAcademicYear(row.academicyear || row.academicYear || row['academic year'] || '2025-2026'),
+                    admissionNumber: admissionNumber, // Storing ERP No
+                    selectedFeeType: selectedFeeType,
+                    annualFee: annualFeeAmount,
+                    academicYear: normalizeAcademicYear(row.academicyear || row.academicYear || row['academic year'] || '2026-2027')
+                } as any
+            })
+
+            if (status === 'Confirmed' || status === 'Admitted') {
+                ambassadorsToUpdate.add(ambassadorId)
+
+                // ⚡ INTEGRATION: Trigger Instant Automations (Only for Admitted)
+                if (status === 'Admitted') {
+                    try {
+                        const { automationEngine } = await import('@/lib/automation-engine')
+                        await automationEngine.processImmediateEvent('ON_LEAD_ADMITTED', ambassadorId, { leadId: newLead.leadId })
+                    } catch (err) {
+                        console.error('[AutomationEngine] Admission trigger failed:', err)
+                    }
+                }
+            }
+
+            processed++
+            results.push({ row: index + 2, data: row, status: 'Success', reason: 'Imported' })
+        }
+
+        // --- Post-Processing: Update Ambassador Stats ---
+        if (ambassadorsToUpdate.size > 0) {
+            const defaultSlabs: Record<number, number> = { 1: 5, 2: 10, 3: 25, 4: 30, 5: 50 }
+
+            for (const userId of ambassadorsToUpdate) {
+                const count = await prisma.referralLead.count({
+                    where: { userId, leadStatus: { in: ['Confirmed', 'Admitted'] } }
+                })
+
+                const lookupCount = Math.min(count, 5)
+                const slab = await prisma.benefitSlab.findFirst({
+                    where: { referralCount: lookupCount }
+                })
+
+                const yearFeeBenefit = slab ? slab.yearFeeBenefitPercent : (defaultSlabs[lookupCount] || 0)
+
+                await prisma.user.update({
+                    where: { userId },
+                    data: {
+                        confirmedReferralCount: count,
+                        yearFeeBenefitPercent: yearFeeBenefit,
+                        benefitStatus: count >= 1 ? 'Active' : 'Inactive',
+                        lastActiveYear: 2025
+                    }
+                })
+            }
+        }
+
+        return { success: true, processed, errors, results }
+
+    } catch (error: any) {
+        return { success: false, error: error.message }
+    }
+}
+
+// --- Import CRM Leads (Blacklist) ---
+export async function importCrmLeads(csvData: string) {
+    const admin = await getCurrentUser()
+    if (!admin || !admin.role.includes('Admin')) return { success: false, error: 'Unauthorized' }
+
+    try {
+        const rows = parseCSV(csvData)
+        let processed = 0
+        let errors: string[] = []
+        let results: any[] = []
+
+        for (const [index, row] of rows.entries()) {
+            const mobileNumber = row.mobilenumber || row.mobileNumber || row['mobile number'] || row['phone']
+            const parentName = row.parentname || row.parentName || row['parent name'] || row['name']
+
+            // New Fields for Context & Logic
+            const studentName = row.studentname || row.studentName || row['student name'] || null
+            const grade = row.grade || row.grade || null
+            const campus = row.campus || row['campus name'] || null
+
+            // Date Parsing - Try to parse 'visitDate' or 'date', default to NOW if missing
+            let visitDate = new Date()
+            const dateStr = row.visitdate || row.visitDate || row['visit date'] || row['date']
+            if (dateStr) {
+                const parsed = new Date(dateStr)
+                if (!isNaN(parsed.getTime())) visitDate = parsed
+            }
+
+            const source = row.source || row['source'] || 'Walk-in'
+
+
+            if (!mobileNumber) {
+                const msg = `Mobile Number is required`
+                errors.push(`Row ${index + 2}: ${msg}`)
+                results.push({ row: index + 2, data: row, status: 'Failed', reason: msg })
+                continue
+            }
+
+            // Upsert: If exists, just update name/source (idempotent)
+            const crmEntry = await prisma.crmLead.upsert({
+                where: { mobileNumber },
+                update: {
+                    parentName: parentName || undefined,
+                    studentName: studentName || undefined,
+                    grade: grade || undefined,
+                    campus: campus || undefined,
+                    visitDate: visitDate, // Update date to latest CRM record
+                    source: source
+                },
+                create: {
+                    mobileNumber,
+                    parentName: parentName || null,
+                    studentName: studentName || null,
+                    grade: grade || null,
+                    campus: campus || null,
+                    visitDate: visitDate,
+                    source
+                }
+            })
+
+            // --- RETROACTIVE ENFORCEMENT (First Source Wins) ---
+            // If this parent already has a Pending Referral, check who was first.
+            const pendingReferral = await prisma.referralLead.findFirst({
+                where: {
+                    parentMobile: mobileNumber,
+                    leadStatus: { in: ['New', 'Interested', 'Follow_up', 'Contacted'] } // Only Open leads
+                }
+            })
+
+            if (pendingReferral) {
+                // If CRM Visit was BEFORE the Referral was created -> CRM Wins
+                if (visitDate < pendingReferral.createdAt) {
+                    await prisma.referralLead.update({
+                        where: { leadId: pendingReferral.leadId },
+                        data: {
+                            leadStatus: 'Rejected',
+                            rejectionReason: `Duplicate: Parent visited school directly on ${visitDate.toDateString()} (First Source Wins)`
+                        }
+                    })
+                    results.push({ row: index + 2, data: row, status: 'Warning', reason: 'Retroactively Rejected an existing Referral (First Source Wins)' })
+                    processed++
+                    continue
+                }
+            }
+
+            processed++
+            results.push({ row: index + 2, data: row, status: 'Success', reason: 'Imported/Updated' })
+        }
+
+        return { success: true, processed, errors, results }
+    } catch (error: any) {
+        return { success: false, error: error.message }
+    }
+}
+
+// --- BACKFILL: Populate Annual Fees for Existing Students ---
+export async function backfillStudentFees() {
+    const admin = await getCurrentUser()
+    if (!admin || admin.role !== 'Super Admin') {
+        return { success: false, error: 'Unauthorized' }
+    }
+
+    try {
+        const studentsToUpdate = await prisma.student.findMany({
+            where: {
+                OR: [
+                    { annualFee: null },
+                    { annualFee: 0 },
+                    { selectedFeeType: null }
+                ]
+            },
+            include: { campus: true }
+        })
+
+        console.log(`[BACKFILL] Found ${studentsToUpdate.length} students to process`)
+
+        let updated = 0
+        let failed = 0
+        const failures: any[] = []
+
+        for (const student of studentsToUpdate) {
+            try {
+                const currentYearRecord = await prisma.academicYear.findFirst({
+                    where: { isCurrent: true }
+                })
+                const currentYear = currentYearRecord?.year || student.academicYear || "2025-2026"
+
+                console.log(`[BACKFILL] Processing: ${student.fullName} - Campus: ${student.campusId}, Grade: ${student.grade}, Year: ${currentYear}`)
+
+                // Normalize the student's grade for matching
+                const normalizedStudentGrade = normalizeGrade(student.grade)
+
+                // Find GradeFee with normalized grade matching
+                const allGradeFees = await prisma.gradeFee.findMany({
+                    where: {
+                        campusId: student.campusId,
+                        academicYear: currentYear
+                    }
+                })
+
+                // Find matching GradeFee by normalized grade
+                const gradeFee = allGradeFees.find(gf =>
+                    normalizeGrade(gf.grade) === normalizedStudentGrade
+                )
+
+                if (!gradeFee) {
+                    console.log(`[BACKFILL] No GradeFee found for ${student.fullName} - Grade "${student.grade}" (normalized: ${normalizedStudentGrade})`)
+                    failures.push({
+                        student: student.fullName,
+                        reason: `No GradeFee for Campus ${student.campusId}, Grade ${student.grade}, Year ${currentYear}`
+                    })
+                    failed++
+                    continue
+                }
+
+                const feeType = student.selectedFeeType || 'WOTP'
+                const annualFee = feeType === 'OTP'
+                    ? (gradeFee.annualFee_otp || 0)
+                    : (gradeFee.annualFee_wotp || 0)
+
+                console.log(`[BACKFILL] Matched! Student grade "${student.grade}" -> GradeFee grade "${gradeFee.grade}" -> FeeType=${feeType}, AnnualFee=${annualFee}`)
+
+                await prisma.student.update({
+                    where: { studentId: student.studentId },
+                    data: {
+                        selectedFeeType: feeType,
+                        annualFee: annualFee
+                    }
+                })
+
+                updated++
+            } catch (err: any) {
+                console.error(`[BACKFILL] Error processing ${student.fullName}:`, err.message)
+                failures.push({
+                    student: student.fullName,
+                    reason: err.message
+                })
+                failed++
+            }
+        }
+
+        console.log(`[BACKFILL] Complete: Updated=${updated}, Failed=${failed}`)
+        console.log('[BACKFILL] Failures:', failures)
+
+        await revalidateDashboard()
+        return { success: true, updated, failed, total: studentsToUpdate.length }
+    } catch (error: any) {
+        console.error('[BACKFILL] Error:', error)
+        return { success: false, error: error.message }
+    }
+}
+
+// --- DIAGNOSTIC: Generate Missing GradeFee Report ---
+export async function generateMissingGradeFeeReport() {
+    const admin = await getCurrentUser()
+    if (!admin || admin.role !== 'Super Admin') {
+        return { success: false, error: 'Unauthorized' }
+    }
+
+    try {
+        const students = await prisma.student.findMany({
+            where: {
+                OR: [
+                    { annualFee: null },
+                    { annualFee: 0 }
+                ]
+            },
+            include: {
+                campus: true
+            },
+            orderBy: [
+                { campusId: 'asc' },
+                { grade: 'asc' }
+            ]
+        })
+
+        // Group by campus and grade
+        const missingCombinations = new Map<string, {
+            campusName: string
+            campusId: number
+            grade: string
+            academicYear: string
+            studentCount: number
+            students: { name: string, admissionNumber: string }[]
+        }>()
+
+        for (const student of students) {
+            const currentYearRecord = await prisma.academicYear.findFirst({
+                where: { isCurrent: true }
+            })
+            const currentYear = currentYearRecord?.year || student.academicYear || "2025-2026"
+
+            // Check if GradeFee exists
+            const gradeFee = await prisma.gradeFee.findFirst({
+                where: {
+                    campusId: student.campusId,
+                    grade: student.grade,
+                    academicYear: currentYear
+                }
+            })
+
+            if (!gradeFee) {
+                const key = `${student.campusId}-${student.grade}-${currentYear}`
+                if (!missingCombinations.has(key)) {
+                    missingCombinations.set(key, {
+                        campusName: student.campus?.campusName || 'Unknown',
+                        campusId: student.campusId,
+                        grade: student.grade,
+                        academicYear: currentYear,
+                        studentCount: 0,
+                        students: []
+                    })
+                }
+                const combo = missingCombinations.get(key)!
+                combo.studentCount++
+                combo.students.push({
+                    name: student.fullName,
+                    admissionNumber: student.admissionNumber || `ID-${student.studentId}`
+                })
+            }
+        }
+
+        // Generate report text
+        let report = '# Missing GradeFee Report\n\n'
+        report += `Generated: ${new Date().toLocaleString()}\n\n`
+        report += `Total Students Missing Fees: ${students.length}\n\n`
+        report += `## Missing Grade/Campus Combinations\n\n`
+
+        for (const [key, combo] of missingCombinations.entries()) {
+            report += `### ${combo.campusName} - ${combo.grade} (${combo.academicYear})\n`
+            report += `- **Campus ID**: ${combo.campusId}\n`
+            report += `- **Students Affected**: ${combo.studentCount}\n`
+            report += `- **Reason**: No GradeFee record configured for Grade "${combo.grade}" at "${combo.campusName}" campus for academic year ${combo.academicYear}\n`
+            report += `- **Action Required**: Add GradeFee entry with annualFee_otp and annualFee_wotp values for this combination\n`
+            report += `- **Students**: ${combo.students.map(s => `${s.name} (${s.admissionNumber})`).join(', ')}\n\n`
+        }
+
+        report += `## Summary\n\n`
+        report += `Total missing combinations: ${missingCombinations.size}\n`
+        report += `Total students affected: ${students.length}\n\n`
+        report += `## Next Steps\n\n`
+        report += `1. Navigate to Fee Management in SuperAdmin\n`
+        report += `2. Add GradeFee entries for each missing combination above\n`
+        report += `3. Run "Backfill Fees" again to populate student fees\n`
+
+        return {
+            success: true,
+            report,
+            totalAffected: students.length,
+            missingCombinations: Array.from(missingCombinations.values())
+        }
+    } catch (error: any) {
+        return { success: false, error: error.message }
+    }
+}

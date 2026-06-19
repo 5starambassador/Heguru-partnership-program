@@ -1,0 +1,163 @@
+import prisma from '@/lib/prisma'
+import { calculateTotalBenefit, ReferralData, UserContext } from '@/lib/benefit-calculator'
+import { getSpecialBonusRate } from '@/lib/reward-constants'
+
+export interface RevenueStats {
+    projectedValue: number
+    securedValue: number
+    confirmedCount: number
+    previousYearReferrals: ReferralData[]
+    // We might need to return these for context if the UI needs them raw
+    currentReferrals: any[]
+}
+
+export async function getUserRevenueStats(userId: number, userRole: string, userContext: {
+    childInHeguru: boolean
+    studentFee: number
+    isFiveStarMember: boolean
+}): Promise<RevenueStats> {
+
+    // 0. Fetch Active Years
+    const activeYears = await prisma.academicYear.findMany({ where: { isActive: true } })
+    const currentYearRecord = activeYears.find(y => y.isCurrent) || activeYears[0]
+    const previousYearRecord = activeYears
+        .filter(y => y.endDate < currentYearRecord.startDate)
+        .sort((a, b) => b.endDate.getTime() - a.endDate.getTime())[0]
+
+    const CURRENT_ACADEMIC_YEAR = currentYearRecord?.year || '2025-2026'
+    const PREVIOUS_ACADEMIC_YEAR = previousYearRecord?.year || '2024-2025'
+
+    // 1. Fetch ALL Referrals
+    const allReferrals = await prisma.referralLead.findMany({
+        where: {
+            userId: userId,
+        },
+        include: {
+            student: {
+                select: {
+                    annualFee: true,
+                    baseFee: true,
+                    campusId: true,
+                    academicYear: true,
+                    selectedFeeType: true,
+                    admissionFeeCollected: true,
+                    donationFeeCollected: true,
+                    paymentCycle: true
+                }
+            }
+        }
+    })
+
+    // 2. Filter Current vs Previous
+    const currentReferrals = allReferrals.filter(r => {
+        // Priority 1: Check admittedYear first
+        if (r.admittedYear) {
+            if (r.admittedYear === CURRENT_ACADEMIC_YEAR || r.admittedYear === '2026-2027') return true
+            return false
+        }
+
+        // Priority 2: Check student's academic year
+        const s = r.student
+        if (s?.academicYear) {
+            if (s.academicYear === CURRENT_ACADEMIC_YEAR || s.academicYear === '2026-2027') return true
+            return false
+        }
+
+        // Priority 3: Fallback to creation date
+        const createdDate = new Date(r.createdAt)
+        const currentYearStart = new Date(currentYearRecord.startDate)
+        return createdDate >= currentYearStart
+    })
+
+    const historicalReferrals = allReferrals.filter(r => {
+        // Exclude current referrals
+        if (currentReferrals.some(curr => curr.leadId === r.leadId)) return false
+
+        // Only count confirmed/admitted for historical yield
+        return r.leadStatus === 'Confirmed' || r.leadStatus === 'Admitted'
+    })
+
+    const confirmedCount = currentReferrals.filter(r => r.leadStatus === 'Confirmed' || r.leadStatus === 'Admitted').length
+
+    // 3. Fetch Grade-1 Fees for Current Referrals
+    const campusIds = Array.from(new Set(currentReferrals.map(r => r.campusId).filter(Boolean))) as number[]
+
+    const grade1Fees = await prisma.gradeFee.findMany({
+        where: {
+            campusId: { in: campusIds },
+            grade: { in: ['Grade 1', 'Grade - 1', '1', 'I'] },
+            academicYear: CURRENT_ACADEMIC_YEAR
+        }
+    })
+
+    const campusFeeMap = new Map<number, { otp: number, wotp: number }>()
+    grade1Fees.forEach(gf => {
+        const otp = gf.annualFee_otp || 0
+        const wotp = gf.annualFee_wotp || 0
+        campusFeeMap.set(gf.campusId, { otp, wotp })
+    })
+
+    // 4. Prepare Data for Calculator
+    const currentReferralsData: ReferralData[] = currentReferrals.map(r => {
+        const campusFees = r.campusId ? campusFeeMap.get(r.campusId) : undefined
+        const selectedGrade1Fee = campusFees?.wotp || campusFees?.otp || 0
+
+        // Determine Special Bonus Rate (Centralized)
+        const specialRate = getSpecialBonusRate(r.campus)
+
+        // Ensure we handle potential nulls for grade safely
+        return {
+            id: r.leadId,
+            campusId: r.campusId || 0,
+            campusName: r.campus || '',
+            grade: r.gradeInterested || '',
+            campusGrade1Fee: selectedGrade1Fee,
+            actualFee: r.student?.annualFee || r.student?.baseFee || r.annualFee || 0,
+            admissionFeeCollected: r.student?.admissionFeeCollected || r.admissionFeeCollected || 0,
+            donationFeeCollected: r.student?.donationFeeCollected || r.donationFeeCollected || 0,
+            specialBonusRate: specialRate,
+            paymentCycle: r.paymentCycle || r.student?.paymentCycle || 'YEARLY'
+        }
+    })
+
+    const historicalReferralsData: ReferralData[] = historicalReferrals.map((r: any) => ({
+        id: r.leadId,
+        campusId: r.campusId || 0,
+        campusName: r.campus || '',
+        grade: r.gradeInterested || '',
+        actualFee: r.student?.annualFee || r.student?.baseFee || r.annualFee || 0,
+        paymentCycle: r.paymentCycle || r.student?.paymentCycle || 'YEARLY'
+    }))
+
+    // 5. Fetch Benefit Slabs (Required for Calculator)
+    const slabs = await prisma.benefitSlab.findMany({
+        orderBy: { referralCount: 'asc' }
+    })
+
+    // 6. Calculate
+    const calcContext: UserContext = {
+        role: userRole as any,
+        childInHeguru: userContext.childInHeguru,
+        studentFee: userContext.studentFee,
+        isFiveStarLastYear: userContext.isFiveStarMember,
+        previousYearReferrals: historicalReferralsData
+    }
+
+    // A. Potential Value (All Current Leads + Historical Bonus)
+    const { totalAmount: projectedValue } = calculateTotalBenefit(currentReferralsData, calcContext, slabs, true)
+
+    // B. Secured Value (Confirmed/Admitted Only)
+    const confirmedReferralsData = currentReferralsData.filter(r => {
+        const lead = currentReferrals.find(ref => ref.leadId === r.id)
+        return lead?.leadStatus === 'Confirmed' || lead?.leadStatus === 'Admitted'
+    })
+    const { totalAmount: securedValue } = calculateTotalBenefit(confirmedReferralsData, calcContext, slabs)
+
+    return {
+        projectedValue,
+        securedValue,
+        confirmedCount,
+        previousYearReferrals: historicalReferralsData,
+        currentReferrals: currentReferrals
+    }
+}

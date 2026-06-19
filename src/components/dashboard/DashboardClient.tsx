@@ -1,0 +1,408 @@
+'use client'
+
+import { useState, useMemo } from 'react'
+import { ActionHomeBlueUnified } from '@/components/themes/ActionHomeBlueUnified'
+import { calculateTotalBenefit, UserContext } from '@/lib/benefit-calculator'
+import { IndianRupee, Settings } from 'lucide-react'
+import { motion } from 'framer-motion'
+import { GlassCard } from '@/components/ui/GlassCard'
+import Link from 'next/link'
+
+// Shared Logic for Filtering Settlements (Matches earnings-actions.ts)
+const filterSettlementsByYear = (settlements: any[], yearRecord: any, yearFilter: string, allYears: any[]) => {
+    if (!yearRecord) return settlements // "All Time" case
+
+    const startDate = new Date(yearRecord.startDate)
+    const endDate = new Date(yearRecord.endDate)
+
+    return settlements.filter((s: any) => {
+        const createdAt = new Date(s.createdAt)
+        const pDate = s.payoutDate ? new Date(s.payoutDate) : createdAt
+
+        // 1. Legacy Check (No benefit type)
+        if (!s.benefitType && createdAt >= startDate && createdAt <= endDate) return true
+
+        // 2. Attribution Heuristic
+        const isFebMarchFuture = s.benefitType === 'ADMISSION_SHARE' && 
+                                pDate.getFullYear() === 2026 && pDate.getMonth() <= 2
+
+        let yearOfAttribution = ''
+        if (s.referralLead) {
+            yearOfAttribution = s.referralLead.academicYear || s.referralLead.admittedYear
+        } else if (isFebMarchFuture) {
+            yearOfAttribution = '2026-2027'
+        } else {
+            const matchedYear = allYears.find((y: any) => {
+                const sDate = new Date(y.startDate)
+                const eDate = new Date(y.endDate)
+                return pDate >= sDate && pDate <= eDate
+            })
+            yearOfAttribution = matchedYear?.year || '2025-2026'
+        }
+
+        return yearOfAttribution === yearFilter
+    })
+}
+
+// Shared Logic for Filtering Referrals (Mirrors server logic but runs on client)
+const filterReferralsByYear = (referrals: any[], yearRecord: any, CURRENT_ACADEMIC_YEAR: string, PREVIOUS_ACADEMIC_YEAR: string) => {
+    if (!yearRecord) return referrals // "All Time" case
+
+    // Exact logic from dashboard/page.tsx
+    // 1. Current Year Logic
+    if (yearRecord.isCurrent) {
+        return referrals.filter((r: any) => {
+            // Priority 0: Recurring Student Check
+            const s = r.student
+            if (s?.academicYear) {
+                if (s.academicYear === CURRENT_ACADEMIC_YEAR || s.academicYear === '2026-2027') return true
+            }
+
+            // Priority 1: Check admittedYear (Acquisition Date)
+            if (r.admittedYear) {
+                if (r.admittedYear === PREVIOUS_ACADEMIC_YEAR) return false
+                if (r.admittedYear === CURRENT_ACADEMIC_YEAR || r.admittedYear === '2026-2027') return true
+            }
+
+            // Priority 2: Fallback to student year negative check
+            if (s?.academicYear) {
+                if (s.academicYear === PREVIOUS_ACADEMIC_YEAR) return false
+            }
+
+            // Priority 3: Fallback to creation date
+            const createdDate = new Date(r.createdAt)
+            const currentYearStart = new Date(yearRecord.startDate)
+            return createdDate >= currentYearStart
+        })
+    }
+
+    // 2. Previous Year Logic
+    else {
+        return referrals.filter((r: any) => {
+            // Priority 1: Check admittedYear
+            if (r.admittedYear) return r.admittedYear === yearRecord.year
+
+            // Priority 2: Check student's academic year
+            const s = r.student
+            if (s?.academicYear) return s.academicYear === yearRecord.year
+
+            // Priority 3: Fallback to creation date
+            const createdDate = new Date(r.createdAt)
+            const yearStart = new Date(yearRecord.startDate)
+            const yearEnd = new Date(yearRecord.endDate)
+            return createdDate >= yearStart && createdDate < yearEnd
+        })
+    }
+}
+
+import type { BenefitSlabData } from '@/types/benefit'
+import { ClientUser } from '@/types/client-types'
+import nextDynamic from 'next/dynamic'
+
+const ProgramGallery = nextDynamic(() => import('./ProgramGallery').then(m => m.ProgramGallery), { ssr: false })
+
+interface DashboardClientProps {
+    user: ClientUser
+    referrals: any[]
+    activeYears: any[]
+    settlements: any[]
+    campusFeeMap: Map<number, { otp: number, wotp: number }>
+    slabs: BenefitSlabData[]
+    // Pre-calculated context stuff
+    dynamicStudentFee: number
+    monthStats: any
+    whatsappUrl: string
+    notifications?: any[]
+    unreadCount?: number
+    programs?: any[]
+    currentYear: string
+    prevYear: string
+}
+
+export function DashboardClient({
+    user,
+    referrals,
+    activeYears,
+    settlements,
+    campusFeeMap,
+    slabs,
+    dynamicStudentFee,
+    monthStats,
+    whatsappUrl,
+    notifications = [],
+    unreadCount = 0,
+    programs = [],
+    currentYear,
+    prevYear
+}: DashboardClientProps) {
+
+    // Filter State
+    // Default to Current Year (find isCurrent or first)
+    const defaultYear = activeYears.find(y => y.isCurrent) || activeYears[0]
+    const [selectedYearId, setSelectedYearId] = useState<string>(defaultYear?.id || 'all')
+
+    // Data Processing (Memoized)
+    const { filteredReferrals, benefitStats } = useMemo(() => {
+        let currentSet = referrals
+        let selectedYearRecord = null
+
+        if (selectedYearId !== 'all') {
+            selectedYearRecord = activeYears.find(y => y.id === selectedYearId)
+            if (selectedYearRecord) {
+                currentSet = filterReferralsByYear(referrals, selectedYearRecord, currentYear, prevYear)
+            }
+        }
+
+        // --- Calculate Benefits for this set ---
+
+        // 1. Format for Calculator
+        const formatForCalculator = (refs: any[]) => refs.map(r => {
+            const feeType = r.selectedFeeType || 'OTP'
+            const year = r.admittedYear || currentYear
+
+            // campusFeeMap is Record<Year, Record<CampusId, Fees>>
+            const yearFees = (campusFeeMap as any)[year] || (campusFeeMap as any)[currentYear]
+            const fees = yearFees ? (yearFees as any)[r.campusId] : null
+
+            const g1Fee = fees?.wotp || fees?.otp || 0
+
+            // Dynamic rewards from constants (Special bonus rates)
+            const specialBonusRate = (r as any).specialBonusRate || 0
+
+            return {
+                id: r.leadId,
+                campusId: r.campusId || 0,
+                campusName: r.campus || '',
+                grade: r.gradeInterested || '',
+                campusGrade1Fee: g1Fee,
+                actualFee: r.student?.annualFee || r.student?.baseFee || r.annualFee || 0,
+                admissionFeeCollected: r.student?.admissionFeeCollected || r.admissionFeeCollected || 0,
+                donationFeeCollected: r.student?.donationFeeCollected || r.donationFeeCollected || 0,
+                specialBonusRate: specialBonusRate,
+                paymentCycle: r.paymentCycle || r.student?.paymentCycle
+            }
+        })
+
+        // 2. User Context
+        // We need previous year referrals for LONG TERM BASE calculation.
+        // Even if we filter to "Current Year", we definitely need previous year refs context.
+        // If we filter to "Previous Year", we technically don't have "Previous Previous" context here easily without fetching more.
+        // But the Long Term Base only applies to CURRENT year benefits based on PASt performance.
+        // So:
+        // - If viewing Current Year: Include Long Term Base (calculated from prev refs).
+        // - If viewing Previous Year: Do NOT include Long Term Base (it didn't exist then, or we ignore it).
+        // - If viewing All Time: Sum them? No, All Time is tricky.
+
+        // Simpler approach:
+        // Always pass the FULL list of historical confirmed referrals to the context
+        const currentYearStr = activeYears.find(y => y.isCurrent)?.year || currentYear
+        const currentYearStart = new Date(activeYears.find(y => y.isCurrent)?.startDate || '2026-04-01')
+
+        const historicalReferrals = referrals
+            .filter((r: any) => r.leadStatus === 'Confirmed' || r.leadStatus === 'Admitted')
+            .filter((r: any) => {
+                const rYear = r.admittedYear || r.student?.academicYear
+                if (rYear) {
+                    // It's historical if it's NOT the current year
+                    return rYear !== currentYearStr && rYear !== '2026-2027'
+                }
+                // Fallback: It's historical if created before the current year started
+                return new Date(r.createdAt) < currentYearStart
+            })
+
+        const userContext: UserContext = {
+            role: user.role as 'Parent' | 'Staff' | 'Alumni' | 'Others',
+            childInHeguru: user.childInHeguru,
+            studentFee: dynamicStudentFee || user.studentFee || 0,
+            isFiveStarLastYear: user.isFiveStarMember,
+            previousYearReferrals: historicalReferrals.map((r: any) => ({
+                id: r.leadId,
+                campusId: r.campusId || 0,
+                campusName: r.campus || '',
+                grade: r.gradeInterested || '',
+                actualFee: r.student?.annualFee || r.student?.baseFee || r.annualFee || 0,
+                paymentCycle: r.paymentCycle || r.student?.paymentCycle
+            }))
+        }
+
+        // 3. Calculation: Earned (Confirmed + Admitted) vs Potential (All Prospects)
+        const confirmedSet = currentSet.filter((r: any) => r.leadStatus === 'Confirmed' || r.leadStatus === 'Admitted')
+        const allProspectsSet = currentSet.filter((r: any) => !['Rejected', 'Closed'].includes(r.leadStatus))
+
+        const earnedBenefits = calculateTotalBenefit(formatForCalculator(confirmedSet), userContext, slabs)
+        const potentialBenefits = calculateTotalBenefit(formatForCalculator(allProspectsSet), userContext, slabs, true)
+
+        // 4. Calculate Settlements for this set (TYPE-AWARE FIFO)
+        // We use the same segmented logic as finance-actions.ts to ensure cross-year settlements 
+        // (like a Feb payment for an April referral) are correctly attributed.
+        
+        // Use full settlements for matching, filtered by status
+        const validSettlements = settlements.filter((s: any) => s.status === 'Processed')
+        
+        // Prepare pools from Settlements
+        let runningAdm = 0
+        let runningDon = 0
+        let runningSlab = 0
+        let runningGreedy = 0
+
+        validSettlements.forEach((s: any) => {
+            const pDate = s.payoutDate ? new Date(s.payoutDate) : new Date(s.createdAt)
+            const type = s.benefitType
+            
+            // Heuristic for Jan-March 2026 Admission Shares
+            const isFebMarchFuture = type === 'ADMISSION_SHARE' && 
+                                    pDate.getFullYear() === 2026 && pDate.getMonth() <= 2
+
+            let yearOfAttribution = ''
+            if (s.referralLead) {
+                yearOfAttribution = s.referralLead.academicYear || s.referralLead.admittedYear
+            } else if (isFebMarchFuture) {
+                yearOfAttribution = '2026-2027'
+            } else {
+                // Find matching year by date
+                const matchedYear = activeYears.find(y => {
+                    const sDate = new Date(y.startDate)
+                    const eDate = new Date(y.endDate)
+                    return pDate >= sDate && pDate <= eDate
+                })
+                yearOfAttribution = matchedYear?.year || '2025-2026'
+            }
+
+            if (selectedYearId !== 'all' && selectedYearRecord && yearOfAttribution !== selectedYearRecord.year) {
+                return // Skip if not matching filter
+            }
+
+            if (type === 'ADMISSION_SHARE') runningAdm += (s.amount || 0)
+            else if (type === 'DONATION_SHARE') runningDon += (s.amount || 0)
+            else if (type === 'SLAB_SHARE') runningSlab += (s.amount || 0)
+            else runningGreedy += (s.amount || 0)
+        })
+
+        // MATCH AGAINST EARNINGS (FIFO)
+        const admShareTotal = earnedBenefits.admissionShare
+        const donShareTotal = earnedBenefits.donationShare
+        const slabShareTotal = earnedBenefits.slabShare + (earnedBenefits as any).longTermBaseAmount || 0
+        const specialBonusTotal = earnedBenefits.specialBonusShare
+
+        const settledAdm = Math.min(admShareTotal, runningAdm)
+        const settledDon = Math.min(donShareTotal, runningDon)
+        const settledSlab = Math.min(slabShareTotal, runningSlab)
+        
+        let totalSettledForYear = settledAdm + settledDon + settledSlab
+        let remainingGreedy = runningGreedy
+        
+        // Greedily consume remaining earnings types with generic "Greedy" pool
+        const leftoverAdm = admShareTotal - settledAdm
+        const greedyAdm = Math.min(leftoverAdm, remainingGreedy); remainingGreedy -= greedyAdm
+        
+        const leftoverDon = donShareTotal - settledDon
+        const greedyDon = Math.min(leftoverDon, remainingGreedy); remainingGreedy -= greedyDon
+        
+        const leftoverSlab = slabShareTotal - settledSlab
+        const greedySlab = Math.min(leftoverSlab, remainingGreedy); remainingGreedy -= greedySlab
+        
+        const greedySpecial = Math.min(specialBonusTotal, remainingGreedy)
+        
+        totalSettledForYear += greedyAdm + greedyDon + greedySlab + greedySpecial
+
+        const benefitStats = {
+            earned: Math.max(0, earnedBenefits.totalAmount - totalSettledForYear), // Net Balance
+            grossEarned: earnedBenefits.totalAmount,
+            totalSettled: totalSettledForYear,
+            potential: potentialBenefits.totalAmount,
+            displayPercent: earnedBenefits.tierPercent,
+            potentialPercent: potentialBenefits.tierPercent
+        }
+
+        return { filteredReferrals: currentSet, benefitStats }
+    }, [referrals, settlements, selectedYearId, activeYears, campusFeeMap, user, slabs, currentYear, prevYear])
+
+    // Derived Display Data
+    const realConfirmedCount = filteredReferrals.filter((r: any) => r.leadStatus === 'Confirmed' || r.leadStatus === 'Admitted').length
+    const pendingCount = filteredReferrals.length - realConfirmedCount
+
+    // Sort recent referrals (just for display)
+    const recentReferralsDisplay = [...filteredReferrals]
+        .sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+        .slice(0, 5)
+
+    // Proactive Reminder Logic — applies to ALL ambassador roles
+    // Bank details are needed for both: Group B cash payouts AND Group A refund processing
+    const hasMissingBankDetails = !user.accountNumber || !user.ifscCode
+    const showBankReminder = hasMissingBankDetails && (referrals.length > 0 || (user.paymentAmount || 0) > 0)
+
+    return (
+        <div className="space-y-6 pt-3">
+            {/* Bank Detail Reminder Banner */}
+            {showBankReminder && (
+                <motion.div
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    style={{backgroundColor:"rgba(255, 217, 0, 0.14)"}}
+                    className="relative overflow-hidden rounded-full border border-[var(--primary-orange)]/20 p-6 shadow-sm"
+                >
+                    <div className="absolute top-0 right-0 p-8 opacity-[0.04]">
+                        <IndianRupee size={80} className="text-[var(--primary-orange)]" />
+                    </div>
+                    <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+                        <div className="flex items-start gap-4">
+                            <div className="p-3 bg-[var(--primary-orange)]/25 rounded-full border border-yellow-600 text-yellow-600">
+                                <Settings size={24} />
+                            </div>
+                            <div>
+                                <h3 className="text-lg font-bold text-[var(--deep-black)] uppercase tracking-tight">Profile Readiness Required</h3>
+                                <p className="text-sm font-medium text-[var(--text-gray)] mt-2">
+                                    You have active referrals but your bank details are missing. Fix this to enable your **payouts and registration fee refunds**.
+                                </p>
+                            </div>
+                        </div>
+                        <Link
+                            href="/profile"
+                            className="bg-[var(--primary-orange)] hover:bg-[var(--primary-orange-hover)] text-white px-6 py-4 rounded-full font-black text-xs uppercase tracking-[0.2em] transition-all text-center shadow-sm"
+                        >
+                            Complete Profile
+                        </Link>
+                    </div>
+                </motion.div>
+            )}
+
+
+            {/* External Programs Gallery */}
+            {programs && programs.length > 0 && (
+                <ProgramGallery programs={programs} referralCode={user.referralCode || ''} />
+            )}
+
+            <ActionHomeBlueUnified
+                user={{
+                    fullName: user.fullName,
+                    role: user.role,
+                    referralCode: user.referralCode || '',
+                    confirmedReferralCount: realConfirmedCount,
+                    lifetimeCount: user.confirmedReferralCount,
+                    yearFeeBenefitPercent: benefitStats.displayPercent,
+                    potentialFeeBenefitPercent: benefitStats.potentialPercent,
+                    benefitStatus: user.benefitStatus || 'Active',
+                    status: user.status || 'Pending',
+                    empId: user.empId,
+                    assignedCampus: user.assignedCampus,
+                    studentFee: dynamicStudentFee || 0,
+                    isFiveStarMember: user.isFiveStarMember
+                }}
+                recentReferrals={recentReferralsDisplay}
+                whatsappUrl={whatsappUrl}
+                referralLink={`${process.env.NEXT_PUBLIC_BASE_URL || 'https://5starambassador.com'}/r/${user.encryptedCode}`}
+                monthStats={monthStats}
+                totalLeadsCount={pendingCount}
+                overrideEarnedAmount={benefitStats.earned}
+                overrideGrossAmount={benefitStats.grossEarned}
+                overrideSettledAmount={benefitStats.totalSettled}
+                overrideEstimatedAmount={benefitStats.potential}
+                notifications={notifications}
+                unreadCount={unreadCount}
+                activeYears={activeYears}
+                selectedYearId={selectedYearId}
+                onYearChange={setSelectedYearId}
+            />
+        </div>
+    )
+}

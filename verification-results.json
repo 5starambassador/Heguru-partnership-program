@@ -1,0 +1,26 @@
+{
+  "user": {
+    "name": "Thirumoorthi R",
+    "isFiveStar": true
+  },
+  "referralCounts": {
+    "current": 0,
+    "previous": 5
+  },
+  "result": {
+    "totalAmount": 22000,
+    "breakdown": [
+      "Long Term Base: 3% of 60000 = 1800",
+      "Long Term Base: 3% of 60000 = 1800",
+      "Long Term Base: 3% of 60000 = 1800",
+      "Long Term Base: 3% of 60000 = 1800",
+      "Long Term Base: 3% of 60000 = 1800",
+      "Special Bonus (ACET): 5000",
+      "Special Bonus (AASC): 2000",
+      "Current Year (Long Term Slab - 10%): 10% of 60000 = 6000"
+    ],
+    "isLongActive": true,
+    "longTermBaseAmount": 9000,
+    "currentYearAmount": 13000
+  }
+}
