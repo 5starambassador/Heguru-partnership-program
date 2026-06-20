@@ -47,7 +47,7 @@ export default async function ReferralsPage() {
   });
 
   return (
-    <div className="relative mt-5">
+    <div className="relative mt-5 px-6 px-md-0">
       <div className="max-w-[1400px] mx-auto flex flex-col">
         <Link
           href="/dashboard"

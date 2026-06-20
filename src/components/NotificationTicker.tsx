@@ -128,7 +128,9 @@ export function NotificationTicker({
   if (!current) return null; // Final safety guard
 
   return (
-    <div className="max-w-[1400px] fixed top-16 left-0 right-0 xl:sticky xl:top-2 z-[110] px-8 py-2 bg-transparent">
+    <div className="max-w-[1400px] fixed top-16 left-0 right-0 xl:sticky xl:top-2 z-[110] mt-4 px-8 py-2 bg-transparent">
+   
+     
       <div className="max-w-container mx-auto flex items-center gap-6 w-full">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -189,7 +191,7 @@ export function NotificationTicker({
                   transition={{ duration: 0.45 }}
                   className="flex items-center gap-2.5 h-full px-1"
                 >
-                  <div className="px-2 py-0.5 rounded-md bg-white/20 backdrop-blur-md border border-white/20 text-[8px] font-black uppercase tracking-wider text-white shadow-sm">
+                  <div className="px-2 py-0.5 md:block hidden rounded-md bg-white/20 backdrop-blur-md border border-white/20 text-[8px] font-black uppercase tracking-wider text-white shadow-sm">
                     {current.type || "info"}
                   </div>
 
@@ -206,7 +208,7 @@ export function NotificationTicker({
             </div>
 
             {/* Premium Navigation */}
-            <div className="px-3 shrink-0 flex items-center gap-2 h-full">
+            <div className="px-3 md:flex hidden shrink-0 items-center gap-2 h-full">
               {notifications.length > 1 && (
                 <>
                   <button
@@ -283,7 +285,7 @@ export function NotificationTicker({
         </motion.div>
 
         {/* Bell Icon Dropdown container */}
-        <div className="relative shrink-0 h-12 w-12 group">
+        <div className="relative md:block hidden shrink-0 h-12 w-12 group">
           <div className="absolute inset-0 rounded-full bg-gradient-to-br from-orange-300 via-primary-orange to-orange-700 shadow-[0_8px_20px_rgba(249,115,22,0.35),inset_0_2px_3px_rgba(255,255,255,0.4),inset_0_-3px_6px_rgba(0,0,0,0.2)] transition-transform duration-300 group-hover:scale-110">
             {/* Top glossy highlight */}
             <div className="absolute bottom-1 left-1/2 -translate-x-1/2 w-8 h-3 rounded-full bg-white/30 blur-sm" />
@@ -303,6 +305,7 @@ export function NotificationTicker({
           </div>
         </div>
       </div>
+
 
       {/* Detail Modal Overlay */}
       <NotificationDetailModal

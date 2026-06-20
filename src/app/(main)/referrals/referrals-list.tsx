@@ -278,9 +278,9 @@ export function ReferralsList({
   return (
     <div className="w-full relative">
       <div className="relative z-10 flex flex-col">
-        <div className="flex justify-between items-center mb-12 relative z-50">
-          <div className="flex items-center gap-4">
-            <div>
+        <div className="md:flex-row flex-col justify-between items-center mb-12 relative z-50">
+          <div className="flex mb-3 items-center gap-4">
+            <div >
               <h1 className="text-2xl md:text-4xl font-black tracking-tight text-[var(--deep-black)] uppercase font-heading">
                 My Referrals
               </h1>
@@ -493,7 +493,7 @@ function ReferralCard({
         }`}
       >
         <div className="text-left sm:text-right">
-          <p className="text-xs font-bold text-slate-600 mt-0.5">
+          <p className="md:text-xs text-[9px] font-bold text-slate-600 mt-0.5">
             {new Date(referral.createdAt).toLocaleDateString("en-IN", {
               day: "2-digit",
               month: "short",
@@ -509,22 +509,22 @@ function ReferralCard({
       {/* Two Grid Layout (Split on large screens) */}
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-6 items-stretch pt-2">
         {/* Left Grid */}
-        <div className="flex-1 min-w-0 flex flex-col justify-between">
+        <div className="flex-1 order-2 md:order-1 min-w-0 flex flex-col justify-between">
           <div>
             {/* 1. Student Name */}
-            <h3 className="font-heading mb-5 font-black text-xl lg:text-3xl text-[var(--deep-black)] capitalize tracking-tight">
+            <h3 className="font-heading mb-5 md:mt-0 mt-3 font-black text-md lg:text-3xl text-[var(--deep-black)] capitalize tracking-tight">
               {referral.studentName}
             </h3>
 
             {/* 2. Parent Name & Mobile Row */}
-            <div className="flex flex-wrap items-center gap-x-6 gap-y-2 mb-4 text-sm font-semibold text-gray-600 capitalize tracking-wider">
+            <div className="flex md:flex-wrap flex-col md:items-center gap-x-6 gap-y-2 mb-4 text-[12px] font-semibold text-gray-600 capitalize tracking-wider">
               <span className="flex items-center gap-2">
                 <User size={14} className="text-slate-400" />
                 <span>Parent - </span>
 
                 {referral.parentName}
               </span>
-              |
+              <span className="md:block hidden">|</span>
               <span className="flex items-center gap-2">
                 <Phone size={14} className="text-slate-400" />
                 <span>Parent's Mobile - </span>
@@ -534,15 +534,15 @@ function ReferralCard({
 
             {/* 3. Student Grade, ERP, Campus Row */}
             <div className="flex flex-wrap gap-2 pt-1">
-              <span className="bg-slate-50 px-3 py-1.5 rounded-xl border border-gray-200 flex items-center gap-2 text-[12px] font-medium text-slate-600 uppercase tracking-wider">
+              <span className="bg-slate-50 px-3 py-1.5 rounded-xl border border-gray-200 flex items-center gap-2 text-[12px] font-medium text-slate-600 md:uppercase capitalize tracking-wider">
                 <GraduationCap size={12} className="text-slate-400" />
                 Grade: {referral.gradeInterested || "All Grades"}
               </span>
-              <span className="bg-slate-50 px-3 py-1.5 rounded-xl border border-gray-200  flex items-center gap-2 text-[12px] font-medium text-slate-600 uppercase tracking-wider">
+              <span className="bg-slate-50 px-3 py-1.5 rounded-xl border border-gray-200  flex items-center gap-2 text-[12px] font-medium text-slate-600 md:uppercase capitalize tracking-wider">
                 <Hash size={12} className="text-slate-400" />
                 ERP: {referral.admissionNumber || "Pending"}
               </span>
-              <span className="bg-slate-50 px-3 py-1.5 rounded-xl border border-gray-200  flex items-center gap-2 text-[12px] font-medium text-slate-600 uppercase tracking-wider">
+              <span className="bg-slate-50 px-3 py-1.5 rounded-xl border border-gray-200  flex items-center gap-2 text-[12px] font-medium text-slate-600 md:uppercase capitalize tracking-wider">
                 <MapPin size={12} className="text-slate-400" />
                 Campus: {referral.campus || "Corporate"}
               </span>
@@ -600,7 +600,7 @@ function ReferralCard({
         </div>
 
         {/* Right Grid */}
-        <div className="flex lg:flex-col items-center lg:items-end justify-between lg:justify-center gap-6 shrink-0 border-t lg:border-t-0 lg:border-l border-slate-100 pt-4 lg:pt-0 lg:pl-6">
+        <div className="flex lg:flex-col order-1 md:order-2 items-center lg:items-end justify-between lg:justify-center gap-6 shrink-0 md:border-t lg:border-t-0 lg:border-l border-slate-100 pt-4 lg:pt-0 lg:pl-6">
           {/* WhatsApp Button with Premium Visuals (matching Bell design without shimmer) */}
           <div className="relative h-12 w-12 group shrink-0">
             <a

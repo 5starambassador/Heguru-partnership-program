@@ -257,6 +257,80 @@ export function ActionHomeBlueUnified({
       <div className="absolute top-[-5%] left-[-5%] w-[40%] h-[40%] bg-[var(--primary-orange)]/[0.02] rounded-full blur-[100px] pointer-events-none" />
       <div className="absolute top-[15%] right-[-5%] w-[35%] h-[35%] bg-[var(--learning-blue)]/[0.02] rounded-full blur-[80px] pointer-events-none" />
 
+ {/* mobilr Year Filter start */}
+            {activeYears.length > 0 && (
+              <motion.div variants={itemVariants}>
+                <div className="flex items-center md:hidden block justify-end gap-3">
+                  <span className="text-[11px] font-bold uppercase tracking-widest text-slate-500">
+                    Filter by
+                  </span>
+                  <div className="relative" ref={filterRef}>
+                    <button
+                      onClick={() => setIsFilterOpen(!isFilterOpen)}
+                      className="flex items-center gap-2 px-4 py-2 bg-white border border-[var(--warm-gray)] rounded-full text-sm font-medium hover:bg-[var(--soft-gray)] text-[var(--deep-black)] transition-colors shadow-sm"
+                    >
+                      <Calendar className="w-4 h-4 text-[var(--primary-orange)]" />
+                      <span>
+                        {activeYears.find((y: any) => y.id === selectedYearId)
+                          ?.year || "All Time"}
+                      </span>
+                      <ChevronDown
+                        className={`w-4 h-4 transition-transform ${
+                          isFilterOpen ? "rotate-180" : ""
+                        }`}
+                      />
+                    </button>
+
+                    <AnimatePresence>
+                      {isFilterOpen && (
+                        <motion.div
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: 10 }}
+                          className="absolute right-0 mt-2 w-48 bg-white border border-[var(--warm-gray)] rounded-xl shadow-lg z-50 overflow-hidden"
+                        >
+                          {activeYears.map((year: any) => (
+                            <button
+                              key={year.id}
+                              onClick={() => {
+                                onYearChange?.(year.id);
+                                setIsFilterOpen(false);
+                              }}
+                              className={`w-full text-left px-4 py-3 text-sm hover:bg-[var(--soft-gray)] transition-colors ${
+                                selectedYearId === year.id
+                                  ? "text-[var(--primary-orange)] font-medium bg-[var(--primary-orange)]/[0.04]"
+                                  : "text-[var(--text-gray)]"
+                              }`}
+                            >
+                              {year.year}
+                              {year.isCurrent && (
+                                <span className="ml-2 text-xs bg-[var(--primary-orange)]/10 text-[var(--primary-orange)] px-2 py-0.5 rounded-md">
+                                  Current
+                                </span>
+                              )}
+                            </button>
+                          ))}
+                          <button
+                            onClick={() => {
+                              onYearChange?.("all");
+                              setIsFilterOpen(false);
+                            }}
+                            className={`w-full text-left px-4 py-3 text-sm hover:bg-[var(--soft-gray)] transition-colors border-t border-[var(--warm-gray)] ${
+                              selectedYearId === "all"
+                                ? "text-[var(--primary-orange)] font-medium bg-[var(--primary-orange)]/[0.04]"
+                                : "text-[var(--text-gray)]"
+                            }`}
+                          >
+                            All Time
+                          </button>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+            {/* mobile year filter end */}
       <motion.div
         variants={containerVariants}
         initial="hidden"
@@ -264,10 +338,85 @@ export function ActionHomeBlueUnified({
         className="grid grid-cols-1 lg:grid-cols-12 gap-6 relative z-10 transition-all duration-500"
       >
         <div className="lg:col-span-8 space-y-6">
+          {/* PRIMARY CTA — Refer a Family */}
+          <motion.div variants={itemVariants}>
+            <Link href="/refer">
+              <motion.div
+                variants={buttonVariants}
+                initial="rest"
+                whileHover="hover"
+                whileTap="tap"
+                className="group bg-white border border-gray-300 rounded-xl p-5 md:p-6 flex items-center justify-between shadow-sm hover:shadow-md hover:border-[var(--learning-blue)]/30 transition-all relative overflow-hidden cursor-pointer"
+              >
+                {/* subtle gradient wash */}
+                <div className="absolute inset-0 bg-gradient-to-r from-[var(--learning-blue)]/[0.03] to-transparent pointer-events-none" />
+                <div className="flex items-center gap-5 relative z-10">
+                  {/* 3D blue icon — same structure as bell, no shimmer, blue palette */}
+                  <div className="relative shrink-0 h-12 w-12 md:h-14 md:w-14 group/refer">
+                    <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-blue-300 via-[var(--learning-blue)] to-blue-800 shadow-[0_8px_20px_rgba(37,99,235,0.35),inset_0_2px_3px_rgba(255,255,255,0.4),inset_0_-3px_6px_rgba(0,0,0,0.2)] transition-transform duration-300 group-hover/refer:scale-105">
+                      {/* gloss pill */}
+                      <div className="absolute top-1.5 left-1/2 -translate-x-1/2 w-7 h-2.5 rounded-full bg-white/35 blur-sm" />
+                      {/* icon */}
+                      <div className="relative z-10 flex h-full w-full items-center justify-center">
+                        <UserPlus
+                          size={22}
+                          className="text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.3)]"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div className="text-left">
+                    <h3 className="text-lg md:text-2xl font-black tracking-tighter leading-tight mb-0.5 text-[var(--deep-black)] uppercase font-heading">
+                      Refer a Family Now
+                    </h3>
+                    <p className="text-slate-500 text-[10px] font-bold uppercase tracking-widest">
+                      Start earning royal benefits today
+                    </p>
+                  </div>
+                </div>
+                <div className="w-10 h-10 rounded-xl bg-[var(--soft-gray)] border border-[var(--warm-gray)] flex items-center justify-center group-hover:bg-[var(--learning-blue)] group-hover:border-[var(--learning-blue)] transition-all shrink-0 relative z-10">
+                  <ChevronRight
+                    size={20}
+                    className="text-slate-400 group-hover:text-white transition-colors"
+                  />
+                </div>
+              </motion.div>
+            </Link>
+          </motion.div>
           <motion.div variants={itemVariants} className="space-y-6">
             {/* Hero Section - Elite Greeting */}
             <DashboardCard className="flex-1 relative overflow-hidden !bg-gradient-to-br !from-orange-50/40 !via-white !to-blue-50/40 border-gray-300 p-6">
               <div className="relative z-10 flex flex-col justify-between h-full p-4">
+                 <div className="text-right mb-3">
+                    {/* <p className="text-[10px] uppercase tracking-[0.25em] text-slate-500 font-bold mb-2">
+                      Account Status
+                    </p> */}
+                    {(() => {
+                      const s = user.status;
+                      if (s === "Active") {
+                        return (
+                          <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-600 text-[11px] font-black uppercase tracking-widest shadow-sm">
+                            <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                            Active
+                          </div>
+                        );
+                      }
+                      if (s === "Pending") {
+                        return (
+                          <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-600 text-[11px] font-black uppercase tracking-widest shadow-sm">
+                            <div className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
+                            Pending
+                          </div>
+                        );
+                      }
+                      return (
+                        <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-600 text-[11px] font-black uppercase tracking-widest shadow-sm">
+                          <div className="w-2 h-2 rounded-full bg-rose-500" />
+                          {s}
+                        </div>
+                      );
+                    })()}
+                  </div>
                 <div>
                   {/* <div className="mb-6">
                                         <div className="inline-flex items-center px-4 py-1.5 rounded-xl bg-[var(--primary-orange)]/10 border border-[var(--primary-orange)]/20 text-[10px] font-black text-[var(--primary-orange)] uppercase tracking-[0.25em] shadow-sm">
@@ -282,13 +431,13 @@ export function ActionHomeBlueUnified({
                       {firstName}
                     </span>
                   </h1>
-                  <p className="text-slate-700 font-bold uppercase tracking-[0.2em] text-[11px] mt-6 leading-relaxed">
+                  {/* <p className="text-slate-700 font-bold uppercase tracking-[0.2em] text-[11px] mt-6 leading-relaxed">
                     {subtitle}
-                  </p>
+                  </p> */}
                 </div>
 
-                <div className="mt-8 flex flex-col md:flex-row items-start gap-6 md:gap-10 opacity-100">
-                  <div className="text-left">
+                <div className="lg:mt-8 mt-4 flex flex-col md:flex-row items-start gap-6 md:gap-10 opacity-100">
+                  <div className="text-left md:block hidden">
                     <p className="text-[10px] uppercase tracking-[0.25em] text-slate-500 font-bold mb-2">
                       Account Status
                     </p>
@@ -333,7 +482,7 @@ export function ActionHomeBlueUnified({
                     <p className="text-[10px] uppercase tracking-[0.25em] text-slate-500 font-bold mb-2">
                       Campus
                     </p>
-                    <p className="text-[var(--deep-black)] font-black text-xl md:text-2xl tracking-tighter uppercase leading-none break-words">
+                    <p className="text-[var(--deep-black)] font-black text-sm md:text-lg tracking-tighter uppercase leading-none break-words">
                       {user.assignedCampus || "Corporate"}
                     </p>
                   </div>
@@ -347,9 +496,9 @@ export function ActionHomeBlueUnified({
                         navigator.clipboard.writeText(user.referralCode);
                         toast.success("Partner ID copied to clipboard");
                       }}
-                      className="group/id relative flex items-center gap-4  bg-[var(--soft-gray)] rounded-xl underline underline-offset-8 decoration-primary-orange hover:border-gray-300 transition-all duration-300 shadow-sm overflow-hidden"
+                      className="group/id relative justify-between border border-gray-200 flex items-center gap-4  bg-[var(--soft-gray)] rounded-xl underline underline-offset-8 decoration-primary-orange hover:border-gray-300 transition-all duration-300 shadow-sm overflow-hidden"
                     >
-                      <p className="text-[var(--deep-black)] font-black text-xl md:text-2xl tracking-[0.15em] uppercase leading-none font-mono relative z-10">
+                      <p className="text-[var(--deep-black)] font-black text-sm md:text-lg tracking-[0.15em] uppercase leading-none font-mono relative z-10">
                         {user.referralCode}
                       </p>
 
@@ -412,7 +561,7 @@ export function ActionHomeBlueUnified({
                       </div>
                     </CircularProgress>
                   </div>
-                  <div className="mt-6">
+                  {/* <div className="mt-6">
                     {user.isFiveStarMember || (user.lifetimeCount || 0) >= 5 ? (
                       <motion.div
                         initial={{ scale: 0.95, opacity: 0 }}
@@ -438,7 +587,7 @@ export function ActionHomeBlueUnified({
                         </span>
                       </div>
                     )}
-                  </div>
+                  </div> */}
                 </div>
               </DashboardCard>
 
@@ -448,9 +597,11 @@ export function ActionHomeBlueUnified({
                 <div className="absolute top-5 right-5 z-20">
                   <div className="relative h-12 w-12 group/badge">
                     <div className="absolute inset-0 rounded-full bg-white border border-primary-orange shadow-xl">
-                     
                       <div className="relative z-10 flex h-full w-full items-center justify-center">
-                        <Wallet size={20} className="text-[var(--primary-orange)] drop-shadow-[0_1px_4px_rgba(242,110,33,0.4)]" />
+                        <Wallet
+                          size={20}
+                          className="text-[var(--primary-orange)] drop-shadow-[0_1px_4px_rgba(242,110,33,0.4)]"
+                        />
                       </div>
                     </div>
                   </div>
@@ -520,133 +671,95 @@ export function ActionHomeBlueUnified({
                 </div>
               </DashboardCard>
             </div>
-
-            {/* <div className="flex items-center gap-3 mt-6">
-              <motion.a
-                href={whatsappUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                variants={buttonVariants}
-                initial="rest"
-                whileHover="hover"
-                whileTap="tap"
-                className="flex-1 group relative flex items-center justify-center gap-4 bg-[var(--primary-orange)]/10 text-[var(--primary-orange)] h-12 md:h-16 rounded-xl font-black text-[10px] md:text-[11px] uppercase tracking-[0.25em] shadow-sm border border-[var(--primary-orange)]/30 hover:bg-[var(--primary-orange)]/25 hover:border-[var(--primary-orange)]/55 transition-all overflow-hidden"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="18"
-                  height="18"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="relative z-10"
-                  style={{
-                    minWidth: "18px",
-                    minHeight: "18px",
-                    display: "block",
-                  }}
-                >
-                  <circle cx="18" cy="5" r="3" />
-                  <circle cx="6" cy="12" r="3" />
-                  <circle cx="18" cy="19" r="3" />
-                  <line x1="8.59" x2="15.42" y1="13.51" y2="17.49" />
-                  <line x1="15.41" x2="8.59" y1="6.51" y2="10.49" />
-                </svg>
-                <span className="relative z-10">Invite Friends</span>
-              </motion.a>
-
-              <button
-                onClick={handleCopy}
-                className="h-12 w-12 md:h-16 md:w-16 bg-[var(--primary-orange)] hover:bg-[var(--primary-orange-hover)] text-white border border-[var(--primary-orange-hover)] rounded-xl flex items-center justify-center transition-all shrink-0 active:scale-95 shadow-sm relative group"
-              >
-                {copied ? (
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="20"
-                    height="20"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="#FFFFFF"
-                    strokeWidth="3"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    style={{
-                      minWidth: "20px",
-                      minHeight: "20px",
-                      display: "block",
-                    }}
-                  >
-                    <polyline points="20 6 9 17 4 12" />
-                  </svg>
-                ) : (
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="22"
-                    height="22"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="#FFFFFF"
-                    strokeWidth="2.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    style={{
-                      minWidth: "22px",
-                      minHeight: "22px",
-                      display: "block",
-                    }}
-                  >
-                    <rect width="8" height="4" x="8" y="2" rx="1" ry="1" />
-                    <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
-                  </svg>
-                )}
-                <span className="absolute -top-10 left-1/2 -translate-x-1/2 bg-black/90 text-white px-3 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none border border-white/10 shadow-lg">
-                  Copy Link
-                </span>
-              </button>
-            </div> */}
           </motion.div>
 
-          {/* PRIMARY CTA - Prominent Refer Button */}
-          {/* <motion.div variants={itemVariants}>
-            <PageItem className="relative z-10 mt-6">
-              <Link href="/refer">
-                <motion.div
-                  variants={buttonVariants}
-                  initial="rest"
-                  whileHover="hover"
-                  whileTap="tap"
-                  className="group bg-gradient-to-r from-[var(--learning-blue)]/5 to-[var(--learning-blue)]/[0.02] border border-[var(--learning-blue)]/20 rounded-xl p-5 md:p-8 flex items-center justify-between shadow-sm hover:bg-[var(--learning-blue)]/[0.08] transition-all relative overflow-hidden cursor-pointer"
-                >
-                  <div className="flex items-center gap-6 relative z-10">
-                    <div className="w-12 h-12 md:w-16 md:h-16 bg-[var(--learning-blue)] rounded-xl flex items-center justify-center border border-white/20 shadow-sm text-white">
-                      <UserPlus size={24} className="md:hidden" />
-                      <UserPlus size={32} className="hidden md:block" />
-                    </div>
-                    <div className="text-left">
-                      <h3 className="text-xl md:text-4xl font-black tracking-tighter leading-tight mb-1 text-[var(--deep-black)] uppercase italic font-heading">
-                        Refer a Family Now
-                      </h3>
-                      <p className="text-slate-500 text-[10px] font-black uppercase tracking-widest">
-                        Start earning royal benefits today
+          {/* INVITE FRIENDS + COPY LINK */}
+          <motion.div variants={itemVariants}>
+            <DashboardCard className="!p-0 border-gray-300 shadow-sm overflow-hidden">
+              <div className="p-5 md:p-6">
+                {/* <div className="flex items-center gap-3 mb-4">
+                    <div className="w-1 h-8 bg-gradient-to-b from-[var(--primary-orange)] to-[var(--primary-orange-hover)] rounded-sm" />
+                    <div>
+                      <h2 className="text-xl md:text-2xl font-black text-[var(--deep-black)] tracking-tighter uppercase leading-none font-heading">
+                        Spread the Word
+                      </h2>
+                      <p className="text-[10px] text-slate-500 font-medium uppercase tracking-widest mt-0.5">
+                        Share your referral link
                       </p>
                     </div>
-                  </div>
-                  <div className="w-12 h-12 rounded-xl bg-white border border-[var(--warm-gray)] flex items-center justify-center group-hover:bg-[var(--learning-blue)] group-hover:border-[var(--learning-blue)] transition-all">
-                    <ChevronRight
-                      size={24}
-                      className="text-slate-400 group-hover:text-white transition-colors"
-                    />
-                  </div>
-                </motion.div>
-              </Link>
-            </PageItem>
-          </motion.div> */}
+                  </div> */}
+
+                <div className="flex items-center gap-3">
+                  {/* Invite Friends — Share icon gets the 3D bell treatment */}
+                  <motion.a
+                    href={whatsappUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    variants={buttonVariants}
+                    initial="rest"
+                    whileHover="hover"
+                    whileTap="tap"
+                    className="flex-1 group relative flex items-center justify-center gap-3 bg-[var(--primary-orange)]/8 text-[var(--primary-orange)] h-12 md:h-14 rounded-xl font-black text-[10px] md:text-[11px] uppercase tracking-[0.2em] border border-[var(--primary-orange)]/25 hover:bg-[var(--primary-orange)]/15 hover:border-[var(--primary-orange)]/50 transition-all shadow-sm"
+                  >
+                    {/* 3D sphere icon — same as bell */}
+                    <div className="relative shrink-0 h-8 w-8 group/icon">
+                      <div className="absolute inset-0 rounded-full bg-gradient-to-br from-orange-300 via-[var(--primary-orange)] to-orange-700 shadow-[0_6px_16px_rgba(249,115,22,0.4),inset_0_2px_3px_rgba(255,255,255,0.45),inset_0_-2px_5px_rgba(0,0,0,0.2)] transition-transform duration-300 group-hover/icon:scale-110">
+                        {/* gloss highlight */}
+                        <div className="absolute top-1 left-1/2 -translate-x-1/2 w-4 h-2 rounded-full bg-white/40 blur-sm" />
+                        {/* shimmer sweep */}
+                        {/* <div className="absolute inset-0 overflow-hidden rounded-full">
+                          <div className="absolute -left-8 top-0 h-full w-5 rotate-12 bg-gradient-to-r from-transparent via-white/50 to-transparent animate-[shimmer_3s_linear_infinite]" />
+                        </div> */}
+                        <div className="relative z-10 flex h-full w-full items-center justify-center">
+                          <Share2
+                            size={14}
+                            className="text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.3)]"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <span className="relative z-10">Invite Friends</span>
+                  </motion.a>
+
+                  {/* Copy button — 3D sphere treatment matching bell icon */}
+                  <button
+                    onClick={handleCopy}
+                    className="relative shrink-0 h-12 w-12 md:h-14 md:w-14 group/copy"
+                  >
+                    <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-orange-300 via-[var(--primary-orange)] to-orange-700 shadow-[0_8px_20px_rgba(249,115,22,0.4),inset_0_2px_3px_rgba(255,255,255,0.45),inset_0_-3px_6px_rgba(0,0,0,0.2)] transition-transform duration-300 group-hover/copy:scale-105 active:scale-95">
+                      {/* gloss pill */}
+                      <div className="absolute top-1.5 left-1/2 -translate-x-1/2 w-7 h-2.5 rounded-full bg-white/35 blur-sm" />
+                      {/* shimmer sweep */}
+                      {/* <div className="absolute inset-0 overflow-hidden rounded-xl">
+                        <div className="absolute -left-10 top-0 h-full w-6 rotate-12 bg-gradient-to-r from-transparent via-white/50 to-transparent animate-[shimmer_3s_linear_infinite]" />
+                      </div> */}
+                      {/* icon */}
+                      <div className="relative z-10 flex h-full w-full items-center justify-center">
+                        {copied ? (
+                          <Check
+                            size={18}
+                            className="text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.3)]"
+                          />
+                        ) : (
+                          <Copy
+                            size={16}
+                            className="text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.3)]"
+                          />
+                        )}
+                      </div>
+                    </div>
+                    {/* tooltip */}
+                    <span className="absolute -top-9 left-1/2 -translate-x-1/2 bg-[var(--deep-black)] text-white px-3 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest opacity-0 group-hover/copy:opacity-100 transition-opacity whitespace-nowrap pointer-events-none shadow-lg z-20">
+                      Copy Link
+                    </span>
+                  </button>
+                </div>
+              </div>
+            </DashboardCard>
+          </motion.div>
 
           {/* BENEFIT STRUCTURE */}
-          <motion.div variants={itemVariants}>
+          {/* <motion.div variants={itemVariants}>
             <PageItem className="bg-white rounded-xl p-6 md:p-8 border border-gray-300 shadow-sm relative z-10 mt-6">
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-1 h-8 bg-gradient-to-b from-[var(--primary-orange)] to-[var(--primary-orange-hover)] rounded-sm" />
@@ -660,7 +773,6 @@ export function ActionHomeBlueUnified({
                 </div>
               </div>
 
-              {/* Short Term Tiers */}
               <div className="mb-6">
                 <div className="flex items-center gap-2 mb-4">
                   <CheckCircle
@@ -686,7 +798,6 @@ export function ActionHomeBlueUnified({
                       let baseStyle =
                         "border rounded-xl backdrop-blur-sm transition-all";
                       if (index === 4) {
-                        // 5 Star Tier Custom Style
                         return `${baseStyle} bg-gradient-to-br from-amber-500/10 to-amber-600/15 border-amber-500/20 text-amber-800 font-black shadow-inner`;
                       }
 
@@ -731,7 +842,6 @@ export function ActionHomeBlueUnified({
                 </div>
               </div>
 
-              {/* Long Term Benefits */}
               <div className="bg-[var(--soft-gray)] rounded-xl overflow-hidden border border-[var(--warm-gray)]">
                 <button
                   onClick={() => setLongTermExpanded(!longTermExpanded)}
@@ -824,7 +934,7 @@ export function ActionHomeBlueUnified({
                 )}
               </div>
             </PageItem>
-          </motion.div>
+          </motion.div> */}
         </div>
 
         <div className="lg:col-span-4 space-y-6">
@@ -832,7 +942,7 @@ export function ActionHomeBlueUnified({
             {/* Year Filter */}
             {activeYears.length > 0 && (
               <motion.div variants={itemVariants}>
-                <div className="flex items-center justify-end gap-3">
+                <div className=" items-center md:flex hidden justify-end gap-3">
                   <span className="text-[11px] font-bold uppercase tracking-widest text-slate-500">
                     Filter by
                   </span>
@@ -1098,7 +1208,10 @@ export function ActionHomeBlueUnified({
                     <div className="relative h-12 w-12 group/badge">
                       <div className="absolute inset-0 rounded-full bg-white border border-primary-orange shadow-xl">
                         <div className="relative z-10 flex h-full w-full items-center justify-center">
-                          <ChartNoAxesCombined size={20} className="text-[var(--primary-orange)] drop-shadow-[0_1px_4px_rgba(242,110,33,0.4)]" />
+                          <ChartNoAxesCombined
+                            size={20}
+                            className="text-[var(--primary-orange)] drop-shadow-[0_1px_4px_rgba(242,110,33,0.4)]"
+                          />
                         </div>
                       </div>
                     </div>
@@ -1162,7 +1275,7 @@ export function ActionHomeBlueUnified({
                             {displayCount}
                           </span>
                           <span className="text-[10px] text-slate-500 font-bold uppercase mb-1.5 opacity-60">
-                            Units
+                            Referrals
                           </span>
                         </div>
                       </div>
@@ -1177,9 +1290,11 @@ export function ActionHomeBlueUnified({
               <div className="absolute top-5 right-5 z-20">
                 <div className="relative h-12 w-12 group/badge">
                   <div className="absolute inset-0 rounded-full bg-white border border-primary-orange shadow-xl">
-                   
                     <div className="relative z-10 flex h-full w-full items-center justify-center">
-                      <Megaphone size={20} className="text-[var(--primary-orange)] drop-shadow-[0_1px_4px_rgba(242,110,33,0.4)]" />
+                      <Megaphone
+                        size={20}
+                        className="text-[var(--primary-orange)] drop-shadow-[0_1px_4px_rgba(242,110,33,0.4)]"
+                      />
                     </div>
                   </div>
                 </div>
@@ -1267,125 +1382,6 @@ export function ActionHomeBlueUnified({
                 </div>
               </DashboardCard>
             </PageItem>
-          </motion.div>
-
-          {/* PRIMARY CTA — Refer a Family */}
-          <motion.div variants={itemVariants}>
-            <Link href="/refer">
-              <motion.div
-                variants={buttonVariants}
-                initial="rest"
-                whileHover="hover"
-                whileTap="tap"
-                className="group bg-white border border-gray-300 rounded-xl p-5 md:p-6 flex items-center justify-between shadow-sm hover:shadow-md hover:border-[var(--learning-blue)]/30 transition-all relative overflow-hidden cursor-pointer"
-              >
-                {/* subtle gradient wash */}
-                <div className="absolute inset-0 bg-gradient-to-r from-[var(--learning-blue)]/[0.03] to-transparent pointer-events-none" />
-                <div className="flex items-center gap-5 relative z-10">
-                  {/* 3D blue icon — same structure as bell, no shimmer, blue palette */}
-                  <div className="relative shrink-0 h-12 w-12 md:h-14 md:w-14 group/refer">
-                    <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-blue-300 via-[var(--learning-blue)] to-blue-800 shadow-[0_8px_20px_rgba(37,99,235,0.35),inset_0_2px_3px_rgba(255,255,255,0.4),inset_0_-3px_6px_rgba(0,0,0,0.2)] transition-transform duration-300 group-hover/refer:scale-105">
-                      {/* gloss pill */}
-                      <div className="absolute top-1.5 left-1/2 -translate-x-1/2 w-7 h-2.5 rounded-full bg-white/35 blur-sm" />
-                      {/* icon */}
-                      <div className="relative z-10 flex h-full w-full items-center justify-center">
-                        <UserPlus size={22} className="text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.3)]" />
-                      </div>
-                    </div>
-                  </div>
-                  <div className="text-left">
-                    <h3 className="text-lg md:text-2xl font-black tracking-tighter leading-tight mb-0.5 text-[var(--deep-black)] uppercase font-heading">
-                      Refer a Family Now
-                    </h3>
-                    <p className="text-slate-500 text-[10px] font-bold uppercase tracking-widest">
-                      Start earning royal benefits today
-                    </p>
-                  </div>
-                </div>
-                <div className="w-10 h-10 rounded-xl bg-[var(--soft-gray)] border border-[var(--warm-gray)] flex items-center justify-center group-hover:bg-[var(--learning-blue)] group-hover:border-[var(--learning-blue)] transition-all shrink-0 relative z-10">
-                  <ChevronRight
-                    size={20}
-                    className="text-slate-400 group-hover:text-white transition-colors"
-                  />
-                </div>
-              </motion.div>
-            </Link>
-          </motion.div>
-
-          {/* INVITE FRIENDS + COPY LINK */}
-          <motion.div variants={itemVariants}>
-            <DashboardCard className="!p-0 border-gray-300 shadow-sm overflow-hidden">
-              <div className="p-5 md:p-6">
-                {/* <div className="flex items-center gap-3 mb-4">
-                    <div className="w-1 h-8 bg-gradient-to-b from-[var(--primary-orange)] to-[var(--primary-orange-hover)] rounded-sm" />
-                    <div>
-                      <h2 className="text-xl md:text-2xl font-black text-[var(--deep-black)] tracking-tighter uppercase leading-none font-heading">
-                        Spread the Word
-                      </h2>
-                      <p className="text-[10px] text-slate-500 font-medium uppercase tracking-widest mt-0.5">
-                        Share your referral link
-                      </p>
-                    </div>
-                  </div> */}
-
-                <div className="flex items-center gap-3">
-                  {/* Invite Friends — Share icon gets the 3D bell treatment */}
-                  <motion.a
-                    href={whatsappUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    variants={buttonVariants}
-                    initial="rest"
-                    whileHover="hover"
-                    whileTap="tap"
-                    className="flex-1 group relative flex items-center justify-center gap-3 bg-[var(--primary-orange)]/8 text-[var(--primary-orange)] h-12 md:h-14 rounded-xl font-black text-[10px] md:text-[11px] uppercase tracking-[0.2em] border border-[var(--primary-orange)]/25 hover:bg-[var(--primary-orange)]/15 hover:border-[var(--primary-orange)]/50 transition-all shadow-sm"
-                  >
-                    {/* 3D sphere icon — same as bell */}
-                    <div className="relative shrink-0 h-8 w-8 group/icon">
-                      <div className="absolute inset-0 rounded-full bg-gradient-to-br from-orange-300 via-[var(--primary-orange)] to-orange-700 shadow-[0_6px_16px_rgba(249,115,22,0.4),inset_0_2px_3px_rgba(255,255,255,0.45),inset_0_-2px_5px_rgba(0,0,0,0.2)] transition-transform duration-300 group-hover/icon:scale-110">
-                        {/* gloss highlight */}
-                        <div className="absolute top-1 left-1/2 -translate-x-1/2 w-4 h-2 rounded-full bg-white/40 blur-sm" />
-                        {/* shimmer sweep */}
-                        {/* <div className="absolute inset-0 overflow-hidden rounded-full">
-                          <div className="absolute -left-8 top-0 h-full w-5 rotate-12 bg-gradient-to-r from-transparent via-white/50 to-transparent animate-[shimmer_3s_linear_infinite]" />
-                        </div> */}
-                        <div className="relative z-10 flex h-full w-full items-center justify-center">
-                          <Share2 size={14} className="text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.3)]" />
-                        </div>
-                      </div>
-                    </div>
-                    <span className="relative z-10">Invite Friends</span>
-                  </motion.a>
-
-                  {/* Copy button — 3D sphere treatment matching bell icon */}
-                  <button
-                    onClick={handleCopy}
-                    className="relative shrink-0 h-12 w-12 md:h-14 md:w-14 group/copy"
-                  >
-                    <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-orange-300 via-[var(--primary-orange)] to-orange-700 shadow-[0_8px_20px_rgba(249,115,22,0.4),inset_0_2px_3px_rgba(255,255,255,0.45),inset_0_-3px_6px_rgba(0,0,0,0.2)] transition-transform duration-300 group-hover/copy:scale-105 active:scale-95">
-                      {/* gloss pill */}
-                      <div className="absolute top-1.5 left-1/2 -translate-x-1/2 w-7 h-2.5 rounded-full bg-white/35 blur-sm" />
-                      {/* shimmer sweep */}
-                      {/* <div className="absolute inset-0 overflow-hidden rounded-xl">
-                        <div className="absolute -left-10 top-0 h-full w-6 rotate-12 bg-gradient-to-r from-transparent via-white/50 to-transparent animate-[shimmer_3s_linear_infinite]" />
-                      </div> */}
-                      {/* icon */}
-                      <div className="relative z-10 flex h-full w-full items-center justify-center">
-                        {copied ? (
-                          <Check size={18} className="text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.3)]" />
-                        ) : (
-                          <Copy size={16} className="text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.3)]" />
-                        )}
-                      </div>
-                    </div>
-                    {/* tooltip */}
-                    <span className="absolute -top-9 left-1/2 -translate-x-1/2 bg-[var(--deep-black)] text-white px-3 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest opacity-0 group-hover/copy:opacity-100 transition-opacity whitespace-nowrap pointer-events-none shadow-lg z-20">
-                      Copy Link
-                    </span>
-                  </button>
-                </div>
-              </div>
-            </DashboardCard>
           </motion.div>
         </div>
       </motion.div>

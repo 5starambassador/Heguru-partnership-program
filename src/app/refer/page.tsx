@@ -176,26 +176,26 @@ function ReferralFormContent() {
     }
 
     return (
-        <div className="relative min-h-screen w-full bg-[#0f172a] text-white font-[family-name:var(--font-outfit)] flex flex-col dark">
+        <div className="relative min-h-screen w-full bg-slate-50 text-gray-900 font-[family-name:var(--font-outfit)] flex flex-col">
             {/* Ambient Background Effects */}
             <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
-                <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-[var(--radiant-indigo)]/10 rounded-full blur-[120px]" />
-                <div className="absolute top-[40%] right-[-10%] w-[400px] h-[400px] bg-[var(--radiant-violet)]/10 rounded-full blur-[100px]" />
+                <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-[var(--primary-orange)]/5 rounded-full blur-[120px]" />
+                <div className="absolute top-[40%] right-[-10%] w-[400px] h-[400px] bg-[var(--learning-blue)]/5 rounded-full blur-[100px]" />
             </div>
 
             {/* Header */}
-            <header className="px-6 pt-6 pb-6 flex items-center justify-between sticky top-0 z-20">
+            <header className="px-6 pt-6 pb-6 flex items-center justify-between sticky top-0 z-20 bg-slate-50/80 backdrop-blur-md">
                 <button
                     onClick={() => step > 1 ? setStep(prev => prev - 1) : router.push('/dashboard')}
-                    className="w-10 h-10 rounded-full flex items-center justify-center bg-white/15 border border-white/20 text-white hover:bg-white/25 transition-all z-50 group shadow-lg"
+                    className="w-10 h-10 rounded-full flex items-center justify-center bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 hover:border-gray-300 transition-all z-50 group shadow-md"
                 >
-                    <ChevronLeft className="w-5 h-5 flex-shrink-0 group-hover:-translate-x-0.5 transition-transform" strokeWidth={2.5} />
+                    <ChevronLeft className="w-5 h-5 flex-shrink-0 group-hover:-translate-x-0.5 transition-transform text-gray-600" strokeWidth={2.5} />
                 </button>
                 <div className="flex flex-col items-center">
-                    <span className="text-[10px] font-black text-amber-400/80 uppercase tracking-[0.2em] mb-1">
+                    <span className="text-[10px] font-black text-[var(--primary-orange)] uppercase tracking-[0.2em] mb-1">
                         {ambassadorName ? 'Public Referral Link' : 'Self-Entry Referral'}
                     </span>
-                    <h1 className="text-xl font-black tracking-tight bg-clip-text text-transparent bg-gradient-to-b from-white to-white/70">
+                    <h1 className="text-xl font-black tracking-tight text-gray-900">
                         {ambassadorName ? 'Join the Program' : 'Make a Referral'}
                     </h1>
                 </div>
@@ -215,18 +215,18 @@ function ReferralFormContent() {
                                 initial={{ opacity: 0, height: 0, marginBottom: 0 }}
                                 animate={{ opacity: 1, height: 'auto', marginBottom: 24 }}
                                 exit={{ opacity: 0, height: 0, marginBottom: 0 }}
-                                className="relative overflow-hidden rounded-2xl !bg-gradient-to-br !from-amber-500/10 !via-amber-800/20 !to-yellow-950/40 border border-amber-400/30 p-4 text-center shadow-[0_20px_60px_rgba(245,158,11,0.2)] backdrop-blur-3xl backdrop-brightness-110"
+                                className="relative overflow-hidden rounded-2xl bg-amber-50 border border-amber-200 p-4 text-center shadow-md backdrop-blur-3xl"
                             >
                                 {/* Glow Effect */}
-                                <div className="absolute top-0 right-0 w-20 h-20 bg-amber-500/20 rounded-full blur-[40px] pointer-events-none"></div>
-                                <div className="absolute bottom-0 left-0 w-20 h-20 bg-amber-500/10 rounded-full blur-[40px] pointer-events-none"></div>
+                                <div className="absolute top-0 right-0 w-20 h-20 bg-amber-500/5 rounded-full blur-[40px] pointer-events-none"></div>
+                                <div className="absolute bottom-0 left-0 w-20 h-20 bg-amber-500/5 rounded-full blur-[40px] pointer-events-none"></div>
 
                                 <div className="relative z-10">
-                                    <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/30 border border-amber-400/40 mb-2">
-                                        <Star size={10} className="text-amber-400 fill-amber-400" />
-                                        <span className="text-[10px] font-black text-amber-400 uppercase tracking-widest">You are referred by</span>
+                                    <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-100/60 border border-amber-200 mb-2">
+                                        <Star size={10} className="text-amber-600 fill-amber-600" />
+                                        <span className="text-[10px] font-black text-amber-700 uppercase tracking-widest">You are referred by</span>
                                     </div>
-                                    <h3 className="text-xl font-black text-white tracking-tight drop-shadow-sm">{ambassadorName}</h3>
+                                    <h3 className="text-xl font-black text-gray-900 tracking-tight">{ambassadorName}</h3>
                                 </div>
                             </motion.div>
                         )}
@@ -255,23 +255,23 @@ function ReferralFormContent() {
                     </AnimatePresence>
 
                     {/* Main Form Area - MATCHES DASHBOARD STAT CARD DEPTH */}
-                    <div className="relative !bg-gradient-to-br !from-indigo-950 !via-indigo-900/90 !to-blue-900 backdrop-blur-3xl border border-indigo-400/40 rounded-[32px] p-8 overflow-hidden shadow-2xl">
+                    <div className="relative bg-white border border-gray-200 rounded-[32px] p-8 overflow-hidden shadow-2xl">
 
-                        {/* Gold Glow Top */}
-                        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1/2 h-1 bg-gradient-to-r from-transparent via-[var(--radiant-gold)] to-transparent opacity-50 shadow-[0_0_20px_rgba(251,191,36,0.5)]"></div>
+                        {/* Orange Glow Top */}
+                        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1/2 h-1 bg-gradient-to-r from-transparent via-[var(--primary-orange)] to-transparent opacity-50 shadow-[0_0_20px_rgba(242,110,33,0.3)]"></div>
 
                         {/* Steps Indicator */}
                         <div className="flex flex-col items-center mb-10">
                             <div className="flex items-baseline gap-1 mb-4">
-                                <span className="text-xs font-black text-amber-400/60 uppercase tracking-widest">Step</span>
-                                <h2 className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-b from-amber-200 to-[var(--radiant-gold)] drop-shadow-sm">
-                                    {step}<span className="text-sm text-white/20 font-medium">/3</span>
+                                <span className="text-xs font-black text-gray-400 uppercase tracking-widest">Step</span>
+                                <h2 className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-b from-[var(--primary-orange)] to-orange-600 drop-shadow-sm">
+                                    {step}<span className="text-sm text-gray-300 font-medium">/3</span>
                                 </h2>
                             </div>
                             <div className="flex gap-2">
-                                <div className={`h-2 w-12 rounded-full transition-all duration-500 ${step >= 1 ? 'bg-gradient-to-r from-amber-400 to-amber-600 shadow-[0_0_15px_rgba(251,191,36,0.4)]' : 'bg-white/5'}`} />
-                                <div className={`h-2 w-12 rounded-full transition-all duration-500 ${step >= 2 ? 'bg-gradient-to-r from-amber-400 to-amber-600 shadow-[0_0_15px_rgba(251,191,36,0.4)]' : 'bg-white/5'}`} />
-                                <div className={`h-2 w-12 rounded-full transition-all duration-500 ${step >= 3 ? 'bg-gradient-to-r from-amber-400 to-amber-600 shadow-[0_0_15px_rgba(251,191,36,0.4)]' : 'bg-white/5'}`} />
+                                <div className={`h-2 w-12 rounded-full transition-all duration-500 ${step >= 1 ? 'bg-gradient-to-r from-[var(--primary-orange)] to-orange-600 shadow-[0_0_15px_rgba(242,110,33,0.3)]' : 'bg-gray-100'}`} />
+                                <div className={`h-2 w-12 rounded-full transition-all duration-500 ${step >= 2 ? 'bg-gradient-to-r from-[var(--primary-orange)] to-orange-600 shadow-[0_0_15px_rgba(242,110,33,0.3)]' : 'bg-gray-100'}`} />
+                                <div className={`h-2 w-12 rounded-full transition-all duration-500 ${step >= 3 ? 'bg-gradient-to-r from-[var(--primary-orange)] to-orange-600 shadow-[0_0_15px_rgba(242,110,33,0.3)]' : 'bg-gray-100'}`} />
                             </div>
                         </div>
 
@@ -286,11 +286,11 @@ function ReferralFormContent() {
                                     className="space-y-6"
                                 >
                                     <div className="space-y-2">
-                                        <label className="text-[10px] font-black text-white/40 uppercase tracking-[0.2em] pl-1">Parent Mobile Number</label>
+                                        <label className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] pl-1">Parent Mobile Number</label>
                                         <div className="relative group">
-                                            <div className="absolute inset-0 bg-indigo-500/20 rounded-2xl blur-xl opacity-0 group-focus-within:opacity-100 transition-opacity duration-500"></div>
-                                            <div className={`relative flex items-center bg-slate-950/40 backdrop-blur-xl border-2 rounded-2xl h-16 px-4 transition-all group-focus-within:bg-slate-900/60 ${error ? 'border-rose-500/50' : 'border-white/10 group-focus-within:border-amber-500/50'}`}>
-                                                <Smartphone className="text-white/30 group-focus-within:text-[var(--radiant-gold)] transition-colors mr-3" />
+                                            <div className="absolute inset-0 bg-orange-500/5 rounded-2xl blur-xl opacity-0 group-focus-within:opacity-100 transition-opacity duration-500"></div>
+                                            <div className={`relative flex items-center bg-gray-50 border-2 rounded-2xl h-16 px-4 transition-all group-focus-within:bg-white ${error ? 'border-rose-500/50' : 'border-gray-200 group-focus-within:border-[var(--primary-orange)]/50'}`}>
+                                                <Smartphone className="text-gray-400 group-focus-within:text-[var(--primary-orange)] transition-colors mr-3" />
                                                 <input
                                                     type="tel"
                                                     value={formData.parentMobile}
@@ -299,7 +299,7 @@ function ReferralFormContent() {
                                                         updateFormData('parentMobile', value);
                                                     }}
                                                     placeholder="98765 43210"
-                                                    className="w-full h-full bg-transparent border-none outline-none text-xl font-bold text-white placeholder-white/10"
+                                                    className="w-full h-full bg-transparent border-none outline-none text-xl font-bold text-gray-900 placeholder-gray-300"
                                                 />
                                             </div>
                                         </div>
@@ -308,13 +308,13 @@ function ReferralFormContent() {
                                     <button
                                         onClick={isOffline ? () => setStep(3) : handleSendOtp}
                                         disabled={loading}
-                                        className="relative overflow-hidden group w-full h-16 rounded-2xl bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600 text-black font-black text-sm uppercase tracking-widest shadow-lg shadow-amber-500/20 flex items-center justify-center gap-2 hover:scale-[1.01] active:scale-[0.99] transition-all disabled:opacity-50 disabled:cursor-not-allowed border border-amber-300/30"
+                                        className="relative overflow-hidden group w-full h-16 rounded-2xl bg-gradient-to-r from-[var(--primary-orange)] via-orange-500 to-[var(--primary-orange-hover)] text-white font-black text-sm uppercase tracking-widest shadow-lg shadow-orange-500/10 flex items-center justify-center gap-2 hover:scale-[1.01] active:scale-[0.99] transition-all disabled:opacity-50 disabled:cursor-not-allowed border border-orange-400/20"
                                     >
                                         {/* Shimmer Effect */}
-                                        <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite] pointer-events-none"></div>
+                                        <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite] pointer-events-none"></div>
 
                                         {loading ? (
-                                            <div className="w-6 h-6 border-2 border-black/30 border-t-black rounded-full animate-spin" />
+                                            <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                                         ) : (
                                             <>
                                                 {isOffline ? 'Offline Collection' : 'Get OTP'}
@@ -324,7 +324,7 @@ function ReferralFormContent() {
                                     </button>
 
                                     {isOffline && (
-                                        <p className="text-center text-[10px] uppercase tracking-widest opacity-50">Offline mode enabled</p>
+                                        <p className="text-center text-[10px] uppercase tracking-widest opacity-50 text-gray-500">Offline mode enabled</p>
                                     )}
                                 </motion.div>
                             )}
@@ -338,34 +338,34 @@ function ReferralFormContent() {
                                     className="space-y-6"
                                 >
                                     <div className="text-center mb-2">
-                                        <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-white/5 border border-white/10 mb-4">
-                                            <Lock size={20} className="text-amber-400" />
+                                        <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-slate-50 border border-gray-200 mb-4">
+                                            <Lock size={20} className="text-[var(--primary-orange)]" />
                                         </div>
 
                                         {otpDestination?.isAmbassador ? (
                                             <>
                                                 {/* LINK FLOW MESSAGE (Security Check) */}
-                                                <p className="text-sm text-amber-200/80 font-medium mb-1 uppercase tracking-wide">Security Check</p>
-                                                <p className="text-sm text-white/60 px-4 leading-relaxed">
+                                                <p className="text-sm text-amber-800 font-bold mb-1 uppercase tracking-wide">Security Check</p>
+                                                <p className="text-sm text-gray-600 px-4 leading-relaxed font-medium">
                                                     For verification, the code has been sent to the referrer:
                                                 </p>
-                                                <div className="my-3 px-4 py-2 bg-white/5 rounded-xl border border-white/10 inline-block">
-                                                    <span className="font-bold text-white">{otpDestination.name}</span>
+                                                <div className="my-3 px-4 py-2 bg-slate-50 rounded-xl border border-gray-250 inline-block">
+                                                    <span className="font-bold text-gray-800">{otpDestination.name}</span>
                                                 </div>
-                                                <p className="text-xs text-white/40">Please contact them to get the code.</p>
+                                                <p className="text-xs text-gray-400 font-medium">Please contact them to get the code.</p>
                                             </>
                                         ) : (
                                             <>
                                                 {/* DIRECT FLOW MESSAGE */}
-                                                <p className="text-sm text-white/60">Enter the 4-digit code sent to</p>
-                                                <p className="text-lg font-bold text-white mt-1">+91 {formData.parentMobile}</p>
+                                                <p className="text-sm text-gray-600 font-medium">Enter the 4-digit code sent to</p>
+                                                <p className="text-lg font-bold text-gray-900 mt-1">+91 {formData.parentMobile}</p>
                                             </>
                                         )}
                                     </div>
 
                                     <div className="flex justify-center">
                                         <div className="relative group w-full max-w-[200px]">
-                                            <div className="absolute inset-0 bg-indigo-500/20 rounded-2xl blur-xl opacity-0 group-focus-within:opacity-100 transition-opacity duration-500"></div>
+                                            <div className="absolute inset-0 bg-orange-500/5 rounded-2xl blur-xl opacity-0 group-focus-within:opacity-100 transition-opacity duration-500"></div>
                                             <input
                                                 type="text"
                                                 value={otp}
@@ -378,7 +378,7 @@ function ReferralFormContent() {
                                                 autoComplete="one-time-code"
                                                 inputMode="numeric"
                                                 pattern="[0-9]*"
-                                                className="relative w-full h-16 bg-slate-950/40 border-2 border-white/10 rounded-2xl text-center text-3xl font-bold tracking-[0.5em] text-white outline-none focus:border-amber-500/50 focus:bg-slate-900/60 transition-all placeholder-white/10 shadow-inner"
+                                                className="relative w-full h-16 bg-gray-50 border-2 border-gray-250 rounded-2xl text-center text-3xl font-bold tracking-[0.5em] text-gray-900 outline-none focus:border-[var(--primary-orange)]/50 focus:bg-white transition-all placeholder-gray-300 shadow-inner"
                                             />
                                         </div>
                                     </div>
@@ -387,13 +387,13 @@ function ReferralFormContent() {
                                         <button
                                             onClick={handleVerifyOtp}
                                             disabled={loading}
-                                            className="relative overflow-hidden group w-full h-16 rounded-2xl bg-gradient-to-r from-amber-400 to-amber-600 text-black font-black text-sm uppercase tracking-widest shadow-lg shadow-amber-500/20 flex items-center justify-center gap-2 hover:scale-[1.01] active:scale-[0.99] transition-all disabled:opacity-50"
+                                            className="relative overflow-hidden group w-full h-16 rounded-2xl bg-gradient-to-r from-[var(--primary-orange)] to-orange-600 text-white font-black text-sm uppercase tracking-widest shadow-lg shadow-orange-500/10 flex items-center justify-center gap-2 hover:scale-[1.01] active:scale-[0.99] transition-all disabled:opacity-50"
                                         >
                                             {/* Shimmer Effect */}
                                             <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite] pointer-events-none"></div>
 
                                             {loading ? (
-                                                <div className="w-6 h-6 border-2 border-black/30 border-t-black rounded-full animate-spin" />
+                                                <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                                             ) : (
                                                 <>
                                                     Verify & Proceed
@@ -403,7 +403,7 @@ function ReferralFormContent() {
                                         </button>
                                         <button
                                             onClick={() => setStep(1)}
-                                            className="w-full text-xs font-bold text-white/40 hover:text-white uppercase tracking-widest transition-colors py-2"
+                                            className="w-full text-xs font-bold text-gray-400 hover:text-gray-600 uppercase tracking-widest transition-colors py-2"
                                         >
                                             Change Number
                                         </button>
@@ -443,20 +443,20 @@ function ReferralFormContent() {
 
                                     {/* Campus Select */}
                                     <div className="space-y-1.5">
-                                        <label className="text-[10px] font-bold text-white/40 uppercase tracking-widest pl-1">Campus</label>
+                                        <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest pl-1">Campus</label>
                                         <div className="relative group">
-                                            <div className="absolute inset-0 bg-pink-500/10 rounded-xl blur opacity-0 group-focus-within:opacity-100 transition-opacity duration-500"></div>
-                                            <div className="relative flex items-center bg-black/20 border border-white/10 rounded-xl h-12 px-4 transition-all group-focus-within:border-pink-500/50 group-focus-within:bg-black/40">
-                                                <div className="text-white/40 group-focus-within:text-pink-400 transition-colors mr-3">
+                                            <div className="absolute inset-0 bg-orange-500/5 rounded-xl blur opacity-0 group-focus-within:opacity-100 transition-opacity duration-500"></div>
+                                            <div className="relative flex items-center bg-gray-50 border border-gray-200 rounded-xl h-12 px-4 transition-all group-focus-within:border-[var(--primary-orange)]/50 group-focus-within:bg-white">
+                                                <div className="text-gray-400 group-focus-within:text-[var(--primary-orange)] transition-colors mr-3">
                                                     <School size={20} />
                                                 </div>
                                                 <select
-                                                    className="w-full h-full bg-transparent border-none outline-none text-sm font-medium text-white appearance-none cursor-pointer [&>option]:text-black"
+                                                    className="w-full h-full bg-transparent border-none outline-none text-sm font-medium text-gray-800 appearance-none cursor-pointer"
                                                     value={formData.campus}
                                                     onChange={(e) => updateFormData('campus', e.target.value)}
                                                 >
-                                                    <option value="" disabled>Select Campus</option>
-                                                    {campuses.map(c => <option key={c.id} value={c.campusName}>{c.campusName}</option>)}
+                                                    <option value="" disabled className="text-gray-400">Select Campus</option>
+                                                    {campuses.map(c => <option key={c.id} value={c.campusName} className="text-gray-800">{c.campusName}</option>)}
                                                 </select>
                                             </div>
                                         </div>
@@ -464,25 +464,25 @@ function ReferralFormContent() {
 
                                     {/* Grade Select */}
                                     <div className="space-y-1.5">
-                                        <label className="text-[10px] font-bold text-white/40 uppercase tracking-widest pl-1">Grade</label>
+                                        <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest pl-1">Grade</label>
                                         <div className="relative group">
-                                            <div className="absolute inset-0 bg-pink-500/10 rounded-xl blur opacity-0 group-focus-within:opacity-100 transition-opacity duration-500"></div>
-                                            <div className="relative flex items-center bg-black/20 border border-white/10 rounded-xl h-12 px-4 transition-all group-focus-within:border-pink-500/50 group-focus-within:bg-black/40">
-                                                <div className="text-white/40 group-focus-within:text-pink-400 transition-colors mr-3">
+                                            <div className="absolute inset-0 bg-orange-500/5 rounded-xl blur opacity-0 group-focus-within:opacity-100 transition-opacity duration-500"></div>
+                                            <div className="relative flex items-center bg-gray-50 border border-gray-200 rounded-xl h-12 px-4 transition-all group-focus-within:border-[var(--primary-orange)]/50 group-focus-within:bg-white">
+                                                <div className="text-gray-400 group-focus-within:text-[var(--primary-orange)] transition-colors mr-3">
                                                     <GraduationCap size={20} />
                                                 </div>
                                                 <select
-                                                    className="w-full h-full bg-transparent border-none outline-none text-sm font-medium text-white appearance-none cursor-pointer [&>option]:text-black"
+                                                    className="w-full h-full bg-transparent border-none outline-none text-sm font-medium text-gray-800 appearance-none cursor-pointer"
                                                     value={formData.gradeInterested}
                                                     onChange={(e) => updateFormData('gradeInterested', e.target.value)}
                                                 >
-                                                    <option value="" disabled>Select Grade</option>
+                                                    <option value="" disabled className="text-gray-400">Select Grade</option>
                                                     {currentCampusGrades.length > 0 ? (
                                                         currentCampusGrades.map(g => (
-                                                            <option key={g} value={g}>{g}</option>
+                                                            <option key={g} value={g} className="text-gray-800">{g}</option>
                                                         ))
                                                     ) : (
-                                                        <option disabled>Select a Campus first</option>
+                                                        <option disabled className="text-gray-400">Select a Campus first</option>
                                                     )}
                                                 </select>
                                             </div>
@@ -491,20 +491,20 @@ function ReferralFormContent() {
 
                                     {/* Academic Year Select */}
                                     <div className="space-y-1.5">
-                                        <label className="text-[10px] font-bold text-white/40 uppercase tracking-widest pl-1">Academic Year</label>
+                                        <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest pl-1">Academic Year</label>
                                         <div className="relative group">
-                                            <div className="absolute inset-0 bg-pink-500/10 rounded-xl blur opacity-0 group-focus-within:opacity-100 transition-opacity duration-500"></div>
-                                            <div className="relative flex items-center bg-black/20 border border-white/10 rounded-xl h-12 px-4 transition-all group-focus-within:border-pink-500/50 group-focus-within:bg-black/40">
-                                                <div className="text-white/40 group-focus-within:text-pink-400 transition-colors mr-3">
+                                            <div className="absolute inset-0 bg-orange-500/5 rounded-xl blur opacity-0 group-focus-within:opacity-100 transition-opacity duration-500"></div>
+                                            <div className="relative flex items-center bg-gray-50 border border-gray-200 rounded-xl h-12 px-4 transition-all group-focus-within:border-[var(--primary-orange)]/50 group-focus-within:bg-white">
+                                                <div className="text-gray-400 group-focus-within:text-[var(--primary-orange)] transition-colors mr-3">
                                                     <Calendar size={20} />
                                                 </div>
                                                 <select
-                                                    className="w-full h-full bg-transparent border-none outline-none text-sm font-medium text-white appearance-none cursor-pointer [&>option]:text-black"
+                                                    className="w-full h-full bg-transparent border-none outline-none text-sm font-medium text-gray-800 appearance-none cursor-pointer"
                                                     value={formData.academicYear}
                                                     onChange={(e) => updateFormData('academicYear', e.target.value)}
                                                 >
-                                                    <option value="2025-2026">2025-2026</option>
-                                                    <option value="2026-2027">2026-2027</option>
+                                                    <option value="2025-2026" className="text-gray-800">2025-2026</option>
+                                                    <option value="2026-2027" className="text-gray-800">2026-2027</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -513,13 +513,13 @@ function ReferralFormContent() {
                                     <button
                                         onClick={handleSubmit}
                                         disabled={loading}
-                                        className="relative overflow-hidden group w-full h-16 rounded-2xl bg-gradient-to-r from-emerald-400 to-emerald-600 text-black font-black text-sm uppercase tracking-widest shadow-lg shadow-emerald-500/20 flex items-center justify-center gap-2 hover:scale-[1.01] active:scale-[0.99] transition-all mt-2"
+                                        className="relative overflow-hidden group w-full h-16 rounded-2xl bg-gradient-to-r from-emerald-500 to-emerald-600 text-white font-black text-sm uppercase tracking-widest shadow-lg shadow-emerald-500/10 flex items-center justify-center gap-2 hover:scale-[1.01] active:scale-[0.99] transition-all mt-2"
                                     >
                                         {/* Shimmer Effect */}
                                         <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite] pointer-events-none"></div>
 
                                         {loading ? (
-                                            <div className="w-6 h-6 border-2 border-black/30 border-t-black rounded-full animate-spin" />
+                                            <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                                         ) : (
                                             <>
                                                 Submit Referral
@@ -534,9 +534,9 @@ function ReferralFormContent() {
                     </div>
 
                     {/* Trust Footer */}
-                    <div className="mt-8 flex flex-col items-center gap-3 opacity-50">
+                    <div className="mt-8 flex flex-col items-center gap-3 text-gray-400">
                         <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest">
-                            <ShieldCheck size={14} />
+                            <ShieldCheck size={14} className="text-emerald-500" />
                             <span>100% Secure & Encrypted</span>
                         </div>
                     </div>
@@ -550,15 +550,15 @@ function ReferralFormContent() {
 function InputGroup({ icon, label, placeholder, value, onChange }: { icon: any, label: string, placeholder: string, value: string, onChange: (e: any) => void }) {
     return (
         <div className="space-y-1.5">
-            <label className="text-[10px] font-black text-white/40 uppercase tracking-[0.2em] pl-1">{label}</label>
+            <label className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] pl-1">{label}</label>
             <div className="relative group">
-                <div className="absolute inset-0 bg-indigo-500/10 rounded-xl blur-lg opacity-0 group-focus-within:opacity-100 transition-opacity duration-500"></div>
-                <div className="relative flex items-center bg-slate-950/40 backdrop-blur-xl border-2 border-white/10 rounded-xl h-14 px-4 transition-all group-focus-within:border-emerald-500/50 group-focus-within:bg-slate-900/60">
-                    <div className="text-white/30 group-focus-within:text-emerald-400 transition-colors mr-3 [&>svg]:w-5 [&>svg]:h-5">
+                <div className="absolute inset-0 bg-orange-500/5 rounded-xl blur-lg opacity-0 group-focus-within:opacity-100 transition-opacity duration-500"></div>
+                <div className="relative flex items-center bg-gray-50 border-2 border-gray-200 rounded-xl h-14 px-4 transition-all group-focus-within:border-emerald-500/50 group-focus-within:bg-white">
+                    <div className="text-gray-400 group-focus-within:text-emerald-500 transition-colors mr-3 [&>svg]:w-5 [&>svg]:h-5">
                         {icon}
                     </div>
                     <input
-                        className="w-full h-full bg-transparent border-none outline-none text-base font-medium text-white placeholder-white/10"
+                        className="w-full h-full bg-transparent border-none outline-none text-base font-medium text-gray-900 placeholder-gray-300"
                         placeholder={placeholder}
                         value={value}
                         onChange={onChange}

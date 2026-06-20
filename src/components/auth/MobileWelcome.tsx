@@ -33,17 +33,15 @@ export function MobileWelcome({ onGetStarted }: MobileWelcomeProps) {
                             <h2 className="text-[var(--deep-black)] text-lg font-black tracking-tight uppercase leading-none font-heading">
                                 Heguru
                             </h2>
-                            <span className="text-[10px] font-black px-1.5 py-0.5 rounded bg-[var(--primary-orange)] text-white uppercase tracking-wider">
-                                Japan
-                            </span>
+                        
                         </div>
                         <p className="text-[10px] text-[var(--text-gray)] font-bold uppercase tracking-widest text-center mt-1">
                             Partnership Program
                         </p>
-                        <p className="text-[var(--primary-orange)] text-[9px] font-black uppercase tracking-[0.2em] mt-1.5 text-center flex items-center gap-1">
+                        {/* <p className="text-[var(--primary-orange)] text-[9px] font-black uppercase tracking-[0.2em] mt-1.5 text-center flex items-center gap-1">
                             <Star size={8} className="fill-[var(--primary-orange)]" />
                             <span>25th Year Celebration</span>
-                        </p>
+                        </p> */}
                     </div>
                 </motion.div>
 
@@ -54,11 +52,11 @@ export function MobileWelcome({ onGetStarted }: MobileWelcomeProps) {
                     transition={{ duration: 0.6, delay: 0.2 }}
                     className="mb-8 space-y-4"
                 >
-                    <h1 className="text-5xl font-black tracking-tighter leading-[0.9] text-[var(--deep-black)] font-heading">
+                    {/* <h1 className="text-5xl font-black tracking-tighter leading-[0.9] text-[var(--deep-black)] font-heading">
                         <span className="text-[var(--primary-orange)]">25</span> Years of
                         <br />
                         Excellence
-                    </h1>
+                    </h1> */}
 
                     <p className="text-[var(--text-gray)] text-sm leading-relaxed max-w-[280px] mx-auto font-medium">
                         Join an elite community of partners committed to shaping and securing the future of education by empowering minds and enriching lives.

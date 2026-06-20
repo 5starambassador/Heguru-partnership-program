@@ -130,7 +130,7 @@ export function ProgramLeadsList({ leads, programs = [], user }: ProgramLeadsLis
                                             <h2 className="text-sm font-black text-[var(--deep-black)] uppercase tracking-[0.15em] leading-snug max-w-[80%] font-heading">{program.title}</h2>
                                             <div className="h-px min-w-[30px] flex-1 bg-gradient-to-r from-blue-500/20 to-transparent" />
                                             <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-200 shrink-0">
-                                                <span className="text-[11px] font-black text-blue-700 tracking-tighter italic">{programLeads.length}</span>
+                                                <span className="text-[11px] font-black text-blue-700 tracking-tighter ">{programLeads.length}</span>
                                                 <span className="text-[9px] font-black text-blue-500/60 uppercase tracking-widest">Leads</span>
                                             </div>
                                         </div>

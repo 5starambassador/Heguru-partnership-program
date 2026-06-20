@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Plus, MessageSquare, Clock, AlertCircle, CheckCircle2, X, Send, Tag, Calendar, Loader2, Star, ChevronLeft } from 'lucide-react'
+import { Plus, MessageSquare, Clock, AlertCircle, CheckCircle2, X, Send, Tag, Calendar, Loader2, Star, ChevronLeft, ArrowLeft } from 'lucide-react'
 import { createTicket, getUserTickets, rateSupportTicket } from '@/app/ticket-actions'
 import { TicketChatModal } from '@/components/support/ticket-chat-modal'
 import { toast } from 'sonner'
@@ -81,20 +81,31 @@ export default function SupportPage() {
             <PageAnimate className="max-w-4xl mx-auto flex flex-col gap-8 pb-32 relative z-10">
                 
                 {/* Header */}
+                  <PageItem>
+                    <Link
+                        href="/dashboard"
+                        className="w-max px-4 mb-4 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center gap-1.5 hover:bg-gray-50 hover:border-gray-300 hover:shadow-md transition-all duration-200 shadow-sm group"
+                    >
+                        <ArrowLeft
+                            size={18}
+                            className="text-gray-600 group-hover:text-gray-700 transition-colors"
+                        />
+                        <span className="text-sm font-medium text-gray-600 group-hover:text-gray-700 transition-colors">
+                            Back
+                        </span>
+                    </Link>
+                </PageItem>
                 <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
-                    <div className="flex items-center gap-4">
-                        <Link href="/dashboard" className="w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center hover:bg-slate-100 hover:border-gray-300 transition-colors shadow-sm shrink-0">
-                            <ChevronLeft size={20} className="text-slate-600" />
-                        </Link>
-                        <div>
-                            <h1 className="text-2xl md:text-3xl font-black tracking-tight text-[var(--deep-black)] uppercase italic font-heading">
-                                Support Desk
-                            </h1>
-                            <p className="text-[10px] text-slate-500 font-bold uppercase tracking-[0.2em] mt-1">
-                                Resolution Concierge & Assistance
-                            </p>
+                     <div className="flex items-center gap-4">
+                            <div>
+                                <h1 className="text-2xl md:text-4xl font-black text-[var(--deep-black)] tracking-tight uppercase  leading-none mb-1 font-heading">
+                                    Support Desk
+                                </h1>
+                                <p className="text-[10px] font-bold text-gray-500 uppercase tracking-[0.25em]">
+                                     Resolution Concierge & Assistance
+                                </p>
+                            </div>
                         </div>
-                    </div>
 
                     <button
                         onClick={() => setShowNewTicket(true)}

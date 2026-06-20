@@ -143,8 +143,8 @@ export function MobileMenu({ navItems, user, logoutAction, onNavigate: propOnNav
 
             {/* Compact Footer (Profile + Logout) */}
             <div className={`mt-auto px-4 py-6 border-t ${isMobile ? 'backdrop-blur-lg' : ''} ${isAmbassador ? 'border-[var(--warm-gray)] bg-gray-50/50' : 'border-white/10 bg-black/20'}`}>
-                <div className={`flex items-center justify-between gap-4 ${isMobile ? '' : 'flex-col items-stretch'}`}>
-                    <Link href="/profile" className={`flex items-center gap-4 transition-all no-underline text-inherit ${isMobile ? 'flex-1' : ''} ${isAmbassador ? 'bg-white hover:bg-gray-50 border border-[var(--warm-gray)] rounded-md p-3 shadow-sm' : 'bg-white/5 hover:bg-white/10 rounded-2xl p-3 border border-white/5'}`}>
+                <div className={`flex flex-col items-center justify-between gap-4 ${isMobile ? '' : 'flex-col items-stretch'}`}>
+                    <Link href="/profile" className={`flex items-center mb-3 gap-4 transition-all no-underline text-inherit ${isMobile ? 'flex-1' : ''} ${isAmbassador ? 'bg-white hover:bg-gray-50 border border-[var(--warm-gray)] rounded-md p-3 shadow-sm' : 'bg-white/5 hover:bg-white/10 rounded-2xl p-3 border border-white/5'}`}>
                         <div
                             className={`w-[48px] h-[48px] flex items-center justify-center text-lg font-black text-white shadow-2xl flex-shrink-0 ring-2 relative overflow-hidden ${
                                 isAmbassador ? 'rounded-md ring-gray-150 bg-gradient-to-br from-[var(--primary-orange)] to-[var(--primary-orange-hover)]' : 'rounded-xl ring-white/10 bg-gradient-to-br from-indigo-600 to-sky-500'

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Search, Filter, Download, Share2, Copy, Check, FileImage, FileText, PlayCircle, ExternalLink, Megaphone, FolderClosed, ChevronLeft } from 'lucide-react'
+import { Search, Filter, Download, Share2, Copy, Check, FileImage, FileText, PlayCircle, ExternalLink, Megaphone, FolderClosed, ChevronLeft, ArrowLeft } from 'lucide-react'
 import { toast } from 'sonner'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -100,19 +100,30 @@ export function MarketingClient({ grouped, categories, referralCode }: Marketing
             <PageAnimate className="max-w-4xl mx-auto flex flex-col gap-8 pb-32 relative z-10">
 
                 <PageItem className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-                    <div className="flex items-center gap-4">
-                        <Link href="/dashboard" className="w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center hover:bg-slate-100 hover:border-gray-300 transition-colors shadow-sm shrink-0">
-                            <ChevronLeft size={20} className="text-slate-600" />
-                        </Link>
-                        <div>
-                            <h1 className="text-2xl md:text-3xl font-black tracking-tight text-[var(--deep-black)] uppercase italic font-heading">
-                                PROMO KIT
-                            </h1>
-                            <p className="text-[10px] text-slate-500 font-bold uppercase tracking-[0.2em] mt-1">
-                                Official marketing infrastructure & social transmission tools.
-                            </p>
+                      <PageItem>
+                    <Link
+                        href="/dashboard"
+                        className="w-max px-4 mb-4 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center gap-1.5 hover:bg-gray-50 hover:border-gray-300 hover:shadow-md transition-all duration-200 shadow-sm group"
+                    >
+                        <ArrowLeft  
+                            size={18}
+                            className="text-gray-600 group-hover:text-gray-700 transition-colors"
+                        />
+                        <span className="text-sm font-medium text-gray-600 group-hover:text-gray-700 transition-colors">
+                            Back
+                        </span>
+                    </Link>
+                </PageItem>
+                 <div className="flex items-center gap-4 mb-3">
+                            <div>
+                                <h1 className="text-2xl md:text-4xl font-black text-[var(--deep-black)] tracking-tight uppercase  leading-none mb-1 font-heading">
+                                    Promo Kits
+                                </h1>
+                                <p className="text-[10px] font-bold text-gray-500 uppercase tracking-[0.25em]">
+                                    Official marketing infrastructure & social transmission tools.
+                                </p>
+                            </div>
                         </div>
-                    </div>
 
                     {/* Compact Search Bar */}
                     <div className="relative w-full md:w-72">

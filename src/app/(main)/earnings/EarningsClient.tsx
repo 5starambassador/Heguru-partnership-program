@@ -156,7 +156,7 @@ export function EarningsClient({ stats, user, activeYears, selectedYear }: Earni
                 <PageItem>
                     <Link
                         href="/dashboard"
-                        className="w-max px-4 mb-6 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center gap-1.5 hover:bg-gray-50 hover:border-gray-300 hover:shadow-md transition-all duration-200 shadow-sm group"
+                        className="w-max px-4 mb-4 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center gap-1.5 hover:bg-gray-50 hover:border-gray-300 hover:shadow-md transition-all duration-200 shadow-sm group"
                     >
                         <ArrowLeft
                             size={18}
@@ -170,10 +170,10 @@ export function EarningsClient({ stats, user, activeYears, selectedYear }: Earni
 
                 {/* ── Header ─────────────────────────────────────────── */}
                 <PageItem>
-                    <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-8 mt-2 pt-4">
+                    <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-8 pt-4">
                         <div className="flex items-center gap-4">
                             <div>
-                                <h1 className="text-2xl md:text-4xl font-black text-[var(--deep-black)] tracking-tight uppercase italic leading-none mb-1 font-heading">
+                                <h1 className="text-2xl md:text-4xl font-black text-[var(--deep-black)] tracking-tight uppercase  leading-none mb-1 font-heading">
                                     My Earnings
                                 </h1>
                                 <p className="text-[10px] font-bold text-gray-500 uppercase tracking-[0.25em]">

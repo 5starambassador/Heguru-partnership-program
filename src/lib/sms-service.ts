@@ -104,10 +104,7 @@ class SMSService {
             })
 
             const response = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
+                method: 'GET'
             })
 
             const data = await response.json()

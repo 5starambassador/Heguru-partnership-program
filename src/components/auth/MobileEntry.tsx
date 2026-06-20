@@ -53,32 +53,34 @@ export const MobileEntry = ({
       </div>
 
       <div className="space-y-5">
-        <div className="group relative">
-          <div className="absolute left-6 top-1/2 -translate-y-1/2 flex items-center gap-3 z-20 pointer-events-none">
-            <span className="text-[var(--text-gray)]/60 font-black text-lg tracking-widest tabular-nums">
-              +91
-            </span>
-            <div className="w-px h-5 bg-black"></div>
+        <div className="my-8">
+          <div className="group relative">
+            <div className="absolute left-5 md:left-[calc(50%-150px)] top-1/2 -translate-y-1/2 flex items-center gap-3 z-20 pointer-events-none">
+              <span className="text-[var(--text-gray)]/60 font-black text-sm md:text-lg tracking-widest tabular-nums">
+                +91
+              </span>
+              <div className="w-px md:block hidden h-5 bg-black"></div>
+            </div>
+            <input
+              type="tel"
+              autoFocus
+              autoComplete="tel"
+              inputMode="numeric"
+              className={`relative z-10 block w-full bg-white border border-[var(--warm-gray)] rounded-xl pl-16 md:pl-0 pr-4 md:pr-0 h-14 text-[var(--deep-black)] placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-[var(--primary-orange)]/50 focus:border-transparent shadow-md transition-all text-sm sm:text-lg md:text-center font-black tracking-[0.15em] sm:tracking-[0.3em] tabular-nums text-left ${
+                loading ? "opacity-50 cursor-not-allowed" : ""
+              }`}
+              placeholder="00000 00000"
+              value={mobile}
+              onChange={(e) => {
+                const value = e.target.value.replace(/\D/g, "");
+                if (value.length <= 10) setMobile(value);
+              }}
+              onKeyDown={(e) =>
+                e.key === "Enter" && mobile.length === 10 && handleNext()
+              }
+              maxLength={10}
+            />
           </div>
-          <input
-            type="tel"
-            autoFocus
-            autoComplete="tel"
-            inputMode="numeric"
-            className={`relative z-10 block w-max-content flex mx-auto my-8 bg-white border border-[var(--warm-gray)] rounded-xl pl-24 pr-6 h-14 text-[var(--deep-black)] placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-[var(--primary-orange)]/50 focus:border-transparent shadow-md transition-all text-lg sm:text-xl font-black tracking-[0.15em] sm:tracking-[0.3em] tabular-nums text-left ${
-              loading ? "opacity-50 cursor-not-allowed" : ""
-            }`}
-            placeholder="00000 00000"
-            value={mobile}
-            onChange={(e) => {
-              const value = e.target.value.replace(/\D/g, "");
-              if (value.length <= 10) setMobile(value);
-            }}
-            onKeyDown={(e) =>
-              e.key === "Enter" && mobile.length === 10 && handleNext()
-            }
-            maxLength={10}
-          />
           {mobile.length > 0 && mobile.length < 10 && (
             <p className="text-center text-[10px] text-[var(--primary-orange)] mt-2 font-bold uppercase tracking-wider animate-pulse">
               {10 - mobile.length} digits remaining
