@@ -15,6 +15,7 @@ interface NavItem {
 interface UserProfile {
     fullName: string
     role: string
+    profileImage?: string | null
 }
 
 interface SidebarUIProps {
@@ -147,11 +148,15 @@ export function MobileMenu({ navItems, user, logoutAction, onNavigate: propOnNav
                     <Link href="/profile" className={`flex items-center mb-3 gap-4 transition-all no-underline text-inherit ${isMobile ? 'flex-1' : ''} ${isAmbassador ? 'bg-white hover:bg-gray-50 border border-[var(--warm-gray)] rounded-md p-3 shadow-sm' : 'bg-white/5 hover:bg-white/10 rounded-2xl p-3 border border-white/5'}`}>
                         <div
                             className={`w-[48px] h-[48px] flex items-center justify-center text-lg font-black text-white shadow-2xl flex-shrink-0 ring-2 relative overflow-hidden ${
-                                isAmbassador ? 'rounded-md ring-gray-150 bg-gradient-to-br from-[var(--primary-orange)] to-[var(--primary-orange-hover)]' : 'rounded-xl ring-white/10 bg-gradient-to-br from-indigo-600 to-sky-500'
+                                isAmbassador ? 'rounded-full ring-gray-150 bg-gradient-to-br from-[var(--primary-orange)] to-[var(--primary-orange-hover)]' : 'rounded-full ring-white/10 bg-gradient-to-br from-indigo-600 to-sky-500'
                             }`}
                         >
                             <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent pointer-events-none" />
-                            {user.fullName[0].toUpperCase()}
+                            {user.profileImage ? (
+                                <img src={user.profileImage} alt="" className="w-full h-full object-cover rounded-full" />
+                            ) : (
+                                <span>{user.fullName[0].toUpperCase()}</span>
+                            )}
                         </div>
                         <div className="flex flex-col min-w-0 flex-1 overflow-hidden">
                             <span

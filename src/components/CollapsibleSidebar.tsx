@@ -13,7 +13,7 @@ interface NavItem {
 
 interface CollapsibleSidebarProps {
     navItems: NavItem[]
-    user: { fullName: string; role: string }
+    user: { fullName: string; role: string, email: string, profileImage?: string | null }
     logoutAction: () => Promise<void>
 }
 
@@ -66,7 +66,7 @@ export function CollapsibleSidebar({ navItems, user, logoutAction }: Collapsible
                 className={`desktop-sidebar hidden xl:flex flex-col p-0 fixed top-0 left-0 bottom-0 z-40 transition-all duration-300 ease-in-out border-r border-gray-200 bg-white shadow-sm ${collapsed ? 'w-[64px]' : 'w-[280px]'}`}
             >
                 {/* Top decorative accent */}
-                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500" />
+                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-orange-400 via-[var(--primary-orange)] to-[var(--primary-orange-hover)]" />
 
                 {/* Logo area */}
                 <div className={`flex flex-col items-center pt-8 pb-4 transition-all duration-300 ${collapsed ? 'px-1' : 'px-4'}`}>
@@ -81,7 +81,7 @@ export function CollapsibleSidebar({ navItems, user, logoutAction }: Collapsible
                         <div className="text-center px-2">
                             <h2 className="text-[13px] font-black tracking-tight text-gray-900 leading-tight">Heguru Partnership Program</h2>
                             {!isAmbassador && (
-                                <span className="inline-block mt-1.5 px-3 py-0.5 rounded-full text-[9px] font-bold text-blue-600 bg-blue-50 border border-blue-100 uppercase tracking-widest">
+                                <span className="inline-block mt-1.5 px-3 py-0.5 rounded-full text-[9px] font-bold text-primary-orange-hover bg-orange-50 border border-orange-100 uppercase tracking-widest">
                                     Admin Panel
                                 </span>
                             )}
@@ -106,7 +106,7 @@ export function CollapsibleSidebar({ navItems, user, logoutAction }: Collapsible
                                         ${collapsed ? 'justify-center px-0 py-2.5' : 'px-4 py-2.5'}
                                         rounded-xl
                                         ${active
-                                            ? 'text-blue-600 bg-blue-50/70 font-extrabold border border-blue-100/50 shadow-sm'
+                                            ? 'text-primary-orange-hover bg-orange-50/70 font-extrabold border border-orange-100/50 shadow-sm'
                                             : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50'
                                         }`}
                                     onMouseEnter={(e) => {
@@ -119,7 +119,7 @@ export function CollapsibleSidebar({ navItems, user, logoutAction }: Collapsible
                                 >
                                     {/* Active bar */}
                                     {!collapsed && (
-                                        <div className={`absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-6 transition-transform duration-500 bg-blue-600 rounded-r-md ${active ? 'scale-y-100' : 'scale-y-0 group-hover/item:scale-y-100'}`} />
+                                        <div className={`absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-6 transition-transform duration-500 bg-primary-orange-hover rounded-r-md ${active ? 'scale-y-100' : 'scale-y-0 group-hover/item:scale-y-100'}`} />
                                     )}
                                     {/* Icon */}
                                     {React.isValidElement(item.icon)
@@ -127,7 +127,7 @@ export function CollapsibleSidebar({ navItems, user, logoutAction }: Collapsible
                                             size: 18,
                                             className: `flex-shrink-0 transition-all duration-300 relative z-10
                                                 ${active
-                                                    ? 'text-blue-600 scale-105'
+                                                    ? 'text-primary-orange-hover scale-105'
                                                     : 'text-gray-400 group-hover/item:text-gray-700 group-hover/item:scale-105'}`
                                         })
                                         : item.icon}
@@ -135,7 +135,7 @@ export function CollapsibleSidebar({ navItems, user, logoutAction }: Collapsible
                                     {!collapsed && (
                                         <span className={`text-[11px] font-bold uppercase tracking-[0.05em] truncate relative z-10 transition-colors duration-200
                                             ${active 
-                                                ? 'text-blue-600' 
+                                                ? 'text-primary-orange-hover' 
                                                 : 'text-gray-500 group-hover/item:text-gray-900'}`}>
                                             {item.label}
                                         </span>
@@ -166,8 +166,12 @@ export function CollapsibleSidebar({ navItems, user, logoutAction }: Collapsible
                         // Collapsed footer: avatar only
                         <div className="flex flex-col items-center gap-2">
                             <Link href="/profile" className="no-underline" title={user.fullName}>
-                                <div className="w-9 h-9 flex items-center justify-center text-xs font-black text-white bg-blue-600 rounded-lg ring-2 ring-blue-100 shadow-md">
-                                    {user.fullName[0].toUpperCase()}{(user.role === 'Super Admin' ? 'A' : '')}
+                                <div className="w-9 h-9 flex items-center justify-center text-xs font-black text-white bg-primary-orange-hover rounded-full ring-2 ring-orange-100 shadow-md overflow-hidden">
+                                    {user.profileImage ? (
+                                        <img src={user.profileImage} alt="" className="w-full h-full object-cover rounded-full" />
+                                    ) : (
+                                        <span>{user.fullName[0].toUpperCase()}{(user.role === 'Super Admin' ? 'A' : '')}</span>
+                                    )}
                                 </div>
                             </Link>
                         </div>
@@ -175,13 +179,17 @@ export function CollapsibleSidebar({ navItems, user, logoutAction }: Collapsible
                         // Expanded footer
                         <div className="flex flex-col gap-3">
                             <Link href="/profile" className="flex items-center gap-3 transition-all no-underline text-inherit bg-white border border-gray-200 rounded-xl p-2.5 shadow-sm hover:bg-gray-50">
-                                <div className="w-9 h-9 flex items-center justify-center text-xs font-black text-white bg-blue-600 rounded-lg ring-2 ring-blue-100 shadow-md flex-shrink-0">
-                                    {user.fullName === 'Super Admin' ? 'SA' : user.fullName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)}
+                                <div className="w-9 h-9 flex items-center justify-center text-xs font-black text-white bg-primary-orange-hover rounded-full ring-2 ring-orange-100 shadow-md flex-shrink-0 overflow-hidden">
+                                    {user.profileImage ? (
+                                        <img src={user.profileImage} alt="" className="w-full h-full object-cover rounded-full" />
+                                    ) : (
+                                        <span>{user.fullName === 'Super Admin' ? 'SA' : user.fullName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)}</span>
+                                    )}
                                 </div>
                                 <div className="flex flex-col min-w-0 flex-1 overflow-hidden">
                                     <span className="font-extrabold truncate text-[12px] text-gray-900 leading-none">{user.fullName}</span>
                                     <span className="text-[10px] text-gray-400 truncate mt-1 leading-none">
-                                        {user.fullName === 'Super Admin' ? 'superadmin@heguru.com' : `${user.fullName.toLowerCase().replace(' ', '')}@heguru.com`}
+                                        {user.fullName === 'Super Admin' || 'Campus Admin' ||'Campus Head' || 'Admission Head' ||'Finance' ? 'superadmin@heguru.com' : `${user.email}`}
                                     </span>
                                 </div>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400 flex-shrink-0"><path d="m6 9 6 6 6-6"/></svg>
@@ -201,7 +209,7 @@ export function CollapsibleSidebar({ navItems, user, logoutAction }: Collapsible
                 {collapsed ? (
                     <button
                         onClick={toggle}
-                        className="absolute -right-3 top-1/2 -translate-y-1/2 w-6 h-12 flex items-center justify-center transition-all bg-white border border-gray-200 rounded-r-md text-gray-400 hover:text-blue-600 hover:bg-gray-50 shadow-md z-30"
+                        className="absolute -right-3 top-1/2 -translate-y-1/2 w-6 h-12 flex items-center justify-center transition-all bg-white border border-gray-200 rounded-r-md text-gray-400 hover:text-primary-orange-hover hover:bg-gray-50 shadow-md z-30"
                         title="Expand sidebar"
                         aria-label="Expand sidebar"
                         aria-expanded="false"
@@ -211,7 +219,7 @@ export function CollapsibleSidebar({ navItems, user, logoutAction }: Collapsible
                 ) : (
                     <button
                         onClick={toggle}
-                        className="absolute -right-3 top-1/2 -translate-y-1/2 w-6 h-12 flex items-center justify-center transition-all bg-white border border-gray-200 rounded-r-md text-gray-400 hover:text-blue-600 hover:bg-gray-50 shadow-md z-30"
+                        className="absolute -right-3 top-1/2 -translate-y-1/2 w-6 h-12 flex items-center justify-center transition-all bg-white border border-gray-200 rounded-r-md text-gray-400 hover:text-primary-orange-hover hover:bg-gray-50 shadow-md z-30"
                         title="Collapse sidebar"
                         aria-label="Collapse sidebar"
                         aria-expanded="true"

@@ -398,7 +398,12 @@ export default async function MainLayout({
       {/* Desktop Collapsible Sidebar (client component — handles expand/collapse) */}
       <CollapsibleSidebar
         navItems={navItems}
-        user={{ fullName: user.fullName, role: user.role }}
+        user={{
+          fullName: user.fullName,
+          role: user.role,
+          email: (user as any).email || "",
+          profileImage: (user as any).profileImage,
+        }}
         logoutAction={logout}
       />
 
@@ -423,7 +428,11 @@ export default async function MainLayout({
             <MobileSidebarWrapper>
               <MobileMenu
                 navItems={navItems}
-                user={{ fullName: user.fullName, role: user.role }}
+                user={{
+                  fullName: user.fullName,
+                  role: user.role,
+                  profileImage: (user as any).profileImage,
+                }}
                 logoutAction={logout}
                 viewMode="mobile-grid"
                 hideLogo={true}

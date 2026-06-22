@@ -87,7 +87,7 @@ export const AuthLayout = ({ children, animationKey }: { children: React.ReactNo
             <BrandSidebar />
 
             {/* Right Pane - Action Center */}
-            <div className="w-full lg:w-1/2 flex flex-col items-center p-4 sm:p-6 lg:p-12 relative h-full overflow-y-auto lg:overflow-hidden z-10">
+            <div className="w-full lg:w-1/2 flex flex-col items-center p-4 sm:p-6 lg:p-12 relative h-full overflow-y-auto z-10">
 
                 {/* Glass Container */}
                 <div className="relative z-10 w-full max-w-md sm:max-w-lg flex flex-col my-auto">

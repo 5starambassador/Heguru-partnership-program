@@ -56,6 +56,10 @@ model User {
   referredStudents       Student[]       @relation("StudentAmbassador")
   students               Student[]       @relation("StudentParent")
   supportTickets         SupportTicket[]
+  communityPosts         CommunityPost[] @relation("UserCommunityPosts")
+  postLikes              PostLike[]      @relation("UserPostLikes")
+  postComments           PostComment[]   @relation("UserPostComments")
+  savedPosts             SavedPost[]     @relation("UserSavedPosts")
 
   @@index([role])
   @@index([assignedCampus])
@@ -163,6 +167,10 @@ model Admin {
   status         AccountStatus  @default(Active)
   notifications  Notification[]
   assignedTickets SupportTicket[] @relation("AdminAssignedTickets")
+  communityPosts  CommunityPost[] @relation("AdminCommunityPosts")
+  postLikes       PostLike[]      @relation("AdminPostLikes")
+  postComments    PostComment[]   @relation("AdminPostComments")
+  savedPosts      SavedPost[]     @relation("AdminSavedPosts")
 
   @@index([role])
   @@index([assignedCampus])
@@ -790,4 +798,82 @@ model ErpStudentData {
 
   @@index([parentMobile])
   @@index([admissionNumber])
+}
+
+model CommunityPost {
+  postId      Int           @id @default(autoincrement())
+  content     String
+  image       String?       
+  link        String?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  
+  userId      Int?
+  user        User?         @relation("UserCommunityPosts", fields: [userId], references: [userId], onDelete: Cascade)
+  adminId     Int?
+  admin       Admin?        @relation("AdminCommunityPosts", fields: [adminId], references: [adminId], onDelete: Cascade)
+
+  likes       PostLike[]    @relation("PostLikes")
+  comments    PostComment[] @relation("PostComments")
+  savedPosts  SavedPost[]   @relation("PostSavedPosts")
+
+  @@index([userId])
+  @@index([adminId])
+  @@index([createdAt])
+}
+
+model PostLike {
+  likeId      Int           @id @default(autoincrement())
+  createdAt   DateTime      @default(now())
+
+  postId      Int
+  post        CommunityPost @relation("PostLikes", fields: [postId], references: [postId], onDelete: Cascade)
+
+  userId      Int?
+  user        User?         @relation("UserPostLikes", fields: [userId], references: [userId], onDelete: Cascade)
+  adminId     Int?
+  admin       Admin?        @relation("AdminPostLikes", fields: [adminId], references: [adminId], onDelete: Cascade)
+
+  @@unique([postId, userId])
+  @@unique([postId, adminId])
+  @@index([postId])
+  @@index([userId])
+  @@index([adminId])
+}
+
+model PostComment {
+  commentId   Int           @id @default(autoincrement())
+  content     String
+  createdAt   DateTime      @default(now())
+
+  postId      Int
+  post        CommunityPost @relation("PostComments", fields: [postId], references: [postId], onDelete: Cascade)
+
+  userId      Int?
+  user        User?         @relation("UserPostComments", fields: [userId], references: [userId], onDelete: Cascade)
+  adminId     Int?
+  admin       Admin?        @relation("AdminPostComments", fields: [adminId], references: [adminId], onDelete: Cascade)
+
+  @@index([postId])
+  @@index([userId])
+  @@index([adminId])
+}
+
+model SavedPost {
+  savedId     Int           @id @default(autoincrement())
+  createdAt   DateTime      @default(now())
+
+  postId      Int
+  post        CommunityPost @relation("PostSavedPosts", fields: [postId], references: [postId], onDelete: Cascade)
+
+  userId      Int?
+  user        User?         @relation("UserSavedPosts", fields: [userId], references: [userId], onDelete: Cascade)
+  adminId     Int?
+  admin       Admin?        @relation("AdminSavedPosts", fields: [adminId], references: [adminId], onDelete: Cascade)
+
+  @@unique([postId, userId])
+  @@unique([postId, adminId])
+  @@index([postId])
+  @@index([userId])
+  @@index([adminId])
 }
