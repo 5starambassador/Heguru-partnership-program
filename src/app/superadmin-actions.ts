@@ -1041,10 +1041,14 @@ export async function getAllAdmins() {
 }
 
 /**
- * Retrieves all registered students with parent, ambassador, and campus details.
- * @returns Array of Student records with inclusions
+ * Retrieves registered students with parent, ambassador, and campus details, optionally paginated.
  */
-export async function getAllStudents(academicYear?: string, studentSource: 'referral' | 'all' | 'organic' = 'referral'): Promise<Student[]> {
+export async function getAllStudents(
+    academicYear?: string,
+    studentSource: 'referral' | 'all' | 'organic' = 'referral',
+    page?: number,
+    pageSize?: number
+): Promise<Student[] | { students: Student[]; pagination: { total: number; page: number; pageSize: number; totalPages: number } }> {
     const user = await getCurrentUser()
     if (!user) throw new Error('Unauthorized')
 
@@ -1052,15 +1056,47 @@ export async function getAllStudents(academicYear?: string, studentSource: 'refe
 
     const yearFilter = academicYear && academicYear !== 'All' ? { academicYear } : {}
 
+    const whereClause = {
+        ...(studentSource === 'referral' ? { referralLeadId: { not: null } } :
+            studentSource === 'organic' ? { referralLeadId: null } : {}),
+        ...(scopeFilter || { id: -1 }),
+        ...yearFilter
+    }
+
+    if (page && pageSize) {
+        const skip = (page - 1) * pageSize
+        const take = pageSize
+
+        const [students, total] = await Promise.all([
+            prisma.student.findMany({
+                where: whereClause,
+                include: {
+                    parent: { select: { fullName: true, mobileNumber: true, isFiveStarMember: true } },
+                    ambassador: { select: { fullName: true, mobileNumber: true, referralCode: true, role: true } },
+                    campus: { select: { campusName: true } }
+                },
+                orderBy: { createdAt: 'desc' },
+                skip,
+                take
+            }),
+            prisma.student.count({ where: whereClause })
+        ])
+
+        return {
+            students: students as unknown as Student[],
+            pagination: {
+                total,
+                page,
+                pageSize,
+                totalPages: Math.ceil(total / pageSize)
+            }
+        }
+    }
+
     const students = await prisma.student.findMany({
-        where: {
-            ...(studentSource === 'referral' ? { referralLeadId: { not: null } } :
-                studentSource === 'organic' ? { referralLeadId: null } : {}),
-            ...(scopeFilter || { id: -1 }),
-            ...yearFilter
-        },
+        where: whereClause,
         include: {
-            parent: { select: { fullName: true, mobileNumber: true } },
+            parent: { select: { fullName: true, mobileNumber: true, isFiveStarMember: true } },
             ambassador: { select: { fullName: true, mobileNumber: true, referralCode: true, role: true } },
             campus: { select: { campusName: true } }
         },
@@ -1068,6 +1104,36 @@ export async function getAllStudents(academicYear?: string, studentSource: 'refe
     })
 
     return students as unknown as Student[]
+}
+
+/**
+ * Searches users for parent auto-complete lookup by name, mobile number, or email.
+ */
+export async function searchParentsForLookup(search: string) {
+    const user = await getCurrentUser()
+    if (!user) throw new Error('Unauthorized')
+
+    const hasAccess = await hasPermission('studentManagement')
+    if (!hasAccess) throw new Error('Unauthorized')
+
+    const normalizedSearch = search.trim()
+    if (!normalizedSearch) return []
+
+    return await withRetry(() => prisma.user.findMany({
+        where: {
+            OR: [
+                { fullName: { contains: normalizedSearch, mode: 'insensitive' } },
+                { mobileNumber: { contains: normalizedSearch } },
+                { email: { contains: normalizedSearch, mode: 'insensitive' } }
+            ]
+        },
+        select: {
+            userId: true,
+            fullName: true,
+            mobileNumber: true
+        },
+        take: 15
+    }))
 }
 
 /**

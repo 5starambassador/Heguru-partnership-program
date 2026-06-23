@@ -23,7 +23,20 @@ import { normalizeScientificNotation } from '@/lib/utils'
 export async function checkSession() {
     const user = await getCurrentUser()
     if (user) {
-        const redirectPath = await getLoginRedirect(user.mobileNumber)
+        // Optimize redirect path resolution: determine directly from memory to save 2 DB lookups
+        let redirectPath = '/dashboard'
+        const role = user.role
+        if (role === 'Super Admin') {
+            redirectPath = '/superadmin'
+        } else if (role === 'Finance Admin') {
+            redirectPath = '/finance'
+        } else if (role === 'Campus Head' || role === 'Campus Admin') {
+            redirectPath = '/campus'
+        } else if (role.includes('Admin')) {
+            redirectPath = '/admin'
+        } else if ((user as any).status === 'Pending') {
+            redirectPath = '/?step=payment'
+        }
         return { authenticated: true, redirect: redirectPath, user }
     }
     return { authenticated: false }

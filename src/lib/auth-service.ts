@@ -5,7 +5,7 @@ import { cache } from 'react'
 
 import { mapAdminRole, mapUserRole } from './enum-utils'
 
-export const getCurrentUser = cache(async (options: { includeCount?: boolean } = {}) => {
+export const getCurrentUser = cache(async () => {
     const session: any = await getSession()
     if (!session || !session.userId) return null
 
@@ -62,20 +62,7 @@ export const getCurrentUser = cache(async (options: { includeCount?: boolean } =
                     finalUser = { ...finalUser, assignedCampus: campus.campusName }
                 }
             }
-            // Calculate current year confirmed referrals for Dual Track Benefit display
-            let currentYearCount = 0
-            if (options.includeCount) {
-                const currentYearStart = new Date(new Date().getFullYear(), 0, 1)
-                currentYearCount = await withRetry(() => prisma.referralLead.count({
-                    where: {
-                        userId: user.userId,
-                        leadStatus: 'Confirmed',
-                        confirmedDate: { gte: currentYearStart }
-                    }
-                })).catch(() => 0) // Defensive count
-            }
-
-            return { ...finalUser, currentYearCount }
+            return finalUser
         }
     } catch (dbError) {
         console.warn('getCurrentUser: Database unreachable (Possible Quota Limit). Using session-only fallback.', (dbError as any).message)

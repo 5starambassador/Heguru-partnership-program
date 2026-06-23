@@ -65,39 +65,39 @@ export function InstallPrompt() {
 
     return (
         <div className="fixed top-20 left-6 right-6 md:left-auto md:right-6 md:max-w-md z-[200] animate-in slide-in-from-top duration-500">
-            <div className="bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 rounded-[32px] shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-white/10 p-6 text-white relative overflow-hidden backdrop-blur-xl">
+            <div className="bg-white/95 backdrop-blur-xl rounded-[32px] shadow-[0_20px_50px_rgba(17,17,17,0.15)] border border-slate-200/80 p-6 text-slate-800 relative overflow-hidden">
                 {/* Visual Accent */}
-                <div className="absolute -top-24 -right-24 w-48 h-48 bg-blue-600/20 blur-[80px] rounded-full" />
+                <div className="absolute -top-24 -right-24 w-48 h-48 bg-[var(--primary-orange)]/10 blur-[80px] rounded-full" />
 
                 <button
                     onClick={handleDismiss}
-                    className="absolute top-4 right-4 p-2 rounded-full bg-white/5 hover:bg-white/10 transition-colors z-50"
+                    className="absolute top-4 right-4 p-2 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 transition-colors z-50"
                 >
                     <X size={18} />
                 </button>
 
                 <div className="relative z-10">
                     <div className="flex items-center gap-4 mb-6">
-                        <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-500/20 shrink-0">
-                            <Smartphone size={24} />
+                        <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[var(--primary-orange)] to-amber-500 flex items-center justify-center shadow-lg shadow-orange-500/20 shrink-0">
+                            <Smartphone size={24} className="text-white" />
                         </div>
                         <div>
-                            <h3 className="text-lg font-black tracking-tight">Install Official App</h3>
-                            <p className="text-[10px] uppercase tracking-widest text-blue-400 font-bold">Fast • Offline • Secure</p>
+                            <h3 className="text-lg font-black tracking-tight text-slate-900">Install Official App</h3>
+                            <p className="text-[10px] uppercase tracking-widest text-[var(--primary-orange)] font-bold">Fast • Offline • Secure</p>
                         </div>
                     </div>
 
                     {/* Platform Selector Tabs */}
-                    <div className="flex bg-white/5 p-1 rounded-2xl mb-6 border border-white/5">
+                    <div className="flex bg-slate-100 p-1 rounded-2xl mb-6 border border-slate-200/50">
                         <button
                             onClick={() => setActiveTab('android')}
-                            className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-black transition-all ${activeTab === 'android' ? 'bg-white text-slate-950 shadow-lg' : 'text-white/40 hover:text-white/60'}`}
+                            className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-black transition-all ${activeTab === 'android' ? 'bg-white text-slate-950 shadow-sm border border-slate-200/30' : 'text-slate-500 hover:text-slate-800'}`}
                         >
                             ANDROID
                         </button>
                         <button
                             onClick={() => setActiveTab('ios')}
-                            className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-black transition-all ${activeTab === 'ios' ? 'bg-white text-slate-950 shadow-lg' : 'text-white/40 hover:text-white/60'}`}
+                            className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-black transition-all ${activeTab === 'ios' ? 'bg-white text-slate-950 shadow-sm border border-slate-200/30' : 'text-slate-500 hover:text-slate-800'}`}
                         >
                             APPLE (iOS)
                         </button>
@@ -107,15 +107,15 @@ export function InstallPrompt() {
                     <div className="min-h-[140px] animate-in fade-in transition-all duration-300">
                         {activeTab === 'android' ? (
                             <div className="space-y-4">
-                                <div className="p-4 bg-white/5 rounded-2xl border border-white/5 border-l-4 border-l-blue-500">
-                                    <p className="text-sm font-medium leading-relaxed text-blue-100">
-                                        Tap the <span className="text-white font-black">three dots (⋮)</span> in Chrome and select <span className="text-amber-400 font-black">"Install App"</span> or "Add to Home Screen".
+                                <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200/60 border-l-4 border-l-blue-500">
+                                    <p className="text-sm font-semibold leading-relaxed text-slate-700">
+                                        Tap the <span className="text-slate-950 font-black">three dots (⋮)</span> in Chrome and select <span className="text-[var(--primary-orange)] font-black">"Install App"</span> or <span className="text-[var(--primary-orange)] font-black">"Add to Home Screen"</span>.
                                     </p>
                                 </div>
                                 {deferredPrompt && (
                                     <button
                                         onClick={handleInstallClick}
-                                        className="w-full bg-blue-600 hover:bg-blue-500 text-white py-4 rounded-2xl font-black text-sm flex items-center justify-center gap-3 shadow-xl shadow-blue-900/40 transition-all active:scale-95"
+                                        className="w-full bg-[var(--primary-orange)] hover:bg-[var(--primary-orange-hover)] text-white py-4 rounded-2xl font-black text-sm flex items-center justify-center gap-3 shadow-lg shadow-orange-500/20 transition-all active:scale-95"
                                     >
                                         <Download size={20} />
                                         ONE-TAP INSTALL
@@ -124,14 +124,14 @@ export function InstallPrompt() {
                             </div>
                         ) : (
                             <div className="space-y-4">
-                                <div className="p-4 bg-white/5 rounded-2xl border border-white/5 border-l-4 border-l-amber-500">
-                                    <p className="text-sm font-medium leading-relaxed text-blue-100">
-                                        1. Tap the <span className="text-white font-black">Share button</span> (square icon with arrow <span className="inline-block p-1 bg-white/10 rounded ml-1">↑]</span>) at the bottom.
+                                <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200/60 border-l-4 border-l-[var(--primary-orange)]">
+                                    <p className="text-sm font-semibold leading-relaxed text-slate-700">
+                                        1. Tap the <span className="text-slate-950 font-black">Share button</span> (square icon with arrow <span className="inline-block p-1 bg-slate-200/60 rounded ml-1 text-slate-800">↑</span>) at the bottom.
                                     </p>
                                 </div>
-                                <div className="p-4 bg-white/5 rounded-2xl border border-white/5 border-l-4 border-l-amber-500">
-                                    <p className="text-sm font-medium leading-relaxed text-blue-100">
-                                        2. Scroll down and tap <span className="text-amber-400 font-black">"Add to Home Screen"</span>.
+                                <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200/60 border-l-4 border-l-[var(--primary-orange)]">
+                                    <p className="text-sm font-semibold leading-relaxed text-slate-700">
+                                        2. Scroll down and tap <span className="text-[var(--primary-orange)] font-black">"Add to Home Screen"</span>.
                                     </p>
                                 </div>
                             </div>
@@ -139,15 +139,18 @@ export function InstallPrompt() {
                     </div>
 
                     {/* Features Footer */}
-                    <div className="mt-6 pt-5 border-t border-white/5 grid grid-cols-3 gap-2 opacity-50">
-                        <div className="text-center">
-                            <p className="text-[10px] font-black uppercase text-blue-400">Offline</p>
+                    <div className="mt-6 pt-5 border-t border-slate-200/60 grid grid-cols-3 gap-2">
+                        <div className="text-center flex items-center justify-center gap-1.5 text-slate-400">
+                            <Wifi size={12} className="text-blue-500" />
+                            <p className="text-[10px] font-black uppercase tracking-wider text-slate-500">Offline</p>
                         </div>
-                        <div className="text-center">
-                            <p className="text-[10px] font-black uppercase text-blue-400">Secure</p>
+                        <div className="text-center flex items-center justify-center gap-1.5 text-slate-400">
+                            <Lock size={12} className="text-green-500" />
+                            <p className="text-[10px] font-black uppercase tracking-wider text-slate-500">Secure</p>
                         </div>
-                        <div className="text-center">
-                            <p className="text-[10px] font-black uppercase text-blue-400">PWA v2.5</p>
+                        <div className="text-center flex items-center justify-center gap-1.5 text-slate-400">
+                            <Zap size={12} className="text-amber-500" />
+                            <p className="text-[10px] font-black uppercase tracking-wider text-slate-500">Fast</p>
                         </div>
                     </div>
                 </div>

@@ -16,7 +16,7 @@ export const metadata: Metadata = {
 }
 
 export default async function DashboardPage() {
-    const user = await getCurrentUser({ includeCount: true })
+    const user = await getCurrentUser()
     if (!user) redirect('/')
 
     // Admin redirects
@@ -26,7 +26,8 @@ export default async function DashboardPage() {
     if (user.role.includes('Admin') && user.role !== 'Admission Admin') redirect('/admin')
 
     const userData = user as any
-    const [referrals, dynamicStudentFee, slabsResult, activeYears, settlements] = await Promise.all([
+    const currentYearStart = new Date(new Date().getFullYear(), 0, 1)
+    const [referrals, dynamicStudentFee, slabsResult, activeYears, settlements, currentYearCount] = await Promise.all([
         getMyReferrals(),
         getDynamicFeeForUser(),
         getBenefitSlabs(),
@@ -34,7 +35,14 @@ export default async function DashboardPage() {
         prisma.settlement.findMany({
             where: { userId: userData.userId },
             include: { referralLead: true }
-        })
+        }),
+        prisma.referralLead.count({
+            where: {
+                userId: userData.userId,
+                leadStatus: 'Confirmed',
+                confirmedDate: { gte: currentYearStart }
+            }
+        }).catch(() => 0)
     ])
 
     const currentYearRecord = activeYears.find(y => y.isCurrent) || activeYears[0]
@@ -132,7 +140,8 @@ export default async function DashboardPage() {
         accountNumber: userData.accountNumber,
         ifscCode: userData.ifscCode,
         paymentAmount: userData.paymentAmount,
-        confirmedReferralCount: userData.confirmedReferralCount
+        confirmedReferralCount: userData.confirmedReferralCount,
+        currentYearCount: currentYearCount
     }
 
     // Sanitize Referrals (Date -> String) to avoid serialization issues

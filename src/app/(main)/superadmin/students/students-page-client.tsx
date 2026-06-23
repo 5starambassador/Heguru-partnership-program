@@ -9,6 +9,7 @@ import { StudentTable } from '@/components/superadmin/StudentTable'
 import { StudentDetailPanel } from '@/components/superadmin/StudentDetailPanel'
 import CSVUploader from '@/components/CSVUploader'
 import { addStudent, updateStudent, bulkAddStudents } from '@/app/student-actions'
+import { searchParentsForLookup } from '@/app/superadmin-actions'
 import { backfillStudentFees, generateMissingGradeFeeReport } from '@/app/import-actions'
 import { getGradesForCampus } from '@/lib/grade-utils'
 import { AcademicYearFilter } from '@/components/AcademicYearFilter'
@@ -16,12 +17,17 @@ import { AnimatePresence } from 'framer-motion'
 
 interface StudentsPageClientProps {
     students: Student[]
-    users: User[]
+    pagination: {
+        total: number
+        page: number
+        pageSize: number
+        totalPages: number
+    }
     campuses: Campus[]
     gradeFees: GradeFee[]
 }
 
-export default function StudentsPageClient({ students, users, campuses, gradeFees }: StudentsPageClientProps) {
+export default function StudentsPageClient({ students, pagination, campuses, gradeFees }: StudentsPageClientProps) {
     const router = useRouter()
     const [searchQuery, setSearchQuery] = useState('')
     const [showStudentModal, setShowStudentModal] = useState(false)
@@ -176,6 +182,31 @@ export default function StudentsPageClient({ students, users, campuses, gradeFee
         newParentMobile: ''
     })
 
+    const [parentSearchInput, setParentSearchInput] = useState('')
+    const [parentSearchResults, setParentSearchResults] = useState<{ userId: number, fullName: string, mobileNumber: string }[]>([])
+    const [searchLoading, setSearchLoading] = useState(false)
+
+    useEffect(() => {
+        if (studentForm.isNewParent || !parentSearchInput || parentSearchInput.includes('(')) {
+            setParentSearchResults([])
+            return
+        }
+
+        const delayDebounce = setTimeout(async () => {
+            setSearchLoading(true)
+            try {
+                const results = await searchParentsForLookup(parentSearchInput)
+                setParentSearchResults(results)
+            } catch (err) {
+                console.error(err)
+            } finally {
+                setSearchLoading(false)
+            }
+        }, 300)
+
+        return () => clearTimeout(delayDebounce)
+    }, [parentSearchInput, studentForm.isNewParent])
+
     // Open Edit Student Modal
     const openEditModal = (student: Student) => {
         setEditingStudent(student)
@@ -195,6 +226,9 @@ export default function StudentsPageClient({ students, users, campuses, gradeFee
             newParentName: '',
             newParentMobile: ''
         })
+        const parentInfo = student.parent ? `${student.parent.fullName} (${student.parent.mobileNumber})` : ''
+        setParentSearchInput(parentInfo)
+        setParentSearchResults([])
         setShowStudentModal(true)
     }
 
@@ -263,6 +297,8 @@ export default function StudentsPageClient({ students, users, campuses, gradeFee
                 admissionNumber: '', academicYear: '2025-2026',
                 isNewParent: false, newParentName: '', newParentMobile: ''
             })
+            setParentSearchInput('')
+            setParentSearchResults([])
             router.refresh()
         } else {
             toast.error(result.error || 'Failed to save student')
@@ -292,6 +328,12 @@ export default function StudentsPageClient({ students, users, campuses, gradeFee
 
             <StudentTable
                 students={students}
+                pagination={pagination}
+                onPageChange={(page) => {
+                    const currentParams = new URLSearchParams(window.location.search)
+                    currentParams.set('page', page.toString())
+                    router.push(`${window.location.pathname}?${currentParams.toString()}`)
+                }}
                 searchTerm={searchQuery}
                 onSearchChange={setSearchQuery}
                 onAddStudent={() => {
@@ -302,6 +344,8 @@ export default function StudentsPageClient({ students, users, campuses, gradeFee
                         admissionNumber: '', academicYear: '2025-2026',
                         isNewParent: false, newParentName: '', newParentMobile: ''
                     })
+                    setParentSearchInput('')
+                    setParentSearchResults([])
                     setShowStudentModal(true)
                 }}
                 onEdit={openEditModal}
@@ -320,7 +364,6 @@ export default function StudentsPageClient({ students, users, campuses, gradeFee
             <AnimatePresence>
                 <StudentDetailPanel
                     student={selectedStudentForDetail}
-                    users={users}
                     campuses={campuses}
                     gradeFees={gradeFees}
                     onClose={() => setSelectedStudentForDetail(null)}
@@ -339,9 +382,8 @@ export default function StudentsPageClient({ students, users, campuses, gradeFee
                         return result
                     }}
                     onViewParent={(parentId) => {
-                        const parent = users.find(u => u.userId === parentId)
-                        if (parent) {
-                            router.push(`/superadmin?view=users&search=${parent.mobileNumber}`)
+                        if (selectedStudentForDetail?.parent?.mobileNumber) {
+                            router.push(`/superadmin?view=users&search=${selectedStudentForDetail.parent.mobileNumber}`)
                         }
                     }}
                 />
@@ -405,17 +447,45 @@ export default function StudentsPageClient({ students, users, campuses, gradeFee
                                             />
                                         </div>
                                     ) : (
-                                        <select
-                                            value={studentForm.parentId}
-                                            onChange={(e) => setStudentForm({ ...studentForm, parentId: e.target.value })}
-                                            disabled={!!editingStudent}
-                                            style={{ width: '100%', padding: '10px 12px', border: '1px solid #E5E7EB', borderRadius: '8px', fontSize: '14px', background: editingStudent ? '#F3F4F6' : 'white' }}
-                                        >
-                                            <option value="">Select Existing Parent</option>
-                                            {(users || []).filter(u => u.role === 'Parent').map((u, i) => (
-                                                <option key={`${u.userId}-${i}`} value={u.userId}>{u.fullName} ({u.mobileNumber})</option>
-                                            ))}
-                                        </select>
+                                        <div style={{ position: 'relative' }}>
+                                            <input
+                                                type="text"
+                                                value={parentSearchInput}
+                                                onChange={(e) => {
+                                                    setParentSearchInput(e.target.value)
+                                                    if (!e.target.value) {
+                                                        setStudentForm({ ...studentForm, parentId: '' })
+                                                    }
+                                                }}
+                                                disabled={!!editingStudent}
+                                                style={{ width: '100%', padding: '10px 12px', border: '1px solid #E5E7EB', borderRadius: '8px', fontSize: '14px', background: editingStudent ? '#F3F4F6' : 'white' }}
+                                                placeholder="Type to search existing parents..."
+                                            />
+                                            {searchLoading && (
+                                                <div style={{ position: 'absolute', right: '12px', top: '12px', fontSize: '11px', color: '#9CA3AF' }}>
+                                                    Searching...
+                                                </div>
+                                            )}
+                                            {parentSearchResults.length > 0 && (
+                                                <div style={{ position: 'absolute', top: '100%', left: 0, right: 0, background: 'white', border: '1px solid #E5E7EB', borderRadius: '8px', zIndex: 100, maxHeight: '200px', overflowY: 'auto', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)' }}>
+                                                    {parentSearchResults.map((u, i) => (
+                                                        <div
+                                                            key={`${u.userId}-${i}`}
+                                                            onClick={() => {
+                                                                setStudentForm({ ...studentForm, parentId: u.userId.toString() })
+                                                                setParentSearchInput(`${u.fullName} (${u.mobileNumber})`)
+                                                                setParentSearchResults([])
+                                                            }}
+                                                            style={{ padding: '8px 12px', cursor: 'pointer', borderBottom: '1px solid #F3F4F6', fontSize: '13px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+                                                            className="hover:bg-slate-50 transition-colors"
+                                                        >
+                                                            <span style={{ fontWeight: '600' }}>{u.fullName}</span>
+                                                            <span style={{ color: '#6B7280', fontSize: '11px', marginLeft: 'auto' }}>{u.mobileNumber}</span>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            )}
+                                        </div>
                                     )}
                                 </div>
                                 <div>

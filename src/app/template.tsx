@@ -5,9 +5,9 @@ import { motion } from 'framer-motion'
 export default function Template({ children }: { children: React.ReactNode }) {
     return (
         <motion.div
-            initial={{ opacity: 0, y: 15 }}
+            initial={{ opacity: 0, y: 4 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ ease: 'easeOut', duration: 0.4 }}
+            transition={{ ease: 'easeOut', duration: 0.12 }}
             className="w-full"
         >
             {children}

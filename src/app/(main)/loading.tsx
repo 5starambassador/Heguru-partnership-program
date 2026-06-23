@@ -2,13 +2,23 @@
 
 export default function Loading() {
     return (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-white/20 backdrop-blur-[2px]">
-            <div className="flex flex-col items-center">
-                <div className="w-10 h-10 border-4 border-amber-600/20 border-t-amber-600 rounded-full animate-spin" />
-                <p className="mt-4 text-[10px] font-bold text-amber-900 tracking-[0.2em] uppercase opacity-60">
-                    Loading
-                </p>
+        <>
+            <style>{`
+                @keyframes progress-loading {
+                    0% { transform: scaleX(0); }
+                    50% { transform: scaleX(0.75); }
+                    100% { transform: scaleX(1); }
+                }
+                .animate-progress {
+                    animation: progress-loading 2.5s infinite linear;
+                }
+            `}</style>
+            <div className="fixed top-0 left-0 right-0 h-[3px] bg-amber-50 z-[9999] overflow-hidden pointer-events-none">
+                <div 
+                    className="h-full bg-gradient-to-r from-amber-500 via-amber-400 to-amber-600 animate-progress"
+                    style={{ transformOrigin: '0% 50%', width: '100%' }}
+                />
             </div>
-        </div>
+        </>
     )
 }

@@ -2,11 +2,12 @@
 import { Suspense } from 'react'
 import { getCurrentUser } from '@/lib/auth-service'
 import { redirect } from 'next/navigation'
-import { getAllStudents, getAllUsers } from '@/app/superadmin-actions'
+import { getAllStudents } from '@/app/superadmin-actions'
 import { getCampuses } from '@/app/campus-actions'
 import { getFeeStructure } from '@/app/fee-actions'
 import StudentsPageClient from './students-page-client'
 import { ErrorBoundary } from '@/components/ErrorBoundary'
+import { Student } from '@/types'
 
 export const dynamic = 'force-dynamic'
 
@@ -39,16 +40,27 @@ export default async function SuperAdminStudentsPage({ searchParams }: PageProps
     const year = Array.isArray(params.year) ? params.year[0] : params.year
     const yearString = (Array.isArray(year) ? year[0] : year) || '2025-2026'
     const source = (Array.isArray(params.source) ? params.source[0] : params.source || 'referral') as 'referral' | 'all' | 'organic'
+    const page = Number(Array.isArray(params.page) ? params.page[0] : params.page || 1)
+    const pageSize = Number(Array.isArray(params.pageSize) ? params.pageSize[0] : params.pageSize || 50)
 
-    // Parallel Fetching
-    const [students, usersResult, campusesData, feeData] = await Promise.all([
-        getAllStudents(year, source),
-        getAllUsers({ academicYear: year }), // Needed for parent lookup in modals
+    // Parallel Fetching (Notice we removed getAllUsers)
+    const [studentsResult, campusesData, feeData] = await Promise.all([
+        getAllStudents(year, source, page, pageSize),
         getCampuses(),
         getFeeStructure({ academicYear: yearString })
     ])
 
-    const users = Array.isArray(usersResult) ? usersResult : usersResult.users
+    let students: Student[] = []
+    let pagination = { total: 0, page: 1, pageSize: 50, totalPages: 1 }
+
+    if (studentsResult && 'students' in studentsResult) {
+        students = studentsResult.students
+        pagination = studentsResult.pagination
+    } else if (Array.isArray(studentsResult)) {
+        students = studentsResult
+        pagination = { total: students.length, page: 1, pageSize: students.length, totalPages: 1 }
+    }
+
     const gradeFees = feeData.success && feeData.data ? feeData.data : []
 
     return (
@@ -56,7 +68,7 @@ export default async function SuperAdminStudentsPage({ searchParams }: PageProps
             <Suspense fallback={<div className="p-8 text-center text-gray-500">Loading Student Database...</div>}>
                 <StudentsPageClient
                     students={serializeData(students)}
-                    users={serializeData(users)}
+                    pagination={pagination}
                     campuses={campusesData.campuses || []}
                     gradeFees={serializeData(gradeFees) || []}
                 />

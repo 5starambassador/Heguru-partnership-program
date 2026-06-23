@@ -20,6 +20,13 @@ import { bulkStudentAction } from '@/app/bulk-student-actions'
 
 interface StudentTableProps {
     students: Student[]
+    pagination?: {
+        total: number
+        page: number
+        pageSize: number
+        totalPages: number
+    }
+    onPageChange?: (page: number) => void
     searchTerm: string // Kept for prop compatibility/initial state
     onSearchChange: (value: string) => void // Kept for prop compatibility
     onAddStudent: () => void
@@ -36,6 +43,8 @@ interface StudentTableProps {
 
 export function StudentTable({
     students: initialStudents,
+    pagination,
+    onPageChange,
     searchTerm: initialSearch,
     onSearchChange,
     onAddStudent,
@@ -810,6 +819,11 @@ export function StudentTable({
                 <DataTable
                     data={filteredStudents}
                     columns={columns}
+                    manualPagination={!!pagination}
+                    pageCount={pagination?.totalPages}
+                    rowCount={pagination?.total}
+                    currentPage={pagination?.page}
+                    onPageChange={onPageChange}
                     pageSize={10}
                     enableMultiSelection={true}
                     onSelectionChange={setSelectedStudents}

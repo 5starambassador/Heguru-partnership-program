@@ -9,7 +9,6 @@ import { Badge } from '@/components/ui/Badge'
 
 interface StudentDetailPanelProps {
     student: Student | null
-    users: UserType[]
     campuses: Campus[]
     onClose: () => void
     onEdit: (student: Student) => void
@@ -18,7 +17,7 @@ interface StudentDetailPanelProps {
     gradeFees?: GradeFee[]
 }
 
-export function StudentDetailPanel({ student, users, campuses, onClose, onEdit, onUpdate, onViewParent, gradeFees = [] }: StudentDetailPanelProps) {
+export function StudentDetailPanel({ student, campuses, onClose, onEdit, onUpdate, onViewParent, gradeFees = [] }: StudentDetailPanelProps) {
     const [activeTab, setActiveTab] = useState<'overview' | 'financials' | 'guardians' | 'timeline'>('overview')
     const [isEditing, setIsEditing] = useState(false)
     const [editForm, setEditForm] = useState<any>({})
@@ -76,7 +75,7 @@ export function StudentDetailPanel({ student, users, campuses, onClose, onEdit, 
 
     if (!student) return null
 
-    const parent = users.find(u => u.userId === student.parentId)
+    const parent = student.parent as any
     const campus = campuses.find(c => c.id === student.campusId)
     const ambassador = student.ambassador
 
