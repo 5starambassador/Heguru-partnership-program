@@ -175,7 +175,7 @@ export default async function RulesPage() {
         </PageItem>
 
         {/* Immediate Benefits (Tier Grid) */}
-        <PageItem>
+        {/* <PageItem>
           <div className="flex items-center gap-3 mb-6">
             <div className="h-6 w-1 bg-gradient-to-b from-[var(--primary-orange)] to-orange-400 rounded-full" />
             <h2 className="text-lg font-black text-slate-800 uppercase tracking-tight font-heading">
@@ -191,7 +191,6 @@ export default async function RulesPage() {
                   key={b.count}
                   className={`relative p-6 rounded-xl border transition-all duration-300 group overflow-hidden ${theme.bg} ${theme.border} hover:shadow-md hover:-translate-y-1`}
                 >
-                  {/* Subtle Top Accent line matching tier */}
                   <div
                     className={`absolute top-0 left-0 w-full h-[2.5px] ${theme.accent}`}
                   />
@@ -227,10 +226,10 @@ export default async function RulesPage() {
               );
             })}
           </div>
-        </PageItem>
+        </PageItem> */}
 
         {/* Elite Status Section */}
-        <PageItem className="bg-white border border-gray-200 rounded-xl p-8 relative overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 group">
+        {/* <PageItem className="bg-white border border-gray-200 rounded-xl p-8 relative overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 group">
           <div className="absolute top-0 left-0 w-full h-[1.5px] bg-gradient-to-r from-transparent via-[var(--primary-orange)]/20 to-transparent opacity-40" />
 
           <div className="relative z-10 w-full">
@@ -286,10 +285,10 @@ export default async function RulesPage() {
               * Required: 1 referral in new year to unlock
             </p>
           </div>
-        </PageItem>
+        </PageItem> */}
 
         {/* Dates Panel */}
-        <PageItem className="bg-rose-50/50 rounded-xl p-6 border border-rose-200/80 text-center relative overflow-hidden shadow-sm">
+        {/* <PageItem className="bg-rose-50/50 rounded-xl p-6 border border-rose-200/80 text-center relative overflow-hidden shadow-sm">
           <div className="relative z-10">
             <p className="font-black text-base text-rose-950 uppercase tracking-tight mb-1 font-heading">
               Registration closes{" "}
@@ -301,7 +300,7 @@ export default async function RulesPage() {
               பதிவு கடைசி தேதி: 31 ஜனவரி 2026
             </p>
           </div>
-        </PageItem>
+        </PageItem> */}
       </PageAnimate>
     </div>
   );

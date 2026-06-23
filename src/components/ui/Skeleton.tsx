@@ -15,7 +15,7 @@ export function Skeleton({
     width,
     height
 }: SkeletonProps) {
-    const baseClass = "animate-pulse bg-white/10 rounded"
+    const baseClass = "skeleton-shimmer rounded"
     const variantClass = variant === 'circle' ? 'rounded-full' : 'rounded-xl'
 
     const style: React.CSSProperties = {
