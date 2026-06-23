@@ -5,6 +5,23 @@ import { getSession } from "@/lib/session";
 import { revalidatePath } from "next/cache";
 import { createNotification } from "@/app/notification-actions";
 import { getFirebaseAdmin } from "@/lib/firebase-admin";
+import { uploadToImageKit } from "@/lib/imagekit-server";
+
+// Primary upload using ImageKit with a fallback to Firebase or direct base64 string
+async function uploadImageWorkflow(
+  base64Data: string,
+  fileName: string,
+): Promise<string> {
+  try {
+    const imageKitUrl = await uploadToImageKit(base64Data, fileName);
+    if (imageKitUrl) {
+      return imageKitUrl;
+    }
+  } catch (err) {
+    console.error("[ImageKit Workflow Error] Falling back to Firebase:", err);
+  }
+  return uploadToFirebaseStorage(base64Data, `community_posts/${fileName}`);
+}
 
 // Helper to upload base64 image to Firebase Storage with raw base64 fallback
 async function uploadToFirebaseStorage(
@@ -54,7 +71,7 @@ export async function getCommunityPosts() {
   if (!session?.userId) return { success: false, error: "Unauthorized" };
 
   const viewerId = Number(session.userId);
-  const viewerType = session.role === "admin" ? "admin" : "user";
+  const viewerType = session.userType === "admin" ? "admin" : "user";
 
   try {
     // Fetch viewer's campus mapping
@@ -207,13 +224,24 @@ export async function getCommunityPosts() {
       };
     });
 
-    // Sort: Priority Weight DESC, CreatedAt DESC
+    // Sort: Group by posting day, admin posts float to top of their day, then same-campus ambassador posts
     mappedPosts.sort((a, b) => {
-      if (b.priorityWeight !== a.priorityWeight) {
-        return b.priorityWeight - a.priorityWeight;
+      const dayA = new Date(a.createdAt).toDateString()
+      const dayB = new Date(b.createdAt).toDateString()
+
+      // Different days → most recent day first
+      if (dayA !== dayB) {
+        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
       }
-      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-    });
+
+      // Same day → admin posts at top, then same-campus, then others
+      if (b.priorityWeight !== a.priorityWeight) {
+        return b.priorityWeight - a.priorityWeight
+      }
+
+      // Tie-break by time
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    })
 
     return { success: true, posts: mappedPosts };
   } catch (error) {
@@ -231,7 +259,8 @@ export async function createCommunityPost(
   if (!session?.userId) return { success: false, error: "Unauthorized" };
 
   const authorId = Number(session.userId);
-  const isAdmin = session.role === "admin";
+  // Use userType (not role string) to determine if this is an admin account
+  const isAdmin = session.userType === "admin";
 
   try {
     let finalImageUrl: string | null = null;
@@ -239,11 +268,8 @@ export async function createCommunityPost(
     if (image) {
       const fileName = `community_${Date.now()}_${Math.random()
         .toString(36)
-        .substring(2, 7)}.jpg`;
-      finalImageUrl = await uploadToFirebaseStorage(
-        image,
-        `community_posts/${fileName}`,
-      );
+        .substring(2, 7)}.webp`;
+      finalImageUrl = await uploadImageWorkflow(image, fileName);
     }
 
     const data: any = {

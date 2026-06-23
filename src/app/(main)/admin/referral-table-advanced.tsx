@@ -1285,8 +1285,9 @@ export function ReferralManagementTable({
 
             {/* Edit Modal */}
             {editingLead && (
-                <div className="fixed inset-0 bg-black/50 z-[100] flex items-center justify-center p-4 backdrop-blur-sm animate-in fade-in">
-                    <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-in zoom-in-95" onClick={e => e.stopPropagation()}>
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 xl:pl-[280px]">
+                    <div className="absolute inset-0 bg-slate-900/50 backdrop-blur-sm animate-in fade-in" onClick={() => setEditingLead(null)} />
+                    <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-in zoom-in-95" onClick={e => e.stopPropagation()}>
                         <div className="p-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
                             <h3 className="font-bold text-gray-900">Edit Referral Details</h3>
                             <button onClick={() => setEditingLead(null)} aria-label="Close modal" className="p-1 hover:bg-gray-200 rounded-full text-gray-500">

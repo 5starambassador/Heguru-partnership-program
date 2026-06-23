@@ -4,7 +4,7 @@ export default function manifest(): MetadataRoute.Manifest {
     return {
         name: 'Heguru Partnership Program',
         short_name: 'HPP',
-        description: 'Join the Heguru Partnership Program (HPP). Refer students, earn rewards, and be part of our 25th Year Celebration journey.',
+        description: 'Heguru Partnership Program (HPP). Refer students, earn admission commissions, and be part of the Heguru community.',
         start_url: '/',
         display: 'standalone',
         background_color: '#ffffff',

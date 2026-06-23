@@ -130,7 +130,7 @@ export async function createNotification(
         adminId?: number,
         title: string,
         message: string,
-        type?: 'info' | 'success' | 'warning' | 'error',
+        type?: 'info' | 'success' | 'warning' | 'error' | 'share_prompt',
         link?: string
     }
 ) {

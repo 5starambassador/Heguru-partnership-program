@@ -4,7 +4,7 @@ import { getSession } from '@/lib/session'
 import { whatsappService } from '@/lib/whatsapp-service'
 
 /**
- * Centralized notification helper for the 5-Star Ambassador program
+ * Centralized notification helper for the Heguru Partnership Program (HPP)
  * All notification templates and logic in one place
  */
 
@@ -73,19 +73,36 @@ export async function notifyReferralStatusChanged(
 }
 
 /**
- * Notify ambassador when referral is confirmed (special celebration!)
+ * Notify ambassador when referral is confirmed
  */
-export async function notifyReferralConfirmed(userId: number, referralDetails: ReferralDetails, currentCount: number) {
-    const message = currentCount >= 5
-        ? `🌟 Congratulations! ${referralDetails.parentName} has been confirmed. You've achieved 5-Star status!`
-        : `Great news! ${referralDetails.parentName} has been confirmed. You now have ${currentCount} confirmed referral${currentCount > 1 ? 's' : ''}!`
+export async function notifyReferralConfirmed(
+    userId: number,
+    referralDetails: ReferralDetails & { parentName: string; campus?: string },
+    currentCount: number
+) {
+    const message = `Great news! ${referralDetails.parentName}'s admission has been confirmed. You now have ${currentCount} confirmed referral${currentCount > 1 ? 's' : ''}. Share the good news with the community!`
 
+    // 1. Primary confirmation notification
     const notifResult = await createNotification({
         userId,
         title: '✅ Referral Confirmed!',
         message,
         type: 'success',
-        link: '/dashboard'
+        link: '/referrals'
+    })
+
+    // 2. Share-prompt notification — shown with a Share CTA in the bell dropdown
+    const encodedShareText = encodeURIComponent(
+        `🎉 Exciting news! ${referralDetails.parentName} has been admitted to Heguru${
+            referralDetails.campus ? ` (${referralDetails.campus})` : ''
+        }! This is my ${currentCount}${currentCount === 1 ? 'st' : currentCount === 2 ? 'nd' : currentCount === 3 ? 'rd' : 'th'} confirmed referral. Proud to be part of the Heguru Partnership Program! 🏫✨`
+    )
+    await createNotification({
+        userId,
+        title: '📢 Share Your Win with the Community!',
+        message: `${referralDetails.parentName}'s confirmation is worth celebrating. Tap Share to post it to the community feed.`,
+        type: 'share_prompt',
+        link: `/community?shareText=${encodedShareText}`
     })
 
     // WhatsApp Alert: Referral Confirmed
@@ -95,7 +112,6 @@ export async function notifyReferralConfirmed(userId: number, referralDetails: R
             select: { mobileNumber: true, role: true, assignedCampus: true }
         })
         if (user?.mobileNumber) {
-            // Template: "Great news! {{1}}'s referral has been confirmed. You now have {{2}} confirmed referrals!"
             await whatsappService.sendByEvent(
                 user.mobileNumber,
                 "REFERRAL_CONFIRMED",

@@ -220,8 +220,9 @@ export default function DashboardSettings({ type, initialSettings }: DashboardSe
 
                         {/* Add Year Modal */}
                         {showYearModal && (
-                            <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-                                <div className="bg-white rounded-xl p-6 w-full max-w-sm shadow-xl">
+                            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 xl:pl-[280px]">
+                                <div className="absolute inset-0 bg-slate-900/50 backdrop-blur-sm" onClick={() => setShowYearModal(false)} />
+                                <div className="relative bg-white rounded-xl p-6 w-full max-w-sm shadow-xl">
                                     <h3 className="font-bold text-lg mb-4">Add Academic Year</h3>
                                     <div className="space-y-3">
                                         <input

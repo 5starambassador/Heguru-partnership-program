@@ -109,7 +109,7 @@ export function UserDetailPanel({ user, onClose, onEdit, onResetPassword, onView
         <AnimatePresence mode="wait">
             {user && (
                 <div 
-                    className="fixed inset-0 z-[150] flex justify-end" 
+                    className="fixed inset-0 z-[150] flex justify-end xl:pl-[280px]" 
                     key="user-detail-panel-root"
                 >
                     {/* Backdrop */}
@@ -118,7 +118,7 @@ export function UserDetailPanel({ user, onClose, onEdit, onResetPassword, onView
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         onClick={onClose}
-                        className="absolute inset-0 bg-black/40 backdrop-blur-[6px]"
+                        className="absolute inset-0 bg-slate-900/50 backdrop-blur-sm"
                     />
 
                     {/* Main Panel - Flush with top/bottom */}

@@ -25,11 +25,13 @@ export default function PaymentButton({ amount, onSuccess, userId }: PaymentButt
     const [showFallback, setShowFallback] = useState(false)
     const [allowManual, setAllowManual] = useState(true)
     const [activeGateway, setActiveGateway] = useState('CASHFREE')
+    const [isDevMode, setIsDevMode] = useState(false)
 
     useEffect(() => {
         getSystemSettings().then(settings => {
             setAllowManual(settings.allowManualPayments)
             setActiveGateway(settings.activeOnlineGateway || 'CASHFREE')
+            setIsDevMode(settings.isDevMode ?? false)
         })
     }, [])
 
@@ -43,6 +45,26 @@ export default function PaymentButton({ amount, onSuccess, userId }: PaymentButt
         }
     })
 
+    const handleGrayQuestPayment = async () => {
+        console.log('[PAYMENT] Initiating GrayQuest transaction...');
+        const response = await fetch('/api/payment/grayquest/create-session', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ amount }),
+        })
+
+        const data = await response.json()
+        if (!response.ok) {
+            throw new Error(data.error || data.details || "Failed to initialize GrayQuest session")
+        }
+
+        if (data.checkoutUrl) {
+            window.location.href = data.checkoutUrl
+        } else {
+            throw new Error("No checkout URL received from GrayQuest")
+        }
+    }
+
     const handlePayment = async () => {
         setLoading(true)
         try {
@@ -50,58 +72,48 @@ export default function PaymentButton({ amount, onSuccess, userId }: PaymentButt
             console.log(`[PAYMENT] Initiating checkout with gateway: ${activeGateway}`);
 
             if (activeGateway === 'GRAYQUEST') {
-                // 1. Create GrayQuest session
-                const response = await fetch('/api/payment/grayquest/create-session', {
+                await handleGrayQuestPayment()
+                return
+            }
+
+            // --- Default: Cashfree Logic ---
+            try {
+                // 1. Create order
+                const response = await fetch('/api/payment/create-order', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ amount }),
                 })
 
                 const data = await response.json()
+
                 if (!response.ok) {
-                    throw new Error(data.error || data.details || "Failed to initialize GrayQuest session")
+                    throw new Error(data.error || 'Failed to create order')
                 }
 
-                if (data.checkoutUrl) {
-                    window.location.href = data.checkoutUrl
-                    return
+                // 2. Load Cashfree SDK with intelligent mode detection
+                const isProd = process.env.NEXT_PUBLIC_CASHFREE_MODE === 'production' ||
+                    window.location.hostname.includes('5starambassador.com') ||
+                    window.location.hostname.includes('heguru.in');
+
+                const mode = isProd ? "production" : "sandbox";
+                console.log(`[DEBUG] Initializing Cashfree in ${mode} mode`);
+
+                const cashfree = await load({ mode });
+
+                // 3. Checkout
+                if (data.payment_session_id) {
+                    await cashfree.checkout({
+                        paymentSessionId: data.payment_session_id,
+                        redirectTarget: "_self"
+                    });
                 } else {
-                    throw new Error("No checkout URL received from GrayQuest")
+                    throw new Error("No payment session ID received");
                 }
-            }
-
-            // --- Default: Cashfree Logic ---
-            // 1. Create order
-            const response = await fetch('/api/payment/create-order', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ amount }),
-            })
-
-            const data = await response.json()
-
-            if (!response.ok) {
-                throw new Error(data.error || 'Failed to create order')
-            }
-
-            // 2. Load Cashfree SDK with intelligent mode detection
-            const isProd = process.env.NEXT_PUBLIC_CASHFREE_MODE === 'production' ||
-                window.location.hostname.includes('5starambassador.com') ||
-                window.location.hostname.includes('heguru.in');
-
-            const mode = isProd ? "production" : "sandbox";
-            console.log(`[DEBUG] Initializing Cashfree in ${mode} mode`);
-
-            const cashfree = await load({ mode });
-
-            // 3. Checkout
-            if (data.payment_session_id) {
-                await cashfree.checkout({
-                    paymentSessionId: data.payment_session_id,
-                    redirectTarget: "_self"
-                });
-            } else {
-                throw new Error("No payment session ID received");
+            } catch (cfError: any) {
+                console.warn("Cashfree checkout failed, falling back to GrayQuest:", cfError);
+                toast.info("Cashfree unavailable. Redirecting to GrayQuest payment gateway...");
+                await handleGrayQuestPayment();
             }
 
         } catch (error: any) {
@@ -169,7 +181,7 @@ export default function PaymentButton({ amount, onSuccess, userId }: PaymentButt
                 }}
             />
 
-            {process.env.NODE_ENV === 'development' && userId && (
+            {isDevMode && userId && (
                 <button
                     onClick={handleSimulation}
                     disabled={loading}

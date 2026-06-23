@@ -34,7 +34,8 @@ export default function CSVUploader({ type, onClose, userRole }: CSVUploaderProp
     const importType = type === 'users' ? 'ambassadors' : type
 
     return createPortal(
-        <div className="fixed inset-0 bg-black/50 z-[5000] flex items-center justify-center p-4 backdrop-blur-sm animate-fade-in">
+        <div className="fixed inset-0 z-[5000] flex items-center justify-center p-4 xl:pl-[280px]">
+            <div className="absolute inset-0 bg-slate-900/50 backdrop-blur-sm animate-fade-in" onClick={onClose} />
             <div className="relative bg-white rounded-2xl w-full max-w-4xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
 
                 {/* Close Button */}

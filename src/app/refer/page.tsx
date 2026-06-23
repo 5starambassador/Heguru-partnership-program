@@ -107,7 +107,11 @@ function ReferralFormContent() {
 
         if (res.success) {
             const data = res as any
-            toast.success('Verification code sent!')
+            if (data.otp) {
+                toast.success(`Your Verification Code is: ${data.otp}`, { duration: 6000 })
+            } else {
+                toast.success('Verification code sent!')
+            }
             setOtpDestination({
                 isAmbassador: data.isAmbassadorVerified || false,
                 name: data.ambassadorName || ''

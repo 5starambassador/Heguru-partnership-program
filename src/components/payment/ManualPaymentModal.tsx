@@ -81,6 +81,7 @@ export default function ManualPaymentModal({ isOpen, onClose, amount, userId, on
             subtitle="Manual Verification"
             variant='blue'
             maxWidth="max-w-md"
+            sidebarOffset={false}
         >
             <div className="space-y-6">
                 {/* QR Section */}

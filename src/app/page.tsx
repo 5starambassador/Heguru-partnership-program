@@ -191,7 +191,11 @@ export default function LoginPage() {
       if (res.success) {
         setIsForgotMode(true)
         setStep(2)
-        toast.success('Recovery OTP sent to ' + mobile)
+        if (res.otp) {
+          toast.success(`Your Recovery Code is: ${res.otp}`, { duration: 6000 })
+        } else {
+          toast.success('Recovery OTP sent to ' + mobile)
+        }
       } else {
         toast.error(res.error || 'Failed to send recovery OTP')
       }
@@ -305,7 +309,7 @@ export default function LoginPage() {
           setOtp={setOtp}
           onVerify={handleVerifyOtp}
           onBack={() => setStep(1)}
-          onResend={handleSendOtp}
+          onResend={isForgotMode ? handleForgotPassword : handleSendOtp}
           loading={loading}
           isNewUser={isNewUser}
           isForgotMode={isForgotMode}

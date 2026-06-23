@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
 import { revalidatePath } from 'next/cache'
+import { isDevelopmentMode } from '@/lib/env-mode'
 
 /**
  * MSG91 Webhook Handler
@@ -24,7 +25,7 @@ export async function POST(request: Request) {
         const body = await request.json()
         console.log('🚀 [MSG91 Webhook] HIT at:', new Date().toISOString())
         // Log payload structure for debugging (if we could see logs)
-        if (process.env.NODE_ENV === 'development') {
+        if (isDevelopmentMode()) {
             console.log('[MSG91 Webhook] Payload:', JSON.stringify(body, null, 2))
         }
 

@@ -2,6 +2,7 @@
 
 import prisma from '@/lib/prisma'
 import { getCurrentUser } from '@/lib/auth-service'
+import { isDevelopmentMode } from '@/lib/env-mode'
 import { logger } from '@/lib/logger'
 import { revalidatePath } from 'next/cache'
 import { EmailService } from '@/lib/email-service'
@@ -91,7 +92,7 @@ export async function sendReferralOtp(mobileInput: string, referralCode?: string
     }
 
     try {
-        if (process.env.NODE_ENV === 'development') {
+        if (isDevelopmentMode()) {
             logger.info(`[OTP] Sending OTP ${finalOtp} to ${destinationMobile} (Ambassador: ${isAmbassadorVerified})`)
         }
 
@@ -129,7 +130,7 @@ export async function sendReferralOtp(mobileInput: string, referralCode?: string
             success: true,
             isAmbassadorVerified,
             ambassadorName,
-            // otp: process.env.NODE_ENV === 'development' ? finalOtp : undefined // DISABLED MOCK OTP
+            otp: isDevelopmentMode() ? finalOtp : undefined
         }
     } catch (error) {
         logger.error('Failed to generate OTP:', error)

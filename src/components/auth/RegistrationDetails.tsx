@@ -53,7 +53,7 @@ export const RegistrationDetails = ({ formData, setFormData, campuses, onNext, l
                     </h1>
                     <div className="h-px w-24 bg-gradient-to-r from-transparent via-amber-200 to-transparent my-1"></div>
                     <p className="text-amber-700 text-[11px] font-serif italic tracking-widest">
-                        25th Year Celebration
+                        Referral Partnership Program
                     </p>
                 </div>
                 <h2 className="text-xl font-black text-neutral-900 tracking-tight">Elite Profile</h2>
@@ -255,7 +255,7 @@ export const RegistrationDetails = ({ formData, setFormData, campuses, onNext, l
                 Proceed to Payment
             </button>
 
-            <PrivacyModal isOpen={showPrivacy} onClose={() => setShowPrivacy(false)} />
+            <PrivacyModal isOpen={showPrivacy} onClose={() => setShowPrivacy(false)} sidebarOffset={false} />
         </div>
     )
 }

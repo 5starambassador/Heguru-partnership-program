@@ -873,8 +873,9 @@ export function StudentTable({
             />
 
             {showTransferModal && (
-                <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-                    <div className="bg-white rounded-3xl p-8 w-full max-w-md shadow-2xl animate-in zoom-in-95">
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 xl:pl-[280px]">
+                    <div className="absolute inset-0 bg-slate-900/50 backdrop-blur-sm" onClick={() => setShowTransferModal(false)} />
+                    <div className="relative bg-white rounded-3xl p-8 w-full max-w-md shadow-2xl animate-in zoom-in-95">
                         <h3 className="text-xl font-black text-gray-900 mb-6">Transfer Students</h3>
                         <p className="text-xs text-gray-500 mb-4">Select target campus for {selectedStudents.length} students.</p>
                         <label htmlFor="transfer-campus-select" className="sr-only">Target Campus</label>

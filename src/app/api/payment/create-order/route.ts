@@ -24,6 +24,10 @@ export async function POST(req: Request) {
         const customerPhone = user.mobileNumber || "9999999999";
         const customerName = user.fullName || "User";
 
+        if (!cashfree) {
+            return NextResponse.json({ error: "Cashfree SDK not initialized. Please verify your environment variables." }, { status: 500 });
+        }
+
         // Create order in Cashfree
         const request = {
             order_amount: amount,

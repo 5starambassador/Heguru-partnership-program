@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState, useTransition, useRef } from "react";
+import React, { useState, useTransition, useRef, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Users,
@@ -22,8 +23,11 @@ import {
   MoreVertical,
   Youtube,
   Video,
+  ShieldCheck,
+  Play,
 } from "lucide-react";
 import { toast } from "sonner";
+import { compressAndConvertToWebP } from "@/lib/client-image-utils";
 import { PageAnimate, PageItem } from "@/components/PageAnimate";
 import {
   createCommunityPost,
@@ -73,65 +77,17 @@ interface CommunityClientProps {
   initialPosts: Post[];
 }
 
-const compressImage = (file: File): Promise<string> => {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = (event) => {
-      const img = new Image();
-      img.src = event.target?.result as string;
-      img.onload = () => {
-        const canvas = document.createElement("canvas");
-        let width = img.width;
-        let height = img.height;
-
-        const MAX_WIDTH = 1200;
-        const MAX_HEIGHT = 1200;
-        if (width > height) {
-          if (width > MAX_WIDTH) {
-            height *= MAX_WIDTH / width;
-            width = MAX_WIDTH;
-          }
-        } else {
-          if (height > MAX_HEIGHT) {
-            width *= MAX_HEIGHT / height;
-            height = MAX_HEIGHT;
-          }
-        }
-
-        canvas.width = width;
-        canvas.height = height;
-
-        const ctx = canvas.getContext("2d");
-        if (!ctx) {
-          resolve(event.target?.result as string);
-          return;
-        }
-
-        ctx.drawImage(img, 0, 0, width, height);
-
-        let quality = 0.8;
-        let compressedBase64 = canvas.toDataURL("image/jpeg", quality);
-
-        // Iteratively compress quality if base64 size exceeds 1MB limit (~1.3MB raw string size)
-        while (compressedBase64.length > 1.3 * 1024 * 1024 && quality > 0.1) {
-          quality -= 0.1;
-          compressedBase64 = canvas.toDataURL("image/jpeg", quality);
-        }
-
-        resolve(compressedBase64);
-      };
-      img.onerror = (err) => reject(err);
-    };
-    reader.onerror = (err) => reject(err);
-  });
-};
-
 const getYouTubeId = (url: string | null): string | null => {
   if (!url) return null;
-  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=|shorts\/)([^#\&\?]*).*/;
+  const regExp =
+    /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=|shorts\/)([^#\&\?]*).*/;
   const match = url.match(regExp);
   return match && match[2].length === 11 ? match[2] : null;
+};
+
+const isYouTubeShort = (url: string | null): boolean => {
+  if (!url) return false;
+  return url.includes("/shorts/") || url.includes("youtube.com/shorts/");
 };
 
 export function CommunityClient({
@@ -156,8 +112,31 @@ export function CommunityClient({
   const [commentTexts, setCommentTexts] = useState<Record<number, string>>({});
   const [openComments, setOpenComments] = useState<Record<number, boolean>>({});
   const [activeMenuPostId, setActiveMenuPostId] = useState<number | null>(null);
+  const [playingPosts, setPlayingPosts] = useState<Record<number, boolean>>({});
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const composerRef = useRef<HTMLDivElement>(null);
+  const searchParams = useSearchParams();
+
+  // Pre-fill post content from ?shareText= URL param (triggered by notification Share CTA)
+  useEffect(() => {
+    const shareText = searchParams?.get("shareText");
+    if (shareText) {
+      setContent(decodeURIComponent(shareText));
+      setActiveTab("feed");
+      // Smooth scroll to the composer
+      setTimeout(() => {
+        composerRef.current?.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      }, 300);
+      // Clean the URL without reload
+      const url = new URL(window.location.href);
+      url.searchParams.delete("shareText");
+      window.history.replaceState({}, "", url.toString());
+    }
+  }, [searchParams]);
 
   const refreshFeed = async () => {
     const res = await getCommunityPosts();
@@ -190,7 +169,12 @@ export function CommunityClient({
 
   const handleCreatePost = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!content.trim() && !imageFile && !youtubeUrl.trim() && !linkUrl.trim()) {
+    if (
+      !content.trim() &&
+      !imageFile &&
+      !youtubeUrl.trim() &&
+      !linkUrl.trim()
+    ) {
       toast.error("Post content, an image, a link, or a video is required");
       return;
     }
@@ -199,11 +183,15 @@ export function CommunityClient({
     try {
       let compressedBase64: string | undefined = undefined;
       if (imageFile) {
-        compressedBase64 = await compressImage(imageFile);
+        compressedBase64 = await compressAndConvertToWebP(imageFile);
       }
 
       const finalLink = youtubeUrl.trim() || linkUrl.trim();
-      const res = await createCommunityPost(content, compressedBase64, finalLink);
+      const res = await createCommunityPost(
+        content,
+        compressedBase64,
+        finalLink,
+      );
       if (res.success) {
         toast.success("Post shared with the community!");
         setContent("");
@@ -374,6 +362,7 @@ export function CommunityClient({
         {/* Create Post Card */}
         {activeTab === "feed" && (
           <motion.div
+            ref={composerRef}
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm hover:shadow-md transition-all duration-300"
@@ -381,21 +370,21 @@ export function CommunityClient({
             <form onSubmit={handleCreatePost} className="space-y-4">
               <div className="md:flex flex-col gap-4">
                 <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 flex items-center justify-center text-xs font-black text-white bg-primary-orange-hover rounded-full ring-2 ring-orange-100 shadow-md shrink-0 select-none">
-                  {currentUser.profileImage ? (
-                    <img
-                      src={currentUser.profileImage}
-                      alt=""
-                      className="w-full h-full object-cover rounded-full"
-                    />
-                  ) : (
-                    currentUser.fullName[0].toUpperCase()
-                  )}
+                  <div className="w-10 h-10 flex items-center justify-center text-xs font-black text-white bg-primary-orange-hover rounded-full ring-2 ring-orange-100 shadow-md shrink-0 select-none">
+                    {currentUser.profileImage ? (
+                      <img
+                        src={currentUser.profileImage}
+                        alt=""
+                        className="w-full h-full object-cover rounded-full"
+                      />
+                    ) : (
+                      currentUser.fullName[0].toUpperCase()
+                    )}
+                  </div>
 
-                  
-                </div>
-
-                <span className="font-medium font-heading capitalize">{currentUser.fullName}</span>
+                  <span className="font-medium font-heading capitalize">
+                    {currentUser.fullName}
+                  </span>
                 </div>
                 <div className="flex-1 md:border-t-0 border-t md:mt-0 mt-4">
                   <textarea
@@ -554,7 +543,13 @@ export function CommunityClient({
 
                 <button
                   type="submit"
-                  disabled={isPosting || (!content.trim() && !imageFile && !youtubeUrl.trim() && !linkUrl.trim())}
+                  disabled={
+                    isPosting ||
+                    (!content.trim() &&
+                      !imageFile &&
+                      !youtubeUrl.trim() &&
+                      !linkUrl.trim())
+                  }
                   className="flex items-center gap-2 bg-[var(--primary-orange)] hover:bg-[var(--primary-orange-hover)] text-white px-5 py-2.5 rounded-xl font-black text-xs uppercase tracking-wider transition-all disabled:opacity-40 disabled:cursor-not-allowed shadow-md hover:shadow-lg active:scale-95"
                 >
                   {isPosting ? (
@@ -594,7 +589,7 @@ export function CommunityClient({
                 layout
                 className={`md:bg-white md:rounded-2xl md:p-5 shadow-sm relative md:overflow-hidden overflow-visible transition-all duration-300 ${
                   post.adminId
-                    ? "border-amber-200 shadow-[0_4px_20px_rgba(245,158,11,0.06)]"
+                    ? "border-amber-200 pt-5 shadow-[0_4px_20px_rgba(245,158,11,0.06)]"
                     : "border-slate-200"
                 }`}
               >
@@ -608,14 +603,16 @@ export function CommunityClient({
                   <div className="flex gap-3 min-w-0">
                     {/* Avatar */}
                     <div className="w-10 h-10 flex items-center justify-center text-xs font-black text-white bg-primary-orange-hover rounded-full ring-2 ring-orange-100 shadow-md shrink-0 overflow-hidden">
-                      {post.authorImage ? (
+                      {post.adminId ? (
+                        <ShieldCheck className="w-5 h-5 text-white" />
+                      ) : post.authorImage ? (
                         <img
                           src={post.authorImage}
                           alt={post.authorName}
                           className="w-full h-full object-cover"
                         />
                       ) : (
-                        post.authorName[0].toUpperCase()
+                        post.authorName?.[0]?.toUpperCase() || "U"
                       )}
                     </div>
                     <div className="min-w-0">
@@ -641,14 +638,17 @@ export function CommunityClient({
                         </span>
                         <span className="text-slate-300">•</span>
                         <span>
-                          {new Date(post.createdAt).toLocaleDateString("en-IN", {
-                            day: "2-digit",
-                            month: "2-digit",
-                            year: "numeric",
-                            hour: "2-digit",
-                            minute: "2-digit",
-                            hour12: true,
-                          })}
+                          {new Date(post.createdAt).toLocaleDateString(
+                            "en-IN",
+                            {
+                              day: "2-digit",
+                              month: "2-digit",
+                              year: "numeric",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              hour12: true,
+                            },
+                          )}
                         </span>
                       </p>
                     </div>
@@ -657,8 +657,7 @@ export function CommunityClient({
                   {/* Desktop Only: Delete Button */}
                   {(currentUser.isAdmin ||
                     (post.userId && post.userId === currentUser.userId) ||
-                    (post.adminId &&
-                      post.adminId === currentUser.userId)) && (
+                    (post.adminId && post.adminId === currentUser.userId)) && (
                     <button
                       onClick={() => handleDeletePost(post.postId)}
                       className="hidden sm:block text-slate-400 hover:text-red-500 p-2 hover:bg-red-50 rounded-xl transition-all shrink-0"
@@ -673,7 +672,9 @@ export function CommunityClient({
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        setActiveMenuPostId(activeMenuPostId === post.postId ? null : post.postId);
+                        setActiveMenuPostId(
+                          activeMenuPostId === post.postId ? null : post.postId,
+                        );
                       }}
                       className="text-slate-400 hover:text-slate-600 p-2 hover:bg-slate-100 rounded-xl transition-all"
                       title="Options"
@@ -689,7 +690,7 @@ export function CommunityClient({
                           className="fixed inset-0 z-40 bg-transparent"
                           onClick={() => setActiveMenuPostId(null)}
                         />
-                        
+
                         <div className="absolute right-0 mt-1 w-44 bg-white border border-slate-200 rounded-xl shadow-lg z-50 py-1.5 animate-in fade-in slide-in-from-top-2 duration-100">
                           {/* Option 1: Save / Bookmark */}
                           <button
@@ -708,12 +709,15 @@ export function CommunityClient({
                                   : "text-slate-400"
                               }
                             />
-                            <span>{post.isSavedByMe ? "Bookmarked" : "Save Post"}</span>
+                            <span>
+                              {post.isSavedByMe ? "Bookmarked" : "Save Post"}
+                            </span>
                           </button>
 
                           {/* Option 2: Delete (Conditional) */}
                           {(currentUser.isAdmin ||
-                            (post.userId && post.userId === currentUser.userId) ||
+                            (post.userId &&
+                              post.userId === currentUser.userId) ||
                             (post.adminId &&
                               post.adminId === currentUser.userId)) && (
                             <button
@@ -758,25 +762,72 @@ export function CommunityClient({
                     overflow:hidden on the container clips those off-screen areas. */}
                 {post.link && getYouTubeId(post.link) && (
                   <div
-                    className="mt-4 rounded-xl border border-slate-100 bg-black overflow-hidden"
-                    style={{ aspectRatio: "16/9", width: "100%" }}
+                    className="mt-4 rounded-xl border border-slate-100 bg-black overflow-hidden relative group"
+                    style={{
+                      aspectRatio: isYouTubeShort(post.link) ? "9/16" : "16/9",
+                      width: "100%",
+                      maxWidth: isYouTubeShort(post.link) ? "340px" : "100%",
+                      margin: isYouTubeShort(post.link) ? "1rem auto 0 auto" : "1rem 0 0 0",
+                    }}
                   >
-                    <iframe
-                      title={`Video by ${post.authorName}`}
-                      src={`https://www.youtube.com/embed/${getYouTubeId(post.link)}?controls=0&modestbranding=1&playsinline=1&rel=0&enablejsapi=1&color=white&iv_load_policy=3&disablekb=1&fs=0`}
-                      frameBorder="0"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      allowFullScreen
-                      loading="lazy"
-                      referrerPolicy="strict-origin-when-cross-origin"
-                      style={{
-                        width: "300%",
-                        height: "100%",
-                        marginLeft: "-100%",
-                        border: 0,
-                        display: "block",
-                      }}
-                    />
+                    {playingPosts[post.postId] ? (
+                      <iframe
+                        title={`Video by ${post.authorName}`}
+                        src={`https://www.youtube.com/embed/${getYouTubeId(
+                          post.link,
+                        )}?autoplay=1&controls=1&modestbranding=1&playsinline=1&rel=0&enablejsapi=1&color=white`}
+                        frameBorder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                        loading="lazy"
+                        referrerPolicy="strict-origin-when-cross-origin"
+                        style={{
+                          width: isYouTubeShort(post.link) ? "100%" : "300%",
+                          height: "100%",
+                          marginLeft: isYouTubeShort(post.link) ? "0" : "-100%",
+                          border: 0,
+                          display: "block",
+                        }}
+                      />
+                    ) : (
+                      <div
+                        className="w-full h-full relative cursor-pointer"
+                        onClick={() =>
+                          setPlayingPosts((prev) => ({
+                            ...prev,
+                            [post.postId]: true,
+                          }))
+                        }
+                      >
+                        <img
+                          src={`https://img.youtube.com/vi/${getYouTubeId(
+                            post.link,
+                          )}/hqdefault.jpg`}
+                          alt="Video thumbnail"
+                          className="w-full h-full object-cover"
+                        />
+                        <div className="absolute inset-0 bg-black/35 hover:bg-black/20 transition-colors flex items-center justify-center">
+                          <div className="relative h-16 w-16 group">
+                            <div className="absolute inset-0 rounded-full bg-gradient-to-br from-orange-300 via-primary-orange to-orange-700 shadow-[0_8px_20px_rgba(249,115,22,0.35),inset_0_2px_3px_rgba(255,255,255,0.4),inset_0_-3px_6px_rgba(0,0,0,0.2)] transition-all duration-300 group-hover:scale-110 active:scale-95 flex items-center justify-center">
+                              {/* Top glossy highlight */}
+                              <div className="absolute bottom-1 left-1/2 -translate-x-1/2 w-10 h-3 rounded-full bg-white/30 blur-sm" />
+
+                              {/* Shimmer effect */}
+                              <div className="absolute inset-0 overflow-hidden rounded-full">
+                                <div className="absolute -left-10 top-0 h-full w-6 rotate-12 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-[shimmer_3s_linear_infinite]" />
+                              </div>
+
+                              {/* Lucide Play Icon in white */}
+                              <Play
+                                size={24}
+                                fill="white"
+                                className="text-white ml-1 relative z-10"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
 
@@ -817,8 +868,9 @@ export function CommunityClient({
                             : "text-slate-400"
                         }
                       />
-                      <span>{post.likeCount}</span>
-                      <span className="hidden sm:inline"> Likes</span>
+                      <span>{post.likeCount > 0 ? post.likeCount : ""}</span>
+                      <span className="hidden sm:inline"> {post.likeCount == 1 ? "Like" :"Likes"}</span>
+
                     </button>
 
                     {/* Comments Toggle */}
@@ -832,8 +884,8 @@ export function CommunityClient({
                       className="flex items-center gap-1.5 hover:text-primary-orange-hover transition-all text-slate-500"
                     >
                       <MessageCircle size={18} className="text-slate-400" />
-                      <span>{post.commentCount}</span>
-                      <span className="hidden sm:inline"> Comments</span>
+                      <span>{post.commentCount > 0 ?post.commentCount:""}</span>
+                      <span className="hidden sm:inline"> {post.commentCount == 1 ? "Comment" :"Comments"}</span>
                     </button>
                   </div>
 

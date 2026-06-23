@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
 import { dispatchCampaignBatch } from '@/app/campaign-dispatcher'
+import { isDevelopmentMode } from '@/lib/env-mode'
 
 export const dynamic = 'force-dynamic' // Ensure this route is never cached
 export const maxDuration = 60 // Allow longer execution time if possible (Vercel specific)
@@ -108,7 +109,7 @@ export async function GET(request: Request) {
             if (!baseUrl && process.env.VERCEL_URL) {
                 baseUrl = `https://${process.env.VERCEL_URL}`
             }
-            if (!baseUrl && process.env.NODE_ENV === 'development') {
+            if (!baseUrl && isDevelopmentMode()) {
                 baseUrl = 'http://localhost:3001' // Default to our dev port
             } else if (!baseUrl) {
                 baseUrl = 'http://localhost:3000'

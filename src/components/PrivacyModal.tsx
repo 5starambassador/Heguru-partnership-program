@@ -5,13 +5,14 @@ import { X, Shield, Lock, Eye, Database } from 'lucide-react'
 interface Props {
     isOpen: boolean
     onClose: () => void
+    sidebarOffset?: boolean
 }
 
-export function PrivacyModal({ isOpen, onClose }: Props) {
+export function PrivacyModal({ isOpen, onClose, sidebarOffset = true }: Props) {
     if (!isOpen) return null
 
     return (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-[100] flex items-center justify-center p-4">
+        <div className={`fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-[100] flex items-center justify-center p-4 ${sidebarOffset ? 'xl:pl-[280px]' : ''}`}>
             <div className="bg-white rounded-[32px] w-full max-w-2xl max-h-[85vh] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200">
                 <div className="p-8 border-b border-gray-100 flex justify-between items-center bg-gradient-to-r from-gray-50 to-white">
                     <div className="flex items-center gap-3">
@@ -35,7 +36,7 @@ export function PrivacyModal({ isOpen, onClose }: Props) {
                     {/* Hero Section */}
                     <div className="p-6 bg-emerald-50 rounded-[24px] border border-emerald-100/50">
                         <p className="text-sm text-emerald-900 leading-relaxed font-medium">
-                            At <strong>HEGURU WORLD CLASS EDUCATION</strong>, your privacy is our priority. We are committed to protecting your personal data and being transparent about how we use it for the 5-Star Ambassador network.
+                            At <strong>HEGURU WORLD CLASS EDUCATION</strong>, your privacy is our priority. We are committed to protecting your personal data and being transparent about how we use it for the Heguru Partnership Program (HPP).
                         </p>
                     </div>
 

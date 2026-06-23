@@ -369,8 +369,9 @@ export default async function MainLayout({
     }
   }
 
-  // Always accessible
+  // Always accessible for all roles
   navItems.push({ label: "Profile", href: "/profile", icon: <User /> });
+  navItems.push({ label: "Community", href: "/community", icon: <Users /> });
 
   // Theme Selection
   const isDarkTheme = false;
@@ -401,7 +402,7 @@ export default async function MainLayout({
         user={{
           fullName: user.fullName,
           role: user.role,
-          email: (user as any).email || "",
+          phone: (user as any).mobileNumber || "",
           profileImage: (user as any).profileImage,
         }}
         logoutAction={logout}
@@ -419,7 +420,7 @@ export default async function MainLayout({
         >
           <img
             src="/images/HEGURU-JAPAN-LOGO.jpeg"
-            alt="Heguru 25th Year"
+            alt="Heguru Partnership Program"
             width={60}
             height={60}
             className="shadow-sm"

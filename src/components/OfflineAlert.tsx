@@ -28,8 +28,9 @@ export function OfflineAlert() {
     if (connected) return null
 
     return (
-        <div className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in">
-            <div className="bg-white rounded-2xl p-8 text-center max-w-sm w-full shadow-2xl">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 xl:pl-[280px]">
+            <div className="absolute inset-0 bg-slate-900/50 backdrop-blur-sm animate-in fade-in" />
+            <div className="relative bg-white rounded-2xl p-8 text-center max-w-sm w-full shadow-2xl">
                 <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4 animate-pulse">
                     <WifiOff className="text-red-600 w-8 h-8" />
                 </div>

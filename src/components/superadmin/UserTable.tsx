@@ -869,12 +869,13 @@ export function UserTable({
             {/* Export Modal (Portal sibling) */}
             {showExportModal && (
                 <div 
-                    className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center animate-in fade-in duration-200"
+                    className="fixed inset-0 z-50 flex items-center justify-center p-4 xl:pl-[280px]"
                     role="dialog"
                     aria-modal="true"
                     aria-labelledby="export-modal-title"
                 >
-                    <div className="bg-white rounded-2xl w-full max-w-md p-6 shadow-2xl scale-100 animate-in zoom-in-95 duration-200">
+                    <div className="absolute inset-0 bg-slate-900/50 backdrop-blur-sm animate-in fade-in duration-200" onClick={() => setShowExportModal(false)} />
+                    <div className="relative bg-white rounded-2xl w-full max-w-md p-6 shadow-2xl scale-100 animate-in zoom-in-95 duration-200">
                         <div className="flex justify-between items-center mb-6">
                             <div>
                                 <h3 id="export-modal-title" className="text-lg font-bold text-gray-900">Export Data</h3>

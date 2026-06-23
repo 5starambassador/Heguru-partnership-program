@@ -76,9 +76,9 @@ export const OtpVerification = ({ mobile, otp, setOtp, onVerify, onBack, onResen
                             <Star size={10} className="text-[var(--learning-blue)] fill-[var(--learning-blue)]" />
                             <span>Heguru Partnership Program (HPP)</span>
                         </div>
-                        <div className="inline-flex items-center px-4 py-1 rounded-full bg-[var(--primary-orange)]/10 border border-[var(--primary-orange)]/20 text-[9px] font-black text-[var(--primary-orange)] uppercase tracking-[0.2em] shadow-sm">
+                        {/* <div className="inline-flex items-center px-4 py-1 rounded-full bg-[var(--primary-orange)]/10 border border-[var(--primary-orange)]/20 text-[9px] font-black text-[var(--primary-orange)] uppercase tracking-[0.2em] shadow-sm">
                             25<sup className="text-[0.6em] ml-0.5">th</sup> <span className="ml-1.5">Year Celebration</span>
-                        </div>
+                        </div> */}
                     </div>
                 </div>
                 <h2 className="text-xl font-black text-[var(--deep-black)] tracking-tight font-heading">Verify Identity</h2>

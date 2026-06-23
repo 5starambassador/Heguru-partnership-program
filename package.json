@@ -26,6 +26,7 @@
     "@capawesome/capacitor-badge": "^6.0.0",
     "@cashfreepayments/cashfree-js": "^1.0.5",
     "@google/generative-ai": "^0.24.1",
+    "@imagekit/next": "^2.1.5",
     "@prisma/client": "^5.22.0",
     "@types/bcryptjs": "^2.4.6",
     "@types/node": "^20",

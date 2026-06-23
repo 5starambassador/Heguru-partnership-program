@@ -48,8 +48,9 @@ export function CampusTargetModal({ currentLeads = 0, currentAdmissions = 0 }: C
     }
 
     return (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-            <div className="bg-white rounded-3xl w-full max-w-md shadow-2xl animate-spring-up overflow-hidden">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 xl:pl-[280px]">
+            <div className="absolute inset-0 bg-slate-900/50 backdrop-blur-sm" onClick={() => setIsOpen(false)} />
+            <div className="relative bg-white rounded-3xl w-full max-w-md shadow-2xl animate-spring-up overflow-hidden">
                 <div className="p-6 bg-gradient-to-r from-primary-maroon to-primary-maroon/90 text-white flex justify-between items-center">
                     <div className="flex items-center gap-3">
                         <div className="p-2 bg-white/20 rounded-xl">

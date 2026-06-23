@@ -3,6 +3,7 @@
 
 import prisma, { withRetry } from '@/lib/prisma'
 import { revalidatePath } from 'next/cache'
+import { isDevelopmentMode } from '@/lib/env-mode'
 import { generateSmartReferralCode } from '@/lib/referral-service'
 import { syncUserStats } from './sync-actions'
 import { encrypt, decrypt } from '@/lib/encryption'
@@ -134,7 +135,7 @@ export async function sendOtp(mobileInput: string, forceOtp: boolean = false, fl
             success: true,
             exists,
             hasPassword,
-            otp: process.env.NODE_ENV === 'development' || !process.env.SMS_PROVIDER ? finalOtp : undefined
+            otp: isDevelopmentMode() ? finalOtp : undefined
         }
 
     } catch (error: any) {
@@ -730,8 +731,9 @@ export async function createPendingUser(formData: any) {
 
 // --- DEV ONLY: Simulate Payment ---
 export async function simulatePayment(userId: number) {
-    if (process.env.NODE_ENV !== 'development') {
-        throw new Error("Simulation only available in development mode");
+    const isTestMode = isDevelopmentMode()
+    if (!isTestMode) {
+        throw new Error("Simulation only available in test/development mode");
     }
 
     try {

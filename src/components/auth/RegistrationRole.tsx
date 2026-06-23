@@ -43,9 +43,9 @@ export const RegistrationRole = ({ formData, setFormData, campuses, onNext, onBa
                             <Star size={10} className="text-[var(--learning-blue)] fill-[var(--learning-blue)]" />
                             <span>Heguru Partnership Program (HPP)</span>
                         </div>
-                        <div className="inline-flex items-center px-4 py-1 rounded-full bg-[var(--primary-orange)]/10 border border-[var(--primary-orange)]/20 text-[9px] font-black text-[var(--primary-orange)] uppercase tracking-[0.2em] shadow-sm">
+                        {/* <div className="inline-flex items-center px-4 py-1 rounded-full bg-[var(--primary-orange)]/10 border border-[var(--primary-orange)]/20 text-[9px] font-black text-[var(--primary-orange)] uppercase tracking-[0.2em] shadow-sm">
                             25<sup className="text-[0.6em] ml-0.5">th</sup> <span className="ml-1.5">Year Celebration</span>
-                        </div>
+                        </div> */}
                     </div>
                     <h2 className="text-3xl font-black text-[var(--deep-black)] tracking-tighter font-heading">Select Profile</h2>
                     <p className="text-[var(--text-gray)] text-[10px] font-bold uppercase tracking-[0.2em] mt-2">Step 2 of 2</p>
@@ -347,7 +347,7 @@ export const RegistrationRole = ({ formData, setFormData, campuses, onNext, onBa
                     </button>
                 </div>
             </div>
-            <PrivacyModal isOpen={showPrivacy} onClose={() => setShowPrivacy(false)} />
+            <PrivacyModal isOpen={showPrivacy} onClose={() => setShowPrivacy(false)} sidebarOffset={false} />
         </>
     )
 }

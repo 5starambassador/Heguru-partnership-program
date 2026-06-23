@@ -31,6 +31,7 @@ import {
   Edit,
 } from "lucide-react";
 import { toast } from "sonner";
+import { compressAndConvertToWebP } from "@/lib/client-image-utils";
 import { PrivacyModal } from "@/components/PrivacyModal";
 import { requestAccountDeletion } from "@/app/deletion-actions";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
@@ -133,29 +134,26 @@ export default function ProfileClient({
     const file = e.target.files?.[0];
     if (!file) return;
 
-    const reader = new FileReader();
-    reader.onloadend = async () => {
-      const base64String = reader.result as string;
-      setUploading(true);
-      try {
-        const response = await fetch("/api/profile/upload", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ image: base64String }),
-        });
-        if (response.ok) {
-          setProfileImage(base64String);
-          toast.success("Photo updated successfully");
-        } else {
-          toast.error("Failed to upload photo");
-        }
-      } catch (error) {
-        toast.error("Error uploading photo");
-      } finally {
-        setUploading(false);
+    setUploading(true);
+    try {
+      const base64String = await compressAndConvertToWebP(file);
+      const response = await fetch("/api/profile/upload", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ image: base64String }),
+      });
+      if (response.ok) {
+        const resData = await response.json();
+        setProfileImage(resData.url || base64String);
+        toast.success("Photo updated successfully");
+      } else {
+        toast.error("Failed to upload photo");
       }
-    };
-    reader.readAsDataURL(file);
+    } catch (error) {
+      toast.error("Error uploading photo");
+    } finally {
+      setUploading(false);
+    }
   };
 
   const handleSave = async () => {

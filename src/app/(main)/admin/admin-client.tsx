@@ -1128,9 +1128,9 @@ export function AdminClient({ referrals, referralMeta, referralStats, analytics,
 
             {/* Student Modal */}
             {isClient && showStudentModal && createPortal(
-                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 xl:pl-[280px]">
                     <div 
-                        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+                        className="absolute inset-0 bg-slate-900/50 backdrop-blur-sm"
                         onClick={() => setShowStudentModal(false)}
                     />
                     <div className="bg-white rounded-[40px] w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl animate-in fade-in zoom-in duration-300 relative">

@@ -1,4 +1,5 @@
 import { headers } from 'next/headers'
+import { isDevelopmentMode } from './env-mode'
 
 type SMSProvider = 'mock' | 'twilio' | 'msg91'
 
@@ -35,6 +36,17 @@ class SMSService {
 
     private async send(mobile: string, message: string, otp?: string, flow?: OTPFlow): Promise<SMSResponse> {
         try {
+            const isTestMode = isDevelopmentMode()
+
+            // In production (not test mode), we MUST strictly use MSG91
+            if (!isTestMode) {
+                if (!MSG91_CONFIG.authKey) {
+                    console.error('❌ [SMS Service] Production mode error: MSG91_AUTH_KEY is not configured!')
+                    return { success: false, error: 'SMS Gateway Configuration Error' }
+                }
+                return this.sendMsg91(mobile, otp, flow)
+            }
+
             // Priority Check: If we have MSG91 keys, use it
             if (MSG91_CONFIG.authKey) {
                 return this.sendMsg91(mobile, otp, flow)
@@ -95,11 +107,12 @@ class SMSService {
             })
             const url = `https://control.msg91.com/api/v5/otp?${queryParams.toString()}`
 
+            const isTestMode = isDevelopmentMode()
             console.log('📤 [MSG91] Sending OTP:', {
                 flow,
                 templateId,
                 mobile: finalMobile,
-                otp: otp,  // Log actual OTP for debugging
+                otp: isTestMode ? otp : '****',  // Mask OTP in production
                 timestamp: new Date().toISOString()
             })
 

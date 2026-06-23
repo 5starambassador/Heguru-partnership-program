@@ -2,6 +2,7 @@
 
 import prisma from '@/lib/prisma'
 import { revalidatePath } from 'next/cache'
+import { isDevelopmentMode } from '@/lib/env-mode'
 import { logAction } from '@/lib/audit-logger'
 import { getCurrentUser } from '@/lib/auth-service'
 import { hasPermission } from '@/lib/permission-service'
@@ -344,7 +345,7 @@ export async function runCampaign(id: number) {
             if (!baseUrl) {
                 if (process.env.VERCEL_URL) {
                     baseUrl = `https://${process.env.VERCEL_URL}`
-                } else if (process.env.NODE_ENV === 'development') {
+                } else if (isDevelopmentMode()) {
                     baseUrl = 'http://localhost:3001'
                 } else {
                     baseUrl = 'http://localhost:3000'

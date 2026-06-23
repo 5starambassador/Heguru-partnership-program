@@ -15,6 +15,7 @@ interface ModalProps {
     footer?: React.ReactNode
     maxWidth?: string
     variant?: 'default' | 'blue' | 'indigo' | 'danger'
+    sidebarOffset?: boolean
 }
 
 export function Modal({
@@ -26,7 +27,8 @@ export function Modal({
     children,
     footer,
     maxWidth = 'max-w-2xl',
-    variant = 'default'
+    variant = 'default',
+    sidebarOffset = true
 }: ModalProps) {
     const [mounted, setMounted] = useState(false)
 
@@ -54,14 +56,14 @@ export function Modal({
     const modalContent = (
         <AnimatePresence>
             {isOpen && (
-                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6">
+                <div className={`fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 ${sidebarOffset ? 'xl:pl-[280px]' : ''}`}>
                     {/* Backdrop */}
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         onClick={onClose}
-                        className="absolute inset-0 bg-gray-900/40 backdrop-blur-sm"
+                        className="absolute inset-0 bg-slate-900/50 backdrop-blur-sm"
                     />
 
                     {/* Modal Container */}

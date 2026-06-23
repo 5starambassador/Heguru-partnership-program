@@ -350,14 +350,14 @@ export function ReferralDetailPanel({
 
     return (
         <AnimatePresence>
-            <div className="fixed inset-0 z-[60] flex justify-end" key="referral-modal">
+            <div className="fixed inset-0 z-[60] flex justify-end xl:pl-[280px]" key="referral-modal">
                 {/* Backdrop */}
                 <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                     onClick={onClose}
-                    className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+                    className="absolute inset-0 bg-slate-900/50 backdrop-blur-sm"
                 />
 
                 {/* Main Panel */}

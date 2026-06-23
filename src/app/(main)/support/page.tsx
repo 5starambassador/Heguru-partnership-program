@@ -237,7 +237,7 @@ export default function SupportPage() {
 
                 {/* New Ticket Modal - Light Theme */}
                 {showNewTicket && (
-                    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm animate-in fade-in duration-300">
+                    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm animate-in fade-in duration-300 xl:pl-[280px]">
                         <div className="bg-white w-full max-w-lg rounded-xl border border-gray-200 shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300">
                             <div className="bg-gradient-to-br from-[var(--primary-orange)] to-orange-600 p-6 flex justify-between items-center text-white">
                                 <div>

@@ -262,10 +262,10 @@ export function ProgramManager() {
             {/* Modal */}
             <AnimatePresence>
                 {showModal && (
-                    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+                    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 xl:pl-[280px]">
                         <motion.div
                             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                            className="absolute inset-0 bg-gray-900/60 backdrop-blur-sm"
+                            className="absolute inset-0 bg-slate-900/50 backdrop-blur-sm"
                             onClick={() => setShowModal(false)}
                         />
                         <motion.div

@@ -5,6 +5,7 @@ import { getCurrentUser } from '@/lib/auth-service'
 import { revalidatePath } from 'next/cache'
 import { logAction } from '@/lib/audit-logger'
 import { z } from 'zod'
+import { isDevelopmentMode } from '@/lib/env-mode'
 
 // Validation Schema for Settings
 const SettingsUpdateSchema = z.object({
@@ -67,16 +68,25 @@ export async function getSystemSettings() {
     }
 
     try {
+        const isDev = isDevelopmentMode();
+
         // Return cached settings if valid
         const now = Date.now();
         if (settingsCache && (now - settingsCache.timestamp < CACHE_TTL)) {
-            return settingsCache.data;
+            return {
+                ...settingsCache.data,
+                isDevMode: isDev
+            };
         }
 
         // Guard against Prisma initialization failures
         if (!prisma) {
             console.warn('Prisma client not initialized in getSystemSettings');
-            return settingsCache?.data || defaultSettings;
+            const fallback = settingsCache?.data || defaultSettings;
+            return {
+                ...fallback,
+                isDevMode: isDev
+            };
         }
 
         // Fetch global flags and current academic year in parallel with individual catches
@@ -106,10 +116,17 @@ export async function getSystemSettings() {
             settingsCache = { data: consolidatedData, timestamp: now };
         }
 
-        return consolidatedData;
+        return {
+            ...consolidatedData,
+            isDevMode: isDev
+        };
     } catch (error) {
         console.warn('CRITICAL: Unexpected error in getSystemSettings. Using safety defaults.', (error as any).message);
-        return settingsCache?.data || defaultSettings;
+        const fallback = settingsCache?.data || defaultSettings;
+        return {
+            ...fallback,
+            isDevMode: isDevelopmentMode()
+        };
     }
 }
 

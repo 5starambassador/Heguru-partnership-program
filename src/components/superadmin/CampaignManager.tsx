@@ -656,13 +656,13 @@ export function CampaignManager() {
                     <ClientPortal show={showModal}>
                         <AnimatePresence>
                         {showModal && (
-                        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+                        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 xl:pl-[280px]">
                                 <motion.div
                                     initial={{ opacity: 0 }}
                                     animate={{ opacity: 1 }}
                                     exit={{ opacity: 0 }}
                                     onClick={() => setShowModal(false)}
-                                    className="absolute inset-0 bg-gray-900/60 backdrop-blur-sm"
+                                    className="absolute inset-0 bg-slate-900/50 backdrop-blur-sm"
                                 />
                                 <motion.div
                                     initial={{ opacity: 0, scale: 0.95, y: 30 }}
@@ -1323,13 +1323,13 @@ export function CampaignManager() {
                     <ClientPortal show={!!(showPreviewModal && previewCampaign)}>
                         <AnimatePresence>
                         {showPreviewModal && previewCampaign && (
-                        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+                        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 xl:pl-[280px]">
                                 <motion.div
                                     initial={{ opacity: 0 }}
                                     animate={{ opacity: 1 }}
                                     exit={{ opacity: 0 }}
                                     onClick={() => setShowPreviewModal(false)}
-                                    className="absolute inset-0 bg-gray-900/60 backdrop-blur-sm"
+                                    className="absolute inset-0 bg-slate-900/50 backdrop-blur-sm"
                                 />
                                 <motion.div
                                     initial={{ opacity: 0, scale: 0.95 }}
@@ -1473,13 +1473,13 @@ export function CampaignManager() {
                     <ClientPortal show={showIndividualModal}>
                         <AnimatePresence>
                             {showIndividualModal && (
-                                <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+                                <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 xl:pl-[280px]">
                                     <motion.div
                                         initial={{ opacity: 0 }}
                                         animate={{ opacity: 1 }}
                                         exit={{ opacity: 0 }}
                                         onClick={() => setShowIndividualModal(false)}
-                                        className="absolute inset-0 bg-gray-900/60 backdrop-blur-sm"
+                                        className="absolute inset-0 bg-slate-900/50 backdrop-blur-sm"
                                     />
                                     <motion.div
                                         initial={{ opacity: 0, scale: 0.95, y: 30 }}

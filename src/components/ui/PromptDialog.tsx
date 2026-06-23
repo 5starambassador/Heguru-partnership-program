@@ -14,6 +14,7 @@ interface PromptDialogProps {
     onCancel: () => void
     isLoading?: boolean
     initialValue?: string
+    sidebarOffset?: boolean
 }
 
 export function PromptDialog({
@@ -27,7 +28,8 @@ export function PromptDialog({
     onConfirm,
     onCancel,
     isLoading = false,
-    initialValue = ''
+    initialValue = '',
+    sidebarOffset = true
 }: PromptDialogProps) {
     const [value, setValue] = useState(initialValue)
 
@@ -75,14 +77,14 @@ export function PromptDialog({
     return (
         <AnimatePresence>
             {isOpen && (
-                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+                <div className={`fixed inset-0 z-[100] flex items-center justify-center p-4 ${sidebarOffset ? 'xl:pl-[280px]' : ''}`}>
                     {/* Backdrop */}
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         onClick={onCancel}
-                        className="absolute inset-0 bg-gray-900/60 backdrop-blur-md"
+                        className="absolute inset-0 bg-slate-900/50 backdrop-blur-sm"
                     />
 
                     {/* Dialog Card */}

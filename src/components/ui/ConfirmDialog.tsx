@@ -12,6 +12,7 @@ interface ConfirmDialogProps {
     onConfirm: () => void
     onCancel: () => void
     isLoading?: boolean
+    sidebarOffset?: boolean
 }
 
 export function ConfirmDialog({
@@ -23,7 +24,8 @@ export function ConfirmDialog({
     variant = 'danger',
     onConfirm,
     onCancel,
-    isLoading = false
+    isLoading = false,
+    sidebarOffset = true
 }: ConfirmDialogProps) {
     // We handle conditional rendering via AnimatePresence below
 
@@ -76,14 +78,14 @@ export function ConfirmDialog({
     return (
         <AnimatePresence>
             {isOpen && (
-                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+                <div className={`fixed inset-0 z-[100] flex items-center justify-center p-4 ${sidebarOffset ? 'xl:pl-[280px]' : ''}`}>
                     {/* Backdrop */}
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         onClick={onCancel}
-                        className="absolute inset-0 bg-gray-900/60 backdrop-blur-md"
+                        className="absolute inset-0 bg-slate-900/50 backdrop-blur-sm"
                     />
 
                     {/* Dialog Card */}

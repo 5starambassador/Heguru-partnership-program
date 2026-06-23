@@ -89,7 +89,7 @@ export function StudentDetailPanel({ student, users, campuses, onClose, onEdit, 
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 onClick={onClose}
-                className="fixed inset-0 bg-gray-900/40 backdrop-blur-sm z-[60] transition-all duration-300"
+                className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-[60] transition-all duration-300 xl:pl-[280px]"
             />
 
             {/* Panel */}

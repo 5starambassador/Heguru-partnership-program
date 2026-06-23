@@ -88,6 +88,7 @@ export function NotificationDropdown({ userName, referralCode }: { userName?: st
             case 'success': return <CheckCircle size={16} className="text-green-500" />
             case 'warning': return <AlertTriangle size={16} className="text-amber-500" />
             case 'error': return <XCircle size={16} className="text-red-500" />
+            case 'share_prompt': return <Share2 size={16} className="text-primary-orange-hover" />
             default: return <Info size={16} className="text-blue-500" />
         }
     }
@@ -135,10 +136,12 @@ export function NotificationDropdown({ userName, referralCode }: { userName?: st
                         ) : (
                             <div className="divide-y divide-gray-50">
                                 {notifications.map((notification) => (
-                                    <div
+                            <div
                                         key={notification.id}
-                                        onClick={() => handleNotificationClick(notification)}
-                                        className={`px-5 py-4 hover:bg-ui-primary/5 transition-all cursor-pointer group border-b  relative ${!notification.isRead ? 'bg-ui-primary/[0.03]' : ''}`}
+                                        onClick={() => notification.type !== 'share_prompt' && handleNotificationClick(notification)}
+                                        className={`px-5 py-4 hover:bg-ui-primary/5 transition-all group border-b relative ${
+                                            notification.type === 'share_prompt' ? 'cursor-default' : 'cursor-pointer'
+                                        } ${!notification.isRead ? 'bg-ui-primary/[0.03]' : ''}`}
                                     >
                                         <div className="flex gap-4">
                                             <div className={`mt-0.5 flex-shrink-0 p-2 bg-gray-100 dark:bg-white/10 group-hover:scale-110 transition-transform self-start h-fit ${isAmbassador ? 'rounded-md' : 'rounded-xl'}`}>
@@ -155,6 +158,27 @@ export function NotificationDropdown({ userName, referralCode }: { userName?: st
                                                         .replace(/{userName}|{Ambassador}/g, userName || 'Ambassador')
                                                         .replace(/{referralCode}|{code}/g, referralCode || '')}
                                                 </p>
+                                                {/* Share CTA — only for share_prompt notifications */}
+                                                {notification.type === 'share_prompt' && notification.link && (
+                                                    <button
+                                                        onClick={async (e) => {
+                                                            e.stopPropagation()
+                                                            if (!notification.isRead) {
+                                                                await markAsRead(notification.id)
+                                                                setNotifications(prev => prev.map(item =>
+                                                                    item.id === notification.id ? { ...item, isRead: true } : item
+                                                                ))
+                                                                setUnreadCount(prev => Math.max(0, prev - 1))
+                                                            }
+                                                            setIsOpen(false)
+                                                            router.push(notification.link!)
+                                                        }}
+                                                        className="mt-2 flex items-center gap-1.5 px-3 py-1.5 bg-[var(--primary-orange)] hover:bg-[var(--primary-orange-hover)] text-white text-[10px] font-black uppercase tracking-wider rounded-lg transition-all shadow-sm active:scale-95"
+                                                    >
+                                                        <Share2 size={11} />
+                                                        Share to Community
+                                                    </button>
+                                                )}
                                                 <p className="text-[9px] font-black text-gray-400 dark:text-white/30 uppercase tracking-widest mt-2">
                                                     {new Date(notification.createdAt).toLocaleString()}
                                                 </p>

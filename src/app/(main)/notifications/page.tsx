@@ -214,13 +214,13 @@ export default function NotificationsPage() {
             {/* Notification Detail Modal */}
             <AnimatePresence>
                 {selectedNotification && (
-                    <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4">
+                    <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 xl:pl-[280px]">
                         <motion.div
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
                             onClick={() => setSelectedNotification(null)}
-                            className="absolute inset-0 bg-slate-955/60 backdrop-blur-md"
+                            className="absolute inset-0 bg-slate-900/50 backdrop-blur-sm"
                         />
                         <motion.div
                             initial={{ y: "100%" }}
