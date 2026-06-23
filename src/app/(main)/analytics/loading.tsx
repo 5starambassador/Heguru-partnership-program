@@ -21,7 +21,7 @@ export default function Loading() {
 
             {/* Details report list */}
             <div className="bg-white rounded-3xl border border-slate-100 p-6 shadow-sm">
-                <div className="h-6 bg-slate-200 w-48 rounded-lg mb-6 skeleton-shimmer" />
+                <div className="h-6 w-48 rounded-lg mb-6 skeleton-shimmer" />
                 <TableSkeleton rows={5} columns={5} />
             </div>
         </div>

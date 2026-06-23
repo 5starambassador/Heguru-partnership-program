@@ -6,10 +6,10 @@ export default function Loading() {
         <div className="p-6 md:p-8 space-y-6">
             <HeaderSkeleton />
 
-            {/* Actions header banner */}
-            <div className="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm flex justify-between items-center">
-                <div className="h-10 w-48 bg-slate-100 rounded-xl skeleton-shimmer" />
-                <div className="h-10 w-32 bg-slate-200 rounded-xl skeleton-shimmer" />
+            {/* Filter/action bar */}
+            <div className="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm flex justify-between items-center gap-3">
+                <div className="h-10 w-48 rounded-xl skeleton-shimmer" />
+                <div className="h-10 w-32 rounded-xl skeleton-shimmer" />
             </div>
 
             {/* Tickets table */}
