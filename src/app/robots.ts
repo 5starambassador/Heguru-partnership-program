@@ -7,6 +7,6 @@ export default function robots(): MetadataRoute.Robots {
             allow: '/',
             disallow: ['/admin/', '/superadmin/', '/campus/', '/api/'],
         },
-        sitemap: 'https://ambassador.heguru.in/sitemap.xml',
+        sitemap: 'https://partner.heguruindia.com/sitemap.xml',
     }
 }

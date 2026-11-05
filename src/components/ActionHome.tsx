@@ -11,7 +11,7 @@ import { PageAnimate, PageItem } from '@/components/PageAnimate'
 import { StatCard } from '@/components/ui/StatCard'
 import { encryptReferralCode } from '@/lib/crypto'
 
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://5starambassador.com'
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://partner.heguruindia.com'
 
 import { ClientUser } from '@/types/client-types'
 

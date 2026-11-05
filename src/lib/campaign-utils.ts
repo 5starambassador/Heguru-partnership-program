@@ -215,7 +215,7 @@ export const getProgramLeadQuery = (audience: AudienceFilter): Prisma.ProgramLea
 export const aliasTokens = async (text: string, user: any, audienceType: string = 'AMBASSADORS') => {
     if (!text) return ''
     const type = audienceType || 'AMBASSADORS'
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://www.5starambassador.com'
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://partner.heguruindia.com'
     // RESOLVER v6 - forced recompile stamp
 
     // ✅ BARE-KEY RESILIENCE: If the UI sends "Name" instead of "{Name}", wrap it

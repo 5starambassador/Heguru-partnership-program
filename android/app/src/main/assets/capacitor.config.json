@@ -1,9 +1,9 @@
 {
-	"appId": "in.heguru.ambassador",
-	"appName": "5-Star Ambassador",
+	"appId": "com.heguruindiapartnershipprogram.app",
+	"appName": "Heguru Partnership Program",
 	"webDir": "public",
 	"server": {
-		"url": "https://www.5starambassador.com",
+		"url": "https://partner.heguruindia.com",
 		"cleartext": true
 	},
 	"plugins": {

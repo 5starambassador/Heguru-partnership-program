@@ -2,11 +2,11 @@
 
 import prisma from '@/lib/prisma'
 import { getCurrentUser } from '@/lib/auth-service'
-import { isDevelopmentMode } from '@/lib/env-mode'
 import { logger } from '@/lib/logger'
 import { revalidatePath } from 'next/cache'
 import { EmailService } from '@/lib/email-service'
 import { smsService } from '@/lib/sms-service'
+import { reserveOtpAttempt, clearOtpAttempts } from '@/lib/otp-security'
 import { whatsappService } from '@/lib/whatsapp-service'
 import { getNotificationSettings } from './notification-actions'
 import { notifyReferralSubmitted, notifyAdminNewReferral } from '@/lib/notification-helper'
@@ -75,7 +75,6 @@ export async function sendReferralOtp(mobileInput: string, referralCode?: string
 
     // Smart Sticky: Reuse if valid for at least 60 more seconds
     if (existingRecord && existingRecord.expiresAt > new Date(Date.now() + 60000)) {
-        console.log('[DEBUG] Smart Sticky (Referral): Reusing existing OTP', existingRecord.otp)
         finalOtp = existingRecord.otp
     } else {
         // Generate New - 4 digits, 3 minutes (consistent with main flow)
@@ -88,14 +87,9 @@ export async function sendReferralOtp(mobileInput: string, referralCode?: string
             update: { otp: finalOtp, expiresAt },
             create: { mobile, otp: finalOtp, expiresAt }
         })
-        console.log('[DEBUG] Generated New OTP (Referral):', finalOtp)
     }
 
     try {
-        if (isDevelopmentMode()) {
-            logger.info(`[OTP] Sending OTP ${finalOtp} to ${destinationMobile} (Ambassador: ${isAmbassadorVerified})`)
-        }
-
         // Send SMS
         const smsResult = await smsService.sendOTP(destinationMobile, finalOtp, 'referral')
 
@@ -129,8 +123,7 @@ export async function sendReferralOtp(mobileInput: string, referralCode?: string
         return {
             success: true,
             isAmbassadorVerified,
-            ambassadorName,
-            otp: isDevelopmentMode() ? finalOtp : undefined
+            ambassadorName
         }
     } catch (error) {
         logger.error('Failed to generate OTP:', error)
@@ -140,21 +133,14 @@ export async function sendReferralOtp(mobileInput: string, referralCode?: string
 
 export async function verifyReferralOtp(mobileInput: string, otp: string) {
     const mobile = sanitizeMobile(mobileInput)
-    console.log('[DEBUG] verifyReferralOtp:', { otp, mobileInput, sanitized: mobile })
-
     // Mock OTP for testing - DISABLED
     // if (otp === '1234') return { success: true }
 
     try {
-        const verifyLimitKey = `verify:otp:${mobile}`
-        const verifyLimit = await prisma.rateLimit.findUnique({ where: { key: verifyLimitKey } })
+        const attempt = await reserveOtpAttempt(mobile)
+        if (!attempt.allowed) return { success: false, error: attempt.error }
+
         const now = new Date()
-
-        if (verifyLimit && verifyLimit.resetAt > now && verifyLimit.count >= 5) {
-            const timeLeft = Math.ceil((verifyLimit.resetAt.getTime() - now.getTime()) / 60000)
-            return { success: false, error: `Too many failed attempts. Please try again in ${timeLeft} minutes.` }
-        }
-
         const record = await prisma.otpVerification.findUnique({ where: { mobile } })
 
         if (!record) {
@@ -165,25 +151,9 @@ export async function verifyReferralOtp(mobileInput: string, otp: string) {
         const isExpired = now > record.expiresAt
         const isMatch = record.otp === otp
 
-        console.log('[DEBUG] Referral OTP Check:', {
-            serverTime: now,
-            expiresAt: record.expiresAt,
-            isExpired,
-            isMatch,
-            recordOtp: record.otp,
-            receivedOtp: otp
-        })
-
         if (isExpired) return { success: false, error: 'OTP has expired. Please request a new one.' }
 
         if (!isMatch) {
-            // Increment failed attempt counter
-            await prisma.rateLimit.upsert({
-                where: { key: verifyLimitKey },
-                update: { count: { increment: 1 } },
-                create: { key: verifyLimitKey, count: 1, resetAt: new Date(now.getTime() + 15 * 60 * 1000) }
-            })
-
             await logAction('OTP_VERIFY_FAILURE', 'auth', `Incorrect Referral OTP attempt for ${mobile}`, mobile)
             return { success: false, error: 'Incorrect OTP. Please check and try again.' }
         }
@@ -192,7 +162,7 @@ export async function verifyReferralOtp(mobileInput: string, otp: string) {
         await prisma.otpVerification.delete({ where: { mobile } })
 
         // Success: Clear throttling counter
-        await prisma.rateLimit.delete({ where: { key: verifyLimitKey } }).catch(() => null)
+        await clearOtpAttempts(mobile)
         await logAction('OTP_VERIFY_SUCCESS', 'auth', `Referral OTP verified successfully for ${mobile}`, mobile)
 
         return { success: true }

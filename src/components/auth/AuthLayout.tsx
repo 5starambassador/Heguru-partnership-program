@@ -111,6 +111,7 @@ export const AuthLayout = ({ children, animationKey }: { children: React.ReactNo
                         © 2026 Heguru Educational Public Trust
                     </p>
                     <div className="flex justify-center gap-4 text-[11px] font-medium text-[var(--text-gray)]/40 uppercase tracking-widest">
+                        <a href="/policies/privacy" className="hover:text-[var(--primary-orange)] transition-colors">Privacy</a>
                         <a href="/policies/terms" className="hover:text-[var(--primary-orange)] transition-colors">Terms</a>
                         <a href="/policies/refund" className="hover:text-[var(--primary-orange)] transition-colors">Refunds</a>
                         <a href="/policies/contact" className="hover:text-[var(--primary-orange)] transition-colors">Contact</a>

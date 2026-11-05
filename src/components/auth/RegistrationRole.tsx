@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { Star, ShieldCheck, User, GraduationCap, ChevronLeft } from 'lucide-react'
 import { PrivacyModal } from '@/components/PrivacyModal'
 import { getGradesForCampus } from '@/lib/grade-utils'
+import { RegistrationProgress } from './RegistrationProgress'
 
 interface RegistrationRoleProps {
     formData: any
@@ -47,14 +48,17 @@ export const RegistrationRole = ({ formData, setFormData, campuses, onNext, onBa
                             25<sup className="text-[0.6em] ml-0.5">th</sup> <span className="ml-1.5">Year Celebration</span>
                         </div> */}
                     </div>
-                    <h2 className="text-3xl font-black text-[var(--deep-black)] tracking-tighter font-heading">Select Profile</h2>
-                    <p className="text-[var(--text-gray)] text-[10px] font-bold uppercase tracking-[0.2em] mt-2">Step 2 of 2</p>
+                    <h2 className="text-3xl font-black text-[var(--deep-black)] tracking-tighter font-heading">Your Profile</h2>
+                    <p className="text-[var(--text-gray)] text-xs font-medium">Tell us how you are connected to Heguru.</p>
+                    <div className="pt-3">
+                        <RegistrationProgress currentStep={2} />
+                    </div>
                 </div>
 
                 <div className="space-y-4">
                     {/* Role Selection */}
                     <div>
-                        <label className="text-[var(--text-gray)] text-[10px] font-bold uppercase tracking-[0.2em] mb-2 block ml-1">Membership Level</label>
+                        <label className="text-[var(--text-gray)] text-[10px] font-bold uppercase tracking-[0.2em] mb-2 block ml-1">I am a</label>
                         <div className="grid grid-cols-4 gap-2">
                             {['Parent', 'Staff', 'Alumni', 'Others'].map((role) => (
                                 <div
@@ -343,7 +347,7 @@ export const RegistrationRole = ({ formData, setFormData, campuses, onNext, onBa
                         onClick={onNext}
                         disabled={loading || !isFormValid()}
                     >
-                        Proceed to Payment
+                        {loading ? 'Creating your account...' : 'Complete Registration'}
                     </button>
                 </div>
             </div>

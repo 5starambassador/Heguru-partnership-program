@@ -320,7 +320,7 @@ export async function notifyVerificationApproved(userId: number) {
         })
         if (user?.mobileNumber) {
             // Template: kyc_approved (Name, Link)
-            const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://ambassador.heguru.in'
+            const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://partner.heguruindia.com'
             await whatsappService.sendByEvent(
                 user.mobileNumber,
                 "KYC_APPROVED",
@@ -419,7 +419,7 @@ export async function notifyProgramLaunch(programTitle: string, slug: string) {
 
     if (activeUsers.length === 0) return
 
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://ambassador.heguru.in'
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://partner.heguruindia.com'
     const programUrl = `${baseUrl}/dashboard/gallery/${slug}`
 
     // NEW: WhatsApp Broadcast to Active Users

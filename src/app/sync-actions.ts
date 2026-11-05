@@ -20,20 +20,18 @@ export async function syncUserStats(userId: number) {
 
         if (!user) return { success: false, error: 'User not found' }
 
-        // AS SENIOR EXPERT RULE: Account Status is strictly driven by Payment Status
-        // We proactively check the Payment table to ensure the User record is in sync with reality.
+        // Since onboarding payment verification is disabled, hasPaid is default true.
+        // We still check the Payment table to preserve details for legacy/active payers.
         const successPayment = await prisma.payment.findFirst({
             where: { userId, paymentStatus: { in: ['Success', 'SUCCESS'] } },
             orderBy: { createdAt: 'desc' }
         })
 
-        const normalizedUserPaymentStatus = (user.paymentStatus || '').toLowerCase()
-        let hasPaid = normalizedUserPaymentStatus === 'success' || normalizedUserPaymentStatus === 'completed'
+        let hasPaid = true
 
         let updatedUserDetails: any = {}
 
         if (successPayment) {
-            hasPaid = true
             updatedUserDetails.paymentStatus = 'Success'
             updatedUserDetails.paymentAmount = successPayment.orderAmount
 

@@ -39,29 +39,37 @@ export function useFcmToken() {
         async function init() {
             if (Capacitor.isNativePlatform()) {
                 // NATIVE (Android/iOS)
-                const permStatus = await PushNotifications.checkPermissions()
+                try {
+                    const permStatus = await PushNotifications.checkPermissions()
 
-                let currentPerm = permStatus.receive
-                if (permStatus.receive === 'prompt') {
-                    const req = await PushNotifications.requestPermissions()
-                    currentPerm = req.receive
-                    setPermission(req.receive)
-                } else {
-                    setPermission(permStatus.receive)
-                }
+                    let currentPerm = permStatus.receive
+                    if (permStatus.receive === 'prompt') {
+                        const req = await PushNotifications.requestPermissions()
+                        currentPerm = req.receive
+                        setPermission(req.receive)
+                    } else {
+                        setPermission(permStatus.receive)
+                    }
 
-                if (currentPerm === 'granted') {
-                    await PushNotifications.register()
+                    if (currentPerm === 'granted') {
+                        await PushNotifications.register()
 
-                    PushNotifications.addListener('registration', async (t) => {
-                        console.log('Push Registration Token:', t.value)
-                        setToken(t.value)
-                        await registerDevice(t.value, Capacitor.getPlatform().toUpperCase() as any)
-                    })
+                        PushNotifications.addListener('registration', async (t) => {
+                            console.log('Push Registration Token:', t.value)
+                            setToken(t.value)
+                            try {
+                                await registerDevice(t.value, Capacitor.getPlatform().toUpperCase() as any)
+                            } catch (regErr) {
+                                console.error('Error saving device token to DB:', regErr)
+                            }
+                        })
 
-                    PushNotifications.addListener('registrationError', (error) => {
-                        console.error('Error on registration:', error)
-                    })
+                        PushNotifications.addListener('registrationError', (error) => {
+                            console.error('Error on registration:', error)
+                        })
+                    }
+                } catch (pushErr) {
+                    console.error('Push notification initialization error (non-fatal):', pushErr)
                 }
             } else {
                 // WEB

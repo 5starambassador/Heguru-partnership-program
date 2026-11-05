@@ -8,11 +8,14 @@ const nextConfig: NextConfig = {
     unoptimized: true, // Keep this if we ever do partial export, but fine for standalone too
   },
   experimental: {
+    // Hostinger reports many CPUs but limits threads, so more build workers crash the build.
+    cpus: 1,
     serverActions: {
       bodySizeLimit: '50mb',
       allowedOrigins: [
         'localhost:3000', 
         'localhost:3001', 
+        'partner.heguruindia.com',
         'www.5starambassador.com',
         'capacitor://localhost', 
         'http://localhost',
@@ -24,7 +27,7 @@ const nextConfig: NextConfig = {
   allowedDevOrigins: ['127.0.0.1:3001', 'localhost:3001', 'capacitor://localhost', 'http://localhost'],
   env: {
     // Expose APP URL to client preference: process.env > calculated fallback
-    NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'https://www.5starambassador.com'),
+    NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'https://partner.heguruindia.com'),
   },
   typescript: {
     // Type checking is now enforced — remove this comment if all types pass cleanly

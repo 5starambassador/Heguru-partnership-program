@@ -1,6 +1,7 @@
 import { ChevronLeft, Star, Timer, RefreshCw } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { useWebOTP } from '@/hooks/useWebOTP'
+import { RegistrationProgress } from './RegistrationProgress'
 
 interface OtpVerificationProps {
     mobile: string
@@ -16,7 +17,9 @@ interface OtpVerificationProps {
 
 export const OtpVerification = ({ mobile, otp, setOtp, onVerify, onBack, onResend, loading, isNewUser, isForgotMode }: OtpVerificationProps) => {
     useWebOTP(setOtp)
-    const [timeLeft, setTimeLeft] = useState(180) // 3 minutes
+    // Must match the OTP validity set in sendOtp and shown in the WhatsApp templates
+    const otpValiditySeconds = isForgotMode ? 5 * 60 : 10 * 60
+    const [timeLeft, setTimeLeft] = useState(otpValiditySeconds)
     const [canResend, setCanResend] = useState(false)
 
     useEffect(() => {
@@ -50,7 +53,7 @@ export const OtpVerification = ({ mobile, otp, setOtp, onVerify, onBack, onResen
     const handleResendClick = () => {
         if (!canResend || !onResend) return
         setCanResend(false)
-        setTimeLeft(180) // Reset expiration timer on new OTP
+        setTimeLeft(otpValiditySeconds) // Reset expiration timer on new OTP
         onResend()
         // Re-enable resend after 30s
         setTimeout(() => setCanResend(true), 30000)
@@ -81,13 +84,20 @@ export const OtpVerification = ({ mobile, otp, setOtp, onVerify, onBack, onResen
                         </div> */}
                     </div>
                 </div>
-                <h2 className="text-xl font-black text-[var(--deep-black)] tracking-tight font-heading">Verify Identity</h2>
+                <h2 className="text-xl font-black text-[var(--deep-black)] tracking-tight font-heading">Verify Your Mobile</h2>
+                <p className="text-[var(--text-gray)] text-xs font-medium">We sent a 4-digit code to your WhatsApp on</p>
                 <div className="inline-block px-3 py-1 rounded-full bg-[var(--soft-gray)] border border-[var(--warm-gray)]">
                     <p className="text-[var(--deep-black)] text-xs font-mono tracking-widest">+91 {mobile}</p>
                 </div>
-                <p className="text-[10px] text-[var(--primary-orange)] font-bold uppercase tracking-[0.2em] mt-2">
-                    {isForgotMode ? 'Password Recovery' : isNewUser ? 'New Registration' : 'Secure Login'}
-                </p>
+                {isNewUser && !isForgotMode ? (
+                    <div className="pt-3">
+                        <RegistrationProgress currentStep={0} />
+                    </div>
+                ) : (
+                    <p className="text-[10px] text-[var(--primary-orange)] font-bold uppercase tracking-[0.2em] mt-2">
+                        {isForgotMode ? 'Password Recovery' : 'Secure Login'}
+                    </p>
+                )}
             </div>
 
             <div className="space-y-6">
@@ -131,7 +141,7 @@ export const OtpVerification = ({ mobile, otp, setOtp, onVerify, onBack, onResen
                     disabled={loading || otp.length !== 4}
                 >
                     <span className="relative z-10 flex items-center gap-2 transition-colors">
-                        {loading ? 'Verifying...' : 'Verify & Proceed'}
+                        {loading ? 'Verifying...' : 'Verify & Continue'}
                     </span>
                 </button>
             </div>

@@ -106,7 +106,7 @@ export async function executeCampusEnforcementLogic() {
                             <p>We noticed that your Heguru Partnership Program (APP) profile is missing campus information for your child.</p>
                             <p>To activate your referral benefits and rewards, please:</p>
                             <ol>
-                                <li>Login to your account at <a href="https://5starambassador.com" style="color: #b91c1c;">5starambassador.com</a></li>
+                                <li>Login to your account at <a href="https://partner.heguruindia.com" style="color: #b91c1c;">partner.heguruindia.com</a></li>
                                 <li>Go to Profile Settings</li>
                                 <li>Update your child's campus information</li>
                             </ol>

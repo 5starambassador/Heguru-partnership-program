@@ -80,6 +80,8 @@ export function MobileWelcome({ onGetStarted }: MobileWelcomeProps) {
             </div>
 
             <div className="p-4 flex justify-center gap-4 text-[9px] uppercase tracking-widest text-[var(--text-gray)]/50 font-bold relative z-10 border-t border-[var(--soft-gray)] bg-white rounded-b-3xl">
+                <a href="/policies/privacy" className="hover:text-[var(--primary-orange)] transition-colors">Privacy</a>
+                <span>•</span>
                 <a href="/policies/terms" className="hover:text-[var(--primary-orange)] transition-colors">Terms</a>
                 <span>•</span>
                 <a href="/policies/refund" className="hover:text-[var(--primary-orange)] transition-colors">Refunds</a>

@@ -81,7 +81,7 @@ Your unique referral code is: <strong style="color: #CC0000; font-size: 18px;">$
 
 Share this code with friends and family to earn exclusive benefits. Every successful admission through your referral earns you rewards!`,
                 ctaText: 'Start Referring Now',
-                ctaUrl: 'https://ambassador.heguru.in/refer',
+                ctaUrl: 'https://partner.heguruindia.com/refer',
                 footer: 'Thank you for being part of our ambassador family.'
             })
         })
@@ -124,7 +124,7 @@ export async function sendReferralStatusEmail(
 
 ${newStatus === 'Confirmed' ? 'Congratulations! This referral has been confirmed. Your benefits will be credited accordingly.' : 'We will keep you updated on further progress.'}`,
                 ctaText: 'View All Referrals',
-                ctaUrl: 'https://ambassador.heguru.in/referrals'
+                ctaUrl: 'https://partner.heguruindia.com/referrals'
             })
         })
         return { success: true }

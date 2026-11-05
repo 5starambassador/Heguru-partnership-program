@@ -390,7 +390,7 @@ export function DashboardClient({
                 }}
                 recentReferrals={recentReferralsDisplay}
                 whatsappUrl={whatsappUrl}
-                referralLink={`${process.env.NEXT_PUBLIC_BASE_URL || 'https://5starambassador.com'}/r/${user.encryptedCode}`}
+                referralLink={`${process.env.NEXT_PUBLIC_BASE_URL || 'https://partner.heguruindia.com'}/r/${user.encryptedCode}`}
                 monthStats={monthStats}
                 totalLeadsCount={pendingCount}
                 overrideEarnedAmount={benefitStats.earned}

@@ -2,7 +2,7 @@
 
 import prisma, { withRetry } from '@/lib/prisma'
 import { getCurrentUser } from '@/lib/auth-service'
-import { revalidatePath } from 'next/cache'
+import { revalidatePath, unstable_cache, revalidateTag } from 'next/cache'
 import { logAction } from '@/lib/audit-logger'
 import { z } from 'zod'
 import { isDevelopmentMode } from '@/lib/env-mode'
@@ -51,9 +51,55 @@ export async function getRegistrationStatus(): Promise<boolean> {
     })
 }
 
-// In-memory cache for system settings to reduce DB load & handle quota limits
+// In-memory cache fallback (still maintained for safety, but Next.js data cache handles request deduplication/caching)
 let settingsCache: { data: any; timestamp: number } | null = null;
 const CACHE_TTL = 1000 * 60 * 5; // 5 minutes
+
+// Next.js Data Cache wrapper to bypass DB query latency on every SSR request
+const getCachedSystemSettingsRaw = unstable_cache(
+    async () => {
+        // Fetch global flags and current academic year in parallel with individual catches
+        const [settings, currentYearRecord] = await withRetry(() => Promise.all([
+            prisma.systemSettings.findFirst().catch(e => {
+                console.warn('getSystemSettings: settings fetch failed, using fallback.', e.message || e);
+                return null;
+            }),
+            // @ts-ignore
+            prisma.academicYear.findFirst({ where: { isCurrent: true } }).catch(e => {
+                console.warn('getSystemSettings: academicYear fetch failed, using fallback.', e.message || e);
+                return null;
+            })
+        ]));
+
+        return {
+            settings: settings ? {
+                id: settings.id,
+                allowNewRegistrations: settings.allowNewRegistrations,
+                defaultStudentFee: settings.defaultStudentFee,
+                maintenanceMode: settings.maintenanceMode,
+                staffReferralText: settings.staffReferralText,
+                parentReferralText: settings.parentReferralText,
+                staffWelcomeMessage: settings.staffWelcomeMessage,
+                parentWelcomeMessage: settings.parentWelcomeMessage,
+                alumniReferralText: settings.alumniReferralText,
+                alumniWelcomeMessage: settings.alumniWelcomeMessage,
+                allowManualPayments: settings.allowManualPayments,
+                activeOnlineGateway: settings.activeOnlineGateway,
+                updatedAt: settings.updatedAt.toISOString(), // Convert to string for serialization
+            } : null,
+            currentYearRecord: currentYearRecord ? {
+                id: currentYearRecord.id,
+                year: currentYearRecord.year,
+                isCurrent: currentYearRecord.isCurrent
+            } : null
+        };
+    },
+    ['system-settings-raw'],
+    {
+        tags: ['system-settings', 'academic-year'],
+        revalidate: 300 // 5 minutes cache TTL
+    }
+);
 
 export async function getSystemSettings() {
     // Default fallback settings
@@ -70,16 +116,7 @@ export async function getSystemSettings() {
     try {
         const isDev = isDevelopmentMode();
 
-        // Return cached settings if valid
-        const now = Date.now();
-        if (settingsCache && (now - settingsCache.timestamp < CACHE_TTL)) {
-            return {
-                ...settingsCache.data,
-                isDevMode: isDev
-            };
-        }
-
-        // Guard against Prisma initialization failures
+        // 1. Guard against Prisma initialization failures
         if (!prisma) {
             console.warn('Prisma client not initialized in getSystemSettings');
             const fallback = settingsCache?.data || defaultSettings;
@@ -89,32 +126,23 @@ export async function getSystemSettings() {
             };
         }
 
-        // Fetch global flags and current academic year in parallel with individual catches
-        const [settings, currentYearRecord] = await withRetry(() => Promise.all([
-            prisma.systemSettings.findFirst().catch(e => {
-                console.warn('getSystemSettings: settings fetch failed, using fallback.', e.message || e);
-                return null;
-            }),
-            // @ts-ignore
-            prisma.academicYear.findFirst({ where: { isCurrent: true } }).catch(e => {
-                console.warn('getSystemSettings: academicYear fetch failed, using fallback.', e.message || e);
-                return null;
-            })
-        ]));
+        // 2. Fetch from Next.js Data Cache
+        const cachedData = await getCachedSystemSettingsRaw();
+        const settings = cachedData.settings ? {
+            ...cachedData.settings,
+            updatedAt: new Date(cachedData.settings.updatedAt) // Hydrate Date object
+        } : null;
+        const currentYearRecord = cachedData.currentYearRecord;
 
         const consolidatedData = {
-            ...(settings || (settingsCache?.data || defaultSettings)),
+            ...(settings || defaultSettings),
             currentAcademicYear: currentYearRecord?.year || '2025-2026',
             // @ts-ignore
             activeOnlineGateway: settings?.activeOnlineGateway || process.env.NEXT_PUBLIC_ACTIVE_ONLINE_GATEWAY || 'CASHFREE'
         };
-        // @ts-ignore
-        console.log(`[SETTINGS] Active Gateway: ${consolidatedData.activeOnlineGateway} (DB: ${settings?.activeOnlineGateway}, Env: ${process.env.NEXT_PUBLIC_ACTIVE_ONLINE_GATEWAY})`);
 
-        // Update cache if we got real data or already have cache
-        if (settings || settingsCache) {
-            settingsCache = { data: consolidatedData, timestamp: now };
-        }
+        // Sync to legacy in-memory cache for additional protection
+        settingsCache = { data: consolidatedData, timestamp: Date.now() };
 
         return {
             ...consolidatedData,
@@ -201,6 +229,7 @@ export async function updateSystemSettings(rawData: any) {
         })
 
         revalidatePath('/superadmin')
+        revalidateTag('system-settings', 'default')
         settingsCache = null; // Invalidate cache after successful update
         return {
             success: true,
@@ -375,6 +404,7 @@ export async function addAcademicYear(data: { year: string; startDate: Date; end
         })
 
         await logAction('CREATE', 'settings', `Added new academic year: ${data.year}`, data.year)
+        revalidateTag('academic-year', 'default')
 
         return { success: true }
     } catch (error) {
@@ -408,6 +438,7 @@ export async function setCurrentAcademicYear(yearString: string) {
         await logAction('UPDATE', 'settings', `Set current academic year to ${yearString}`, yearString)
 
         revalidatePath('/superadmin')
+        revalidateTag('academic-year', 'default')
         return { success: true }
     } catch (error) {
         console.error('Error setting current academic year:', error)

@@ -11,8 +11,8 @@ import { createSession } from '@/lib/session'
 import { redirect } from 'next/navigation'
 import bcrypt from 'bcryptjs'
 
-import { smsService } from '@/lib/sms-service'
-import { whatsappService } from '@/lib/whatsapp-service'
+import { whatsappService, type WhatsAppOtpFlow } from '@/lib/whatsapp-service'
+import { reserveOtpAttempt, clearOtpAttempts, markMobileVerified, isMobileVerified, clearMobileVerified } from '@/lib/otp-security'
 import { getCurrentUser } from '@/lib/auth-service'
 import { UserRole, AccountStatus, LeadStatus } from '@prisma/client'
 import { mapUserRole, mapAdminRole, mapAccountStatus } from '@/lib/enum-utils'
@@ -34,15 +34,11 @@ export async function checkSession() {
             redirectPath = '/campus'
         } else if (role.includes('Admin')) {
             redirectPath = '/admin'
-        } else if ((user as any).status === 'Pending') {
-            redirectPath = '/?step=payment'
         }
         return { authenticated: true, redirect: redirectPath, user }
     }
     return { authenticated: false }
 }
-
-import { OTPFlow } from '@/lib/sms-service'
 
 // Helper for consistent sanitization
 function sanitizeMobile(input: string): string {
@@ -53,7 +49,7 @@ function sanitizeMobile(input: string): string {
     return mobile
 }
 
-export async function sendOtp(mobileInput: string, forceOtp: boolean = false, flow: OTPFlow = 'registration') {
+export async function sendOtp(mobileInput: string, forceOtp: boolean = false, flow: WhatsAppOtpFlow = 'registration') {
     const mobile = sanitizeMobile(mobileInput)
     console.log('[DEBUG] sendOtp input:', mobileInput, 'Sanitized:', mobile)
 
@@ -104,12 +100,13 @@ export async function sendOtp(mobileInput: string, forceOtp: boolean = false, fl
 
         // Smart Sticky: Reuse if valid for at least 60 more seconds
         if (existingRecord && existingRecord.expiresAt > new Date(Date.now() + 60000)) {
-            console.log('[DEBUG] Smart Sticky: Reusing existing OTP', existingRecord.otp)
             finalOtp = existingRecord.otp
         } else {
             // 2. Generate New
             finalOtp = Math.floor(1000 + Math.random() * 9000).toString()
-            const expiresAt = new Date(Date.now() + 3 * 60 * 1000) // 3 Minutes
+            // Must match the expiry shown in each approved WhatsApp template footer
+            const validityMinutes = flow === 'forgot-password' ? 5 : 10
+            const expiresAt = new Date(Date.now() + validityMinutes * 60 * 1000)
 
             // 3. Upsert (Atomic Update) - This handles the "Delete then Create" raciness implicitly
             await withRetry(() => prisma.otpVerification.upsert({
@@ -117,38 +114,23 @@ export async function sendOtp(mobileInput: string, forceOtp: boolean = false, fl
                 update: { otp: finalOtp, expiresAt },
                 create: { mobile, otp: finalOtp, expiresAt }
             }))
-            console.log('[DEBUG] Generated New OTP:', finalOtp)
         }
 
-        // Send SMS
-        const smsResult = await smsService.sendOTP(mobile, finalOtp, flow)
+        // Send via the MSG91 WhatsApp authentication template for this flow
+        const whatsappResult = await whatsappService.sendOtp(mobile, finalOtp, flow)
 
-        // Parallel/Alternative: WhatsApp (If enabled)
-        try {
-            const settings = await withRetry(() => prisma.notificationSettings.findFirst())
-            if (settings?.whatsappNotifications) {
-                // We use a generic OTP template name. User will need to ensure this exists in MSG91.
-                // Template: "Your Heguru OTP is {{1}}. Valid for 3 minutes."
-                // await whatsappService.sendTemplateMessage(mobile, "otp_verification", [finalOtp])
-                console.log('💬 [Action] WhatsApp OTP triggered for:', mobile, '(ON HOLD)')
-            }
-        } catch (waError) {
-            console.error('⚠️ [Action] WhatsApp OTP failed (silent):', waError)
-        }
-
-        if (!smsResult.success) {
-            console.error('[Action] SMS Failed:', smsResult.error)
+        if (!whatsappResult.success) {
+            console.error('[Action] WhatsApp OTP Failed:', whatsappResult.error)
             // CRITICAL FIX: DO NOT DELETE RECORD ON FAILURE!
-            // This prevents "Phantom OTPs" where the user got the SMS but we deleted the record.
+            // This prevents "Phantom OTPs" where the user got the message but we deleted the record.
             // If they click "Resend", we will just pick up the Sticky OTP above and try sending again.
-            return { success: false, error: 'SMS delivery failed. Please click Resend.' }
+            return { success: false, error: 'WhatsApp OTP delivery failed. Please click Resend.' }
         }
 
         return {
             success: true,
             exists,
-            hasPassword,
-            otp: isDevelopmentMode() ? finalOtp : undefined
+            hasPassword
         }
 
     } catch (error: any) {
@@ -175,6 +157,9 @@ export async function verifyOtpAndResetPassword(mobileInput: string, otp: string
         mobile = mobile.slice(2)
     }
 
+    const attempt = await reserveOtpAttempt(mobile)
+    if (!attempt.allowed) return { success: false, error: attempt.error }
+
     // 1. Verify OTP
     const record = await prisma.otpVerification.findUnique({
         where: { mobile }
@@ -183,8 +168,11 @@ export async function verifyOtpAndResetPassword(mobileInput: string, otp: string
     if (!record) return { success: false, error: 'Request expired. Please try again.' }
 
     if (record.otp !== otp || new Date() > record.expiresAt) {
+        await logAction('OTP_VERIFY_FAILURE', 'auth', `Incorrect password reset OTP attempt for ${mobile}`, mobile)
         return { success: false, error: 'Invalid or expired OTP' }
     }
+
+    await clearOtpAttempts(mobile)
 
     // 2. Hash Password
     const hashedPassword = await bcrypt.hash(newPassword, 10)
@@ -222,17 +210,10 @@ export async function verifyOtpOnly(otp: string, mobileInput?: string) {
         mobile = mobile.slice(2)
     }
 
-    console.log('[DEBUG] verifyOtpOnly called:', { otp, mobileInput, sanitized: mobile })
+    const attempt = await reserveOtpAttempt(mobile)
+    if (!attempt.allowed) return { success: false, error: attempt.error }
 
-    const verifyLimitKey = `verify:otp:${mobile}`
-    const verifyLimit = await prisma.rateLimit.findUnique({ where: { key: verifyLimitKey } })
     const now = new Date()
-
-    if (verifyLimit && verifyLimit.resetAt > now && verifyLimit.count >= 5) {
-        const timeLeft = Math.ceil((verifyLimit.resetAt.getTime() - now.getTime()) / 60000)
-        return { success: false, error: `Too many failed attempts. Please try again in ${timeLeft} minutes.` }
-    }
-
     const record = await prisma.otpVerification.findUnique({
         where: { mobile }
     })
@@ -245,33 +226,18 @@ export async function verifyOtpOnly(otp: string, mobileInput?: string) {
     const isExpired = now > record.expiresAt
     const isMatch = record.otp === otp
 
-    console.log('[DEBUG] OTP Verification:', {
-        serverTime: now,
-        expiresAt: record.expiresAt,
-        isExpired,
-        isMatch,
-        recordOtp: record.otp,
-        receivedOtp: otp
-    })
-
     if (isExpired) {
         return { success: false, error: 'OTP has expired. Please request a new one.' }
     }
 
     if (!isMatch) {
-        // Increment failed attempt counter
-        await prisma.rateLimit.upsert({
-            where: { key: verifyLimitKey },
-            update: { count: { increment: 1 } },
-            create: { key: verifyLimitKey, count: 1, resetAt: new Date(now.getTime() + 15 * 60 * 1000) }
-        })
-
         await logAction('OTP_VERIFY_FAILURE', 'auth', `Incorrect OTP attempt for ${mobile}`, mobile)
         return { success: false, error: 'Incorrect OTP. Please check and try again.' }
     }
 
-    // Success: Clear throttling counter
-    await prisma.rateLimit.delete({ where: { key: verifyLimitKey } }).catch(() => null)
+    // Success: Clear throttling counter and let registration trust this mobile
+    await clearOtpAttempts(mobile)
+    await markMobileVerified(mobile)
     await logAction('OTP_VERIFY_SUCCESS', 'auth', `OTP verified successfully for ${mobile}`, mobile)
 
     return { success: true }
@@ -376,10 +342,6 @@ export async function getLoginRedirect(mobile: string) {
         where: { mobileNumber: mobile }
     }))
 
-    if (user && user.status === 'Pending') {
-        return '/?step=payment'
-    }
-
     // Default to dashboard for regular users
     return '/dashboard'
 }
@@ -399,22 +361,18 @@ export async function getRegistrationCampuses() {
 }
 
 export async function registerUser(formData: any) {
-    const { fullName, mobileNumber, password, role, childInHeguru, childName, bankAccountDetails, campusId, grade, childEprNo, empId, aadharNo, email, childCampusId } = formData
-    const transactionId = normalizeScientificNotation(formData.transactionId)
+    const { fullName, password, role, childInHeguru, childName, bankAccountDetails, campusId, grade, childEprNo, empId, aadharNo, email, childCampusId } = formData
+    const transactionId = formData.transactionId ? normalizeScientificNotation(formData.transactionId) : null
+
+    const mobileNumber = sanitizeMobile(formData.mobileNumber || '')
+    if (!(await isMobileVerified(mobileNumber))) {
+        return { success: false, error: 'Please verify your mobile number with OTP again.' }
+    }
 
     // Secure Password Policy Check
     const passwordRegex = /^(?=.*[0-9])(?=.*[!@#$%^&*])(?=.*[A-Z])[a-zA-Z0-9!@#$%^&*]{8,}$/;
     if (!password || !passwordRegex.test(password)) {
         return { success: false, error: 'Password must be at least 8 chars with 1 uppercase, 1 special char, and 1 number.' }
-    }
-
-    if (transactionId) {
-        const validation = transactionIdSchema.safeParse(transactionId)
-        if (!validation.success) {
-            return { success: false, error: validation.error.issues[0].message }
-        }
-    } else {
-        return { success: false, error: 'Transaction ID is required' }
     }
 
     // Fetch current academic year
@@ -511,17 +469,15 @@ export async function registerUser(formData: any) {
                     empId: empId || null,
                     aadharNo: encrypt(aadharNo) || null,
                     // Payment Info
-                    status: AccountStatus.Pending, // Gatekeeper: All registrations start Pending
-                    paymentStatus: transactionId ? 'Success' : 'Pending',
+                    status: AccountStatus.Active, // Active immediately
+                    paymentStatus: 'Success',
                     transactionId: transactionId || null,
-                    paymentAmount: transactionId ? 25 : 0
+                    paymentAmount: 0
                 }
             })
 
-            // If immediately active (paid during registration), sync benefits and create student record
-            if (transactionId) {
-                await syncUserStats(user.userId)
-            }
+            // Sync user stats (to link children if they exist in ERP)
+            await syncUserStats(user.userId)
 
             const securitySettings = await prisma.securitySettings.findFirst() as any
             const isSuperAdmin = role === 'Super Admin'
@@ -554,6 +510,7 @@ export async function registerUser(formData: any) {
                 console.error('[AutomationEngine] Trigger failed:', err)
             }
 
+            await clearMobileVerified(mobileNumber)
             return { success: true }
 
         } catch (e: any) {
@@ -586,11 +543,10 @@ export async function registerUser(formData: any) {
                                     assignedCampus: assignedCampusName,
                                     campusId: campusId ? parseInt(campusId) : null,
                                     grade: grade || existingUser.grade,
-                                    // Record the payment made during registration
-                                    paymentStatus: transactionId ? 'Success' : 'Pending',
+                                    paymentStatus: 'Success',
                                     transactionId: transactionId || null,
-                                    paymentAmount: transactionId ? 25 : 0,
-                                    status: transactionId ? AccountStatus.Active : AccountStatus.Pending
+                                    paymentAmount: 0,
+                                    status: AccountStatus.Active
                                 }
                             })
 
@@ -621,6 +577,7 @@ export async function registerUser(formData: any) {
                             console.error('[AutomationEngine] Trigger failed:', err)
                         }
 
+                        await clearMobileVerified(mobileNumber)
                         return { success: true }
                     }
                     return { success: false, error: 'This mobile number is already registered. Please login.' }
@@ -635,7 +592,12 @@ export async function registerUser(formData: any) {
 }
 
 export async function createPendingUser(formData: any) {
-    const { fullName, mobileNumber, password, role, childInHeguru, childName, bankAccountDetails, campusId, grade, childEprNo, empId, aadharNo, email } = formData
+    const { fullName, password, role, childInHeguru, childName, bankAccountDetails, campusId, grade, childEprNo, empId, aadharNo, email } = formData
+
+    const mobileNumber = sanitizeMobile(formData.mobileNumber || '')
+    if (!(await isMobileVerified(mobileNumber))) {
+        return { success: false, error: 'Please verify your mobile number with OTP again.' }
+    }
 
     // Secure Password Policy Check
     const passwordRegex = /^(?=.*[0-9])(?=.*[!@#$%^&*])(?=.*[A-Z])[a-zA-Z0-9!@#$%^&*]{8,}$/;
@@ -704,18 +666,21 @@ export async function createPendingUser(formData: any) {
                     assignedCampus: assignedCampusName,
                     bankAccountDetails: bankAccountDetails ? encrypt(bankAccountDetails) : null,
                     referralCode,
-                    status: AccountStatus.Pending, // Brand new user, needs payment
-                    benefitStatus: AccountStatus.Pending,
+                    status: AccountStatus.Active, // Active immediately
+                    benefitStatus: (role === 'Parent' || childInHeguru === 'Yes') ? ('PendingVerification' as any as AccountStatus) : AccountStatus.Inactive,
                     studentFee,
                     academicYear: currentYear,
                     email: email || null,
                     childEprNo: childEprNo || null,
                     empId: empId || null,
                     aadharNo: aadharNo ? encrypt(aadharNo) : null,
-                    paymentStatus: 'Pending',
-                    paymentAmount: 0 // Will be updated after payment
+                    paymentStatus: 'Success',
+                    paymentAmount: 0
                 }
             })
+
+            // Sync user stats (to link children if they exist in ERP)
+            await syncUserStats(user.userId)
 
             const securitySettings = await prisma.securitySettings.findFirst() as any
             const isSuperAdmin = role === 'Super Admin'
@@ -723,6 +688,7 @@ export async function createPendingUser(formData: any) {
 
             await createSession(user.userId, 'user', mapUserRole(user.role), !is2faRequired, user.status)
 
+            await clearMobileVerified(mobileNumber)
             return { success: true, userId: user.userId }
 
         } catch (e: any) {

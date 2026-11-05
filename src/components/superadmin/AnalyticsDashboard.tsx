@@ -73,13 +73,13 @@ export function AnalyticsDashboard({ analyticsData: initialAnalytics, trendData,
 
     return (
         <div className="animate-fade-in space-y-8">
-            <div className="flex justify-between items-center bg-white p-4 rounded-2xl border border-gray-100 shadow-sm relative z-20">
-                <h2 className="text-xl font-black flex items-center gap-2 text-gray-900 tracking-tight">
-                    <Target className="text-blue-600" />
-                    {selectedCampus === 'all' ? 'System Command Center' : `${selectedCampus} View`}
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 bg-white p-4 sm:p-5 rounded-2xl border border-gray-100 shadow-sm relative z-20">
+                <h2 className="text-lg sm:text-xl font-black flex items-center gap-2 text-gray-900 tracking-tight">
+                    <Target className="text-blue-600 shrink-0" size={22} />
+                    <span className="truncate">{selectedCampus === 'all' ? 'System Command Center' : `${selectedCampus} View`}</span>
                 </h2>
 
-                <div className="flex items-center gap-4">
+                <div className="flex flex-wrap items-center gap-2.5 w-full sm:w-auto justify-between sm:justify-end">
                     {/* Period Filter */}
                     <div className="hidden md:flex items-center gap-2 bg-gray-50 border border-gray-100 rounded-xl px-3 py-1.5">
                         <Calendar size={14} className="text-gray-400" />
@@ -101,7 +101,7 @@ export function AnalyticsDashboard({ analyticsData: initialAnalytics, trendData,
                     </div>
 
                     <select
-                        className="p-2.5 border border-gray-200 rounded-xl bg-gray-50 text-xs font-black uppercase tracking-tight focus:ring-4 focus:ring-blue-50 outline-none cursor-pointer"
+                        className="w-full sm:w-auto p-2 sm:p-2.5 border border-gray-200 rounded-xl bg-gray-50 text-[11px] sm:text-xs font-black uppercase tracking-tight focus:ring-4 focus:ring-blue-50 outline-none cursor-pointer"
                         value={selectedCampus}
                         onChange={(e) => setSelectedCampus(e.target.value)}
                         suppressHydrationWarning={true}

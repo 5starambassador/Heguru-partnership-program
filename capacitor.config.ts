@@ -1,11 +1,11 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'in.heguru.ambassador',
-  appName: '5-Star Ambassador',
+  appId: 'com.heguruindiapartnershipprogram.app',
+  appName: 'Heguru Partnership Program',
   webDir: 'public',
   server: {
-    url: 'https://www.5starambassador.com', // Production Vercel URL
+    url: 'https://partner.heguruindia.com', // Production Live URL
     cleartext: true
   },
   plugins: {

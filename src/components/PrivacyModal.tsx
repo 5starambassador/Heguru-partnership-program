@@ -48,8 +48,10 @@ export function PrivacyModal({ isOpen, onClose, sidebarOffset = true }: Props) {
                         </h4>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                             {[
-                                { title: 'Identity', desc: 'Full Name, Mobile Number, Aadhar Number (for Alumni only).' },
+                                { title: 'Identity', desc: 'Full Name, Mobile Number, Email, Aadhaar Number (for Alumni and Others).' },
                                 { title: 'Professional', desc: 'Employee ID and Campus details (for Staff members).' },
+                                { title: 'Student', desc: 'Student name, ERP number, grade and campus.' },
+                                { title: 'Bank', desc: 'Bank details you provide to receive payouts.' },
                                 { title: 'System', desc: 'Referral links, transaction history, and reward credits.' },
                                 { title: 'Media', desc: 'Profile photos you choose to upload.' }
                             ].map((item, i) => (
@@ -76,10 +78,6 @@ export function PrivacyModal({ isOpen, onClose, sidebarOffset = true }: Props) {
                                 <span className="w-1.5 h-1.5 bg-amber-500 rounded-full shrink-0 mt-2" />
                                 <span>To verify your status as a parent, staff, or alumni of Heguru.</span>
                             </li>
-                            <li className="flex gap-3 text-sm text-gray-600">
-                                <span className="w-1.5 h-1.5 bg-amber-500 rounded-full shrink-0 mt-2" />
-                                <span>To process and verify registration payments via transaction IDs.</span>
-                            </li>
                         </ul>
                     </div>
 
@@ -90,13 +88,13 @@ export function PrivacyModal({ isOpen, onClose, sidebarOffset = true }: Props) {
                             Your Rights
                         </h4>
                         <p className="text-sm text-gray-600 leading-relaxed">
-                            You have the right to access, correct, or request deletion of your data through the Profile section of this app. All deletion requests are processed manually by our Super Admin to ensure data integrity.
+                            You have the right to access, correct, or request deletion of your data through the Profile section of this app. All deletion requests are processed manually by our Super Admin to ensure data integrity. The full policy is at partner.heguruindia.com/policies/privacy.
                         </p>
                     </div>
 
                     <div className="pt-8 border-t border-gray-100">
                         <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest text-center">
-                            Last Updated: January 2025 • HEGURU WORLD CLASS EDUCATION
+                            Last Updated: November 2026 • HEGURU WORLD CLASS EDUCATION
                         </p>
                     </div>
                 </div>

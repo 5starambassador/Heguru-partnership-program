@@ -1,21 +1,21 @@
 apply plugin: 'com.android.application'
 
 android {
-    namespace "in.heguru.ambassador"
-    compileSdk rootProject.ext.compileSdkVersion
+    namespace = "com.heguruindiapartnershipprogram.app"
+    compileSdk = rootProject.ext.compileSdkVersion
     defaultConfig {
-        applicationId "in.heguru.ambassador"
+        applicationId "com.heguruindiapartnershipprogram.app"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        // Auto-incrementing version code based on timestamp (for unique builds)
-        def code = (int)(((new Date().getTime()/1000) - 1451606400) / 10)
-        versionCode code
-        versionName "1.0." + code
+        // Increment versionCode for every Play Store upload (must be higher than the last uploaded build).
+        // Earlier builds used a timestamp-based code (~34.2M), so numbering continues above that.
+        versionCode 34210001
+        versionName "1.1.1"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
              // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.
              // Default: https://android.googlesource.com/platform/frameworks/base/+/282e181b58cf72b6ca770dc7ca5f91f135444502/tools/aapt/AaptAssets.cpp#61
-            ignoreAssetsPattern '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
+            ignoreAssetsPattern = '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
         }
     }
     signingConfigs {
@@ -57,12 +57,11 @@ dependencies {
 
 apply from: 'capacitor.build.gradle'
 
-// Google Services plugin removed to disable Firebase
-// try {
-//     def servicesJSON = file('google-services.json')
-//     if (servicesJSON.text) {
-//         apply plugin: 'com.google.gms.google-services'
-//     }
-// } catch(Exception e) {
-//     logger.info("google-services.json not found, google-services plugin not applied. Push Notifications won't work")
-// }
+try {
+    def servicesJSON = file('google-services.json')
+    if (servicesJSON.text) {
+        apply plugin: 'com.google.gms.google-services'
+    }
+} catch(Exception e) {
+    logger.info("google-services.json not found, google-services plugin not applied. Push Notifications won't work")
+}

@@ -68,7 +68,7 @@ export async function GET(req: Request) {
             if (user?.mobileNumber) {
                 const { whatsappService } = await import('@/lib/whatsapp-service');
                 const encryptedCode = encryptReferralCode(referralCode || '');
-                const marketingUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'https://5starambassador.com'}/r/${encryptedCode}`
+                const marketingUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'https://partner.heguruindia.com'}/r/${encryptedCode}`
                 
                 await whatsappService.sendByEvent(
                     user.mobileNumber, 

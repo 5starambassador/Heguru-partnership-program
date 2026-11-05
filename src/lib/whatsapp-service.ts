@@ -11,11 +11,21 @@ interface WhatsAppResponse {
     error?: string
 }
 
-const MSG91_WHATSAPP_NUMBER = "919944600905" 
+const MSG91_WHATSAPP_NUMBER = process.env.MSG91_WHATSAPP_NUMBER || ""
 const MSG91_API_URL = process.env.MSG91_API_URL || "https://api.msg91.com/api/v5"
 const WHATSAPP_PROVIDER = process.env.WHATSAPP_PROVIDER || 'msg91'
 
-const MSG91_WHATSAPP_NAMESPACE = process.env.MSG91_WHATSAPP_NAMESPACE || "a4fe4058_eaa9_45d8_91d6_df10d082de80"
+const MSG91_WHATSAPP_NAMESPACE = process.env.MSG91_WHATSAPP_NAMESPACE || undefined
+
+const MSG91_WHATSAPP_API_URL = process.env.MSG91_WHATSAPP_API_URL || "https://api.msg91.com/api/v5/whatsapp/whatsapp-outbound-message/bulk/"
+const MSG91_WHATSAPP_OTP_LANGUAGE = process.env.MSG91_WHATSAPP_OTP_LANGUAGE || "en"
+
+export type WhatsAppOtpFlow = 'registration' | 'forgot-password'
+
+const OTP_TEMPLATES: Record<WhatsAppOtpFlow, string | undefined> = {
+    registration: process.env.MSG91_WHATSAPP_TEMPLATE_REGISTRATION,
+    'forgot-password': process.env.MSG91_WHATSAPP_TEMPLATE_FORGOT_PASSWORD
+}
 
 /**
  * WhatsApp Service using MSG91 WhatsApp API
@@ -140,6 +150,86 @@ class WhatsAppService {
     }
 
     /**
+     * Sends an OTP using an approved MSG91 WhatsApp authentication template.
+     * The OTP goes in both the body and the copy-code button, and is never logged or stored in WhatsAppLog.
+     */
+    async sendOtp(mobile: string, otp: string, flow: WhatsAppOtpFlow): Promise<WhatsAppResponse> {
+        const templateName = OTP_TEMPLATES[flow]
+        const authKey = this.getAuthKey()
+        const to = this.sanitizeMobile(mobile)
+
+        if (WHATSAPP_PROVIDER === 'mock') {
+            console.log(`[WhatsApp OTP MOCK] Flow: ${flow} | To: ${to}`)
+            return { success: true, messageId: 'mock-wa-otp-' + Date.now() }
+        }
+
+        if (!authKey || !MSG91_WHATSAPP_NUMBER || !templateName) {
+            console.error(`[WhatsApp OTP] Missing configuration for flow "${flow}" (auth key, integrated number or template name)`)
+            return { success: false, error: 'WhatsApp OTP is not configured' }
+        }
+
+        if (!to) {
+            return { success: false, error: 'Invalid mobile number' }
+        }
+
+        const trackingRef = `AUT_OTP_${Date.now()}_${Math.random().toString(36).substring(7)}`
+        const redactedContent = `OTP (${flow})`
+
+        try {
+            const response = await fetch(MSG91_WHATSAPP_API_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'authkey': authKey
+                },
+                body: JSON.stringify({
+                    integrated_number: MSG91_WHATSAPP_NUMBER,
+                    content_type: "template",
+                    payload: {
+                        messaging_product: "whatsapp",
+                        type: "template",
+                        template: {
+                            name: templateName,
+                            language: {
+                                code: MSG91_WHATSAPP_OTP_LANGUAGE,
+                                policy: "deterministic"
+                            },
+                            namespace: MSG91_WHATSAPP_NAMESPACE,
+                            to_and_components: [
+                                {
+                                    to: [to],
+                                    components: {
+                                        body_1: { type: "text", value: otp },
+                                        button_1: { subtype: "url", type: "text", value: otp }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                })
+            })
+
+            const data = await response.json()
+            const metadata = { sentAt: new Date().toISOString(), apiResponse: data }
+
+            if (response.ok && data.status === 'success' && !data.hasError) {
+                const messageId = (data.request_id || data.data?.request_id || data.message_id || '').toString()
+                await this.logMessage(mobile, templateName, redactedContent, 'OTP', 'SENT', messageId, undefined, trackingRef, metadata)
+                return { success: true, messageId }
+            }
+
+            const errorMsg = typeof data.errors === 'string' ? data.errors : (data.message || JSON.stringify(data.errors || data))
+            await this.logMessage(mobile, templateName, redactedContent, 'OTP', 'FAILED', undefined, errorMsg, trackingRef, metadata)
+            console.error(`[WhatsApp OTP] MSG91 rejected flow "${flow}":`, errorMsg)
+            return { success: false, error: errorMsg }
+        } catch (error: any) {
+            await this.logMessage(mobile, templateName, redactedContent, 'OTP', 'FAILED', undefined, error.message, trackingRef)
+            console.error('[WhatsApp OTP] Request failed:', error.message)
+            return { success: false, error: error.message }
+        }
+    }
+
+    /**
      * Sends a template-based WhatsApp message
      */
     async sendTemplateMessage(
@@ -189,8 +279,6 @@ class WhatsAppService {
             const activeAuthKey = this.getAuthKey()
             console.log(`[WhatsApp] Sending message to ${sanitizedMobile} via SUCCESS-PROVEN Individual API`)
             console.log(`[WHATSAPP_AUTH_DEBUG] Using Auth Key ending in: ${activeAuthKey.slice(-4)}`)
-
-            console.log(`[WhatsApp] RAW_PAYLOAD:`, JSON.stringify(payload, null, 2))
 
             const response = await fetch(url.replace('/bulk/', '/'), {
                 method: 'POST',
@@ -469,7 +557,7 @@ class WhatsAppService {
     }
 
     private async sendMock(mobile: string, template: string, vars: string[], type: string = 'SYSTEM', userRole?: string, campus?: string): Promise<WhatsAppResponse> {
-        console.log(`\n💬 [WHATSAPP MOCK] To: ${mobile} | Template: ${template} | Type: ${type} | Vars: ${vars.join(', ')}\n`)
+        console.log(`\n💬 [WHATSAPP MOCK] To: ${mobile} | Template: ${template} | Type: ${type}\n`)
         await this.logMessage(mobile, template, vars.join(', '), type, 'SENT', undefined, undefined, undefined, undefined, undefined, userRole, campus)
         return { success: true, messageId: 'mock-wa-' + Date.now() }
     }
@@ -541,7 +629,7 @@ class WhatsAppService {
                 index: 0,
                 parameters: buttonVariables.map(v => ({
                     type: "text",
-                    text: v || "https://5starambassador.com" // Safety fallback
+                    text: v || "https://partner.heguruindia.com" // Safety fallback
                 }))
             })
         }

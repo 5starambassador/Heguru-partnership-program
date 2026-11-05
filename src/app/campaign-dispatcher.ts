@@ -307,7 +307,7 @@ export async function dispatchCampaignBatch(campaignId: number) {
                     const { waVars, btnVars } = await resolveWhatsAppVariables(user, audience.type, mapping, requiredCount)
 
                     // 🛡️ INLINE SAFETY NET: Force correct picker resolution regardless of module cache
-                    const _dBaseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://www.5starambassador.com'
+                    const _dBaseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://partner.heguruindia.com'
                     for (let _di = 0; _di < waVars.length; _di++) {
                         const _dToken = mapping[(_di + 1).toString()] || ''
                         const _dHasPicker = _dToken.includes('{ProgramLink:') || _dToken.includes('{programLink:')

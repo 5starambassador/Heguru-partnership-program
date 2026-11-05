@@ -914,7 +914,7 @@ export async function sendTestCampaignMessage(
             // For campaigns with picker tokens, build variables completely inline.
             // This bypasses any module caching issues in resolveWhatsAppVariables.
             // ====================================================================
-            const _baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://www.5starambassador.com'
+            const _baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://partner.heguruindia.com'
             const _refCode = sampleUser.referralCode || sampleUser.referrerCode || ''
             const _mappingEntries = Object.entries(mapping).filter(([k]) => /^\d+$/.test(k)).sort(([a], [b]) => Number(a) - Number(b))
             const _hasPickerInMapping = _mappingEntries.some(([, v]) => (v as string)?.includes('{ProgramLink:'))

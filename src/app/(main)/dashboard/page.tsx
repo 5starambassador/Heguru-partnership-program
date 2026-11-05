@@ -77,7 +77,7 @@ export default async function DashboardPage() {
         }
     })
 
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://5starambassador.com'
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://partner.heguruindia.com'
 
     // Encrypt referral code for security
     const encryptedCode = encryptReferralCode(userData.referralCode)

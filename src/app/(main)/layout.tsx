@@ -472,7 +472,7 @@ export default async function MainLayout({
         <div
           className={`flex-1 w-full ${
             isAmbassadorRole ? "max-w-[1400px]" : "max-w-[1800px]"
-          } flex flex-col pt-16 xl:pt-0 ${isAmbassadorRole ? "md:pt-0" : ""}`}
+          } flex flex-col pt-20 xl:pt-0 ${isAmbassadorRole ? "md:pt-0" : ""}`}
         >
           {isAmbassadorRole && (
             <NotificationTicker
@@ -482,11 +482,11 @@ export default async function MainLayout({
           )}
 
           <main
-            className={`flex-1 w-full px-4 py-4 ${
+            className={`flex-1 w-full px-3 sm:px-4 py-4 ${
               isAmbassadorRole ? "xl:px-8 xl:py-8" : "xl:px-4 xl:py-5"
             } ${
-              isAmbassadorRole ? "md:pt-16 pt-6" : "pt-4"
-            } xl:pt-5 pb-20 xl:pb-6 relative z-10`}
+              isAmbassadorRole ? "md:pt-16 pt-3" : "pt-2"
+            } xl:pt-5 pb-24 xl:pb-6 relative z-10`}
           >
             {!isAmbassadorRole && (
               <header className="hidden xl:flex justify-end mb-4 absolute top-4 right-8 z-20">

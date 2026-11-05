@@ -22,7 +22,7 @@ export const viewport: Viewport = {
 }
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://5starambassador.com'),
+  metadataBase: new URL('https://partner.heguruindia.com'),
   title: "Heguru Partnership Program (HPP) | Japan Design Language",
   description: "Join the Heguru Partnership Program (HPP). Refer students, earn rewards, and be part of our Heguru journey.",
   keywords: ["Heguru", "HPP", "Partnership Program", "School Admission", "Referral Program", "Education", "Pondicherry", "5 Star", "Japan Design"],
@@ -32,7 +32,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_IN",
-    url: "https://5starambassador.com",
+    url: "https://partner.heguruindia.com",
     title: "Heguru Partnership Program (HPP)",
     description: "Join the Heguru Partnership Program (HPP). Refer students, earn rewards, and be part of our Heguru journey.",
     siteName: "Heguru Partnership Program (HPP)",

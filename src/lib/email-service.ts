@@ -20,7 +20,7 @@ export const EmailService = {
                         <p>Thank you for joining as a <strong>${role}</strong>.</p>
                         <p>You can now log in and start referring students to earn rewards.</p>
                         <br/>
-                        <a href="https://ambassador.heguru.in" style="background: #D97706; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Go to Dashboard</a>
+                        <a href="https://partner.heguruindia.com" style="background: #D97706; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Go to Dashboard</a>
                     </div>
                 `
             });
@@ -180,7 +180,7 @@ export const EmailService = {
                         <p>It's been a while since your last referral. Your current rank is <strong>${badgeTier}</strong>.</p>
                         <p>Join our Heguru journey and help more students experience the 5-Star Education while earning exclusive benefits.</p>
                         <br/>
-                        <a href="https://ambassador.heguru.in" style="background: #D97706; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold;">Return to Dashboard</a>
+                        <a href="https://partner.heguruindia.com" style="background: #D97706; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold;">Return to Dashboard</a>
                     </div>
                 `
             });

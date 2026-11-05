@@ -1,4 +1,4 @@
-package in.heguru.ambassador;
+package com.heguruindiapartnershipprogram.app;
 
 import com.getcapacitor.BridgeActivity;
 

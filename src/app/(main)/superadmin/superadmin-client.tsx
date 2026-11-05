@@ -361,7 +361,7 @@ export default function SuperadminClient({ analytics, campusComparison = [], use
                             </div>
                         )}
 
-                        <div className="flex justify-end px-2">
+                        <div className="flex flex-wrap items-center justify-end gap-2.5 w-full my-3 px-1">
                             <StudentSourceFilter />
                             <AcademicYearFilter />
                         </div>

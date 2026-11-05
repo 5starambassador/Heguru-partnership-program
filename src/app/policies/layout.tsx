@@ -44,6 +44,7 @@ export default function PolicyLayout({
                 <div className="max-w-4xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-gray-500">
                     <p>© {new Date().getFullYear()} Heguru Educational Public Trust. All rights reserved.</p>
                     <div className="flex gap-6">
+                        <Link href="/policies/privacy" className="hover:text-gray-900 transition-colors">Privacy</Link>
                         <Link href="/policies/terms" className="hover:text-gray-900 transition-colors">Terms</Link>
                         <Link href="/policies/refund" className="hover:text-gray-900 transition-colors">Refunds</Link>
                         <Link href="/policies/contact" className="hover:text-gray-900 transition-colors">Contact</Link>

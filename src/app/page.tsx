@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { sendOtp, verifyOtpAndResetPassword, loginWithPassword, registerUser, createPendingUser, getLoginRedirect, getRegistrationCampuses, checkSession, verifyOtpOnly } from './actions'
+import { sendOtp, verifyOtpAndResetPassword, loginWithPassword, createPendingUser, getLoginRedirect, getRegistrationCampuses, checkSession, verifyOtpOnly } from './actions'
 import { toast } from 'sonner'
 import { logger } from '@/lib/logger'
 import { AuthLayout } from '@/components/auth/AuthLayout'
@@ -12,7 +12,6 @@ import { OtpVerification } from '@/components/auth/OtpVerification'
 import { triggerVersionSync } from '@/components/VersionStability'
 import { RegistrationBasic } from '@/components/auth/RegistrationBasic'
 import { RegistrationRole } from '@/components/auth/RegistrationRole'
-import { PaymentGateway } from '@/components/auth/PaymentGateway'
 import { ResetPassword } from '@/components/auth/ResetPassword'
 import { MobileWelcome } from '@/components/auth/MobileWelcome'
 
@@ -21,20 +20,9 @@ export default function LoginPage() {
 
   useEffect(() => {
     async function verify() {
-      // Check URL for step=payment
-      const urlParams = new URLSearchParams(window.location.search)
-      const isPaymentStep = urlParams.get('step') === 'payment'
-
       const res = await checkSession()
       if (res.authenticated) {
-        // [HARD BLOCK] Redirect Pending users to Payment step
-        if (res.user?.status === 'Pending') {
-          setStep(4)
-          setRegisteredUserId(res.user.userId)
-          return
-        }
-
-        if (res.redirect && !isPaymentStep) {
+        if (res.redirect) {
           router.push(res.redirect)
         }
       }
@@ -42,7 +30,7 @@ export default function LoginPage() {
     verify()
   }, [router])
 
-  // Steps: 0: Welcome, 1: Mobile, 1.5: Password (Existing), 2: OTP (New/Forgot), 3: Register Details, 4: Payment, 5: Reset Password
+  // Steps: 0: Welcome, 1: Mobile, 1.5: Password (Existing), 2: OTP (New/Forgot), 3: Your Details, 3.5: Your Profile, 5: Reset Password
   const [step, setStep] = useState(0)
   const [mobile, setMobile] = useState('')
   const [otp, setOtp] = useState('')
@@ -62,7 +50,6 @@ export default function LoginPage() {
     grade: 'Grade 1',
     campusId: '',
     bankAccountDetails: '',
-    transactionId: '',
     childEprNo: '',
     empId: '',
     aadharNo: '',
@@ -97,14 +84,7 @@ export default function LoginPage() {
         if (res.exists && res.hasPassword) {
           setStep(1.5)
         } else {
-          if (res.otp) {
-            toast.success(`Your Verification Code is: ${res.otp}`, { duration: 6000 })
-            if (process.env.NODE_ENV === 'development') {
-              console.log('MOCK OTP:', res.otp)
-            }
-          } else {
-            toast.success(`OTP Sent to ${mobile}`)
-          }
+          toast.success('OTP sent to your WhatsApp')
           setIsNewUser(!res.exists)
           setStep(2)
           setOtp('') // CLEAR STALE OTP to prevent confusion
@@ -191,11 +171,7 @@ export default function LoginPage() {
       if (res.success) {
         setIsForgotMode(true)
         setStep(2)
-        if (res.otp) {
-          toast.success(`Your Recovery Code is: ${res.otp}`, { duration: 6000 })
-        } else {
-          toast.success('Recovery OTP sent to ' + mobile)
-        }
+        toast.success('OTP sent to your WhatsApp')
       } else {
         toast.error(res.error || 'Failed to send recovery OTP')
       }
@@ -241,40 +217,6 @@ export default function LoginPage() {
       }
     }
     setLoading(false)
-  }
-
-  const handleRegister = async () => {
-    if (!formData.transactionId) return toast.error('Payment Reference Required')
-
-    // Validate again just in case
-    const passwordRegex = /^(?=.*[0-9])(?=.*[!@#$%^&*])(?=.*[A-Z])[a-zA-Z0-9!@#$%^&*]{8,}$/;
-    if (!passwordRegex.test(formData.password)) {
-      return toast.error('Password too weak. Please go back and fix it.')
-    }
-
-    setLoading(true)
-    try {
-      const res = await registerUser({
-        ...formData,
-        mobileNumber: mobile
-      })
-
-      if (res.success) {
-        router.push('/dashboard')
-      } else {
-        toast.error(res.error)
-        setLoading(false)
-      }
-    } catch (error: any) {
-      setLoading(false)
-      const errorMsg = error.message || ''
-      if (errorMsg.toLowerCase().includes('server action') && errorMsg.toLowerCase().includes('not found')) {
-        toast.info('Updating app version...')
-        triggerVersionSync()
-      } else {
-        toast.error('Registration failed. Try again.')
-      }
-    }
   }
 
   return (
@@ -338,7 +280,7 @@ export default function LoginPage() {
           campuses={campuses}
           onNext={async () => {
             setLoading(true)
-            // Create Pending User & Session
+            // Create User & Session
             const res = await createPendingUser({
               ...formData,
               mobileNumber: mobile
@@ -346,22 +288,14 @@ export default function LoginPage() {
             setLoading(false)
 
             if (res.success) {
-              setRegisteredUserId(res.userId)
-              setStep(4)
+              toast.success('Registration complete. Welcome!')
+              router.push('/dashboard')
             } else {
               toast.error(res.error)
             }
           }}
           onBack={() => setStep(3)}
           loading={loading}
-        />
-      )}
-
-      {step === 4 && (
-        <PaymentGateway
-          onBack={() => setStep(3.5)}
-          loading={loading}
-          userId={registeredUserId}
         />
       )}
 

@@ -23,7 +23,7 @@ export class ChatbotService {
         if (!user) {
             return whatsappService.sendFreeTextMessage(
                 mobile,
-                "Welcome! You are not registered as an Ambassador yet. Please sign up at https://ambassador.heguru.in to start earning rewards! 🚀",
+                "Welcome! You are not registered as an Ambassador yet. Please sign up at https://partner.heguruindia.com to start earning rewards! 🚀",
                 'CHATBOT'
             )
         }
@@ -96,7 +96,7 @@ export class ChatbotService {
             const statusEmoji = l.leadStatus === 'Admitted' ? '🎓' : l.leadStatus === 'Confirmed' ? '✅' : '📋'
             message += `${i + 1}. ${l.parentName} (${statusEmoji} ${l.leadStatus})\n`
         })
-        message += `\nView all at: https://ambassador.heguru.in/referrals`
+        message += `\nView all at: https://partner.heguruindia.com/referrals`
 
         return whatsappService.sendFreeTextMessage(user.mobileNumber, message, 'CHATBOT', undefined, user.role, user.assignedCampus || '-')
     }

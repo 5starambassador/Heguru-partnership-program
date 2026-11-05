@@ -111,9 +111,6 @@ export async function middleware(request: NextRequest) {
             if (user.role === 'Super Admin') return NextResponse.redirect(new URL('/superadmin', request.url))
             if (user.userType === 'admin') return NextResponse.redirect(new URL('/admin', request.url)) // Or their specific dashboard
 
-            // If user is pending, they should go to payment step even if they try to go to /login or /register
-            if (user.status === 'Pending') return NextResponse.redirect(new URL('/?step=payment', request.url))
-
             return NextResponse.redirect(new URL('/dashboard', request.url))
         }
 

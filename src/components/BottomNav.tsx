@@ -1,116 +1,149 @@
 'use client'
 
-import { Home, UserPlus, List, User, IndianRupee } from 'lucide-react'
-import Link from 'next/link'
-import { usePathname } from 'next/navigation'
 import React from 'react'
+import Link from 'next/link'
+import { usePathname, useSearchParams } from 'next/navigation'
+import { 
+    Home, UserPlus, List, User, IndianRupee, Users, 
+    GraduationCap, CheckCircle, Wallet, GitFork, FileDown, ShieldCheck
+} from 'lucide-react'
 
-export function BottomNav({ role }: { role?: string }) {
-    const pathname = usePathname()
+export function BottomNav({ role = '' }: { role?: string }) {
+    const pathname = usePathname() || ''
+    const searchParams = useSearchParams()
 
-    const isActive = (path: string) => {
-        if (path === '/' || path === '/dashboard' || path === '/campus' || path === '/superadmin' || path === '/admin' || path === '/finance') {
-            // Match any root dashboard path
-            return pathname === path || (pathname === '/' && path === '/dashboard')
+    const isSuperAdmin = role === 'Super Admin'
+    const isCampusLevel = role === 'Campus Head' || role === 'Campus Admin'
+    const isFinanceAdmin = role === 'Finance Admin'
+    const isRegularAdmin = role.includes('Admin') && !isSuperAdmin && !isCampusLevel && !isFinanceAdmin
+    const isAmbassador = role === 'Staff' || role === 'Parent' || role === 'Alumni' || role === 'Others'
+
+    const isPathActive = (href: string) => {
+        try {
+            const itemUrl = new URL(href, 'http://dummy.com')
+            const itemPath = itemUrl.pathname
+            const itemView = itemUrl.searchParams.get('view')
+            const currentView = searchParams?.get('view')
+
+            if (itemView) {
+                return pathname === itemPath && currentView === itemView
+            }
+            if (href === '/superadmin' || href === '/campus' || href === '/admin' || href === '/finance' || href === '/dashboard') {
+                return (pathname === href || (pathname === '/' && href === '/dashboard')) && !currentView
+            }
+            return pathname.startsWith(itemPath)
+        } catch {
+            return pathname === href
         }
-        return pathname.startsWith(path)
     }
 
-    const isFinanceAccess = role === 'Finance Admin' || role === 'Super Admin'
+    // Role-tailored navigation items
+    let navConfig = {
+        item1: { label: 'Home', href: '/dashboard', icon: Home },
+        item2: { label: 'Earnings', href: '/earnings', icon: IndianRupee },
+        center: { label: 'Refer', href: '/refer', icon: UserPlus, isFloating: true },
+        item3: { label: 'Referrals', href: '/referrals', icon: List },
+        item4: { label: 'Profile', href: '/profile', icon: User }
+    }
 
-    const isAmbassador = role === 'Staff' || role === 'Parent' || role === 'Alumni' || role === 'Others'
+    if (isSuperAdmin) {
+        navConfig = {
+            item1: { label: 'Home', href: '/superadmin', icon: Home },
+            item2: { label: 'Users', href: '/superadmin/users', icon: Users },
+            center: { label: 'Students', href: '/superadmin/students', icon: GraduationCap, isFloating: true },
+            item3: { label: 'Approvals', href: '/superadmin/approvals', icon: CheckCircle },
+            item4: { label: 'Profile', href: '/profile', icon: User }
+        }
+    } else if (isCampusLevel) {
+        navConfig = {
+            item1: { label: 'Home', href: '/campus', icon: Home },
+            item2: { label: 'Users', href: '/campus/users', icon: Users },
+            center: { label: 'Students', href: '/campus/students', icon: GraduationCap, isFloating: true },
+            item3: { label: 'Finance', href: '/campus?view=finance', icon: IndianRupee },
+            item4: { label: 'Profile', href: '/profile', icon: User }
+        }
+    } else if (isFinanceAdmin) {
+        navConfig = {
+            item1: { label: 'Home', href: '/finance', icon: Home },
+            item2: { label: 'Approvals', href: '/superadmin/approvals', icon: CheckCircle },
+            center: { label: 'Payouts', href: '/superadmin?view=settlements', icon: Wallet, isFloating: true },
+            item3: { label: 'Verify', href: '/superadmin/verification', icon: ShieldCheck },
+            item4: { label: 'Profile', href: '/profile', icon: User }
+        }
+    } else if (isRegularAdmin) {
+        navConfig = {
+            item1: { label: 'Home', href: '/admin', icon: Home },
+            item2: { label: 'Students', href: '/admin?view=students', icon: GraduationCap },
+            center: { label: 'Leads', href: '/admin?view=referrals', icon: GitFork, isFloating: true },
+            item3: { label: 'Reports', href: '/admin?view=reports', icon: FileDown },
+            item4: { label: 'Profile', href: '/profile', icon: User }
+        }
+    }
+
+    const { item1, item2, center, item3, item4 } = navConfig
+
+    const renderStandardTab = (item: { label: string; href: string; icon: any }) => {
+        const active = isPathActive(item.href)
+        const IconComponent = item.icon
+
+        return (
+            <Link
+                href={item.href}
+                className={`group flex flex-col items-center justify-center flex-1 h-full py-1 transition-all duration-200 no-underline ${
+                    active ? (isAmbassador ? 'text-primary-orange-hover' : 'text-blue-600') : 'text-gray-500 hover:text-gray-900'
+                }`}
+            >
+                <div className={`p-1.5 rounded-xl transition-all duration-200 ${
+                    active 
+                        ? (isAmbassador ? 'bg-orange-50 text-primary-orange-hover' : 'bg-blue-50 text-blue-600') 
+                        : 'group-hover:bg-gray-100/80 text-gray-400 group-hover:text-gray-700'
+                }`}>
+                    <IconComponent size={20} strokeWidth={active ? 2.5 : 2} />
+                </div>
+                <span className={`text-[10px] uppercase tracking-wider mt-0.5 leading-none font-bold ${
+                    active ? (isAmbassador ? 'text-primary-orange-hover font-black' : 'text-blue-600 font-black') : 'text-gray-500'
+                }`}>
+                    {item.label}
+                </span>
+            </Link>
+        )
+    }
 
     return (
         <div className="fixed bottom-0 left-0 right-0 z-50 xl:hidden">
-            {/* Gradient Glow at top */}
-            {!isAmbassador && (
-                <div className="absolute -top-10 left-0 right-0 h-10 bg-gradient-to-t from-black/10 to-transparent pointer-events-none" />
-            )}
-
             {/* Main Bar */}
-            <div className={`pb-[env(safe-area-inset-bottom)] backdrop-blur-xl ${
-                isAmbassador 
-                    ? 'bg-white/95 border-t border-[var(--warm-gray)] shadow-[0_-5px_15px_rgba(0,0,0,0.05)]' 
-                    : 'bg-[#0f172a]/95 border-t border-white/10 shadow-[0_-5px_20px_rgba(0,0,0,0.3)]'
-            }`}>
-                <div className={`flex justify-around items-center h-16 ${isFinanceAccess ? 'px-2' : ''} px-4`}>
-                    <Link
-                        href="/dashboard"
-                        className={`group flex flex-col items-center justify-center w-full h-full space-y-1 transition-all duration-300 ${
-                            pathname.includes('dashboard') || pathname === '/' || pathname.includes('admin') || pathname.includes('campus') || pathname.includes('superadmin') 
-                                ? isAmbassador ? 'text-[var(--primary-orange)]' : 'text-white' 
-                                : isAmbassador ? 'text-[var(--text-gray)] hover:text-[var(--deep-black)]' : 'text-slate-400 hover:text-white'
-                        }`}
-                    >
-                        <div className={`p-1.5 transition-all duration-300 ${
-                            isAmbassador ? 'rounded-md' : 'rounded-full'
-                        } ${
-                            pathname.includes('dashboard') || pathname === '/' || pathname.includes('admin') || pathname.includes('campus') || pathname.includes('superadmin') 
-                                ? isAmbassador ? 'bg-[var(--primary-orange)]/10' : 'bg-white/10 shadow-[0_0_10px_rgba(255,255,255,0.2)]' 
-                                : isAmbassador ? 'group-hover:bg-[var(--soft-gray)]' : 'group-hover:bg-white/5'
-                        }`}>
-                            <Home size={20} className={
-                                pathname.includes('dashboard') || pathname === '/' || pathname.includes('admin') || pathname.includes('campus') || pathname.includes('superadmin') 
-                                    ? isAmbassador ? 'text-[var(--primary-orange)]' : 'text-blue-300' 
-                                    : isAmbassador ? 'text-[var(--text-gray)] group-hover:text-[var(--deep-black)]' : 'text-slate-400 group-hover:text-blue-200'
-                            } strokeWidth={pathname.includes('dashboard') ? 2.5 : 2} />
-                        </div>
-                        <span className="text-[9px] font-bold uppercase tracking-wider">Home</span>
-                    </Link>
+            <div className="pb-[env(safe-area-inset-bottom)] backdrop-blur-xl bg-white/95 border-t border-gray-200 shadow-[0_-4px_20px_rgba(0,0,0,0.06)]">
+                <div className="flex justify-between items-center h-16 px-2 sm:px-4 max-w-lg mx-auto">
+                    {renderStandardTab(item1)}
+                    {renderStandardTab(item2)}
 
-                    {isFinanceAccess && (
+                    {/* Center Action Button */}
+                    <div className="relative -top-4 flex flex-col items-center px-1">
                         <Link
-                            href="/finance"
-                            className={`group flex flex-col items-center justify-center w-full h-full space-y-1 transition-all duration-300 ${isActive('/finance') ? 'text-white' : 'text-slate-400 hover:text-white'}`}
-                        >
-                            <div className={`p-1.5 rounded-full transition-all duration-300 ${isActive('/finance') ? 'bg-emerald-500/20 shadow-[0_0_10px_rgba(16,185,129,0.3)]' : 'group-hover:bg-white/5'}`}>
-                                <IndianRupee size={20} className={isActive('/finance') ? 'text-emerald-400' : 'text-slate-400 group-hover:text-emerald-300'} strokeWidth={isActive('/finance') ? 2.5 : 2} />
-                            </div>
-                            <span className="text-[9px] font-bold uppercase tracking-wider">Finance</span>
-                        </Link>
-                    )}
-
-                    {/* Prominent Refer Button - Floating */}
-                    <div className="relative -top-5">
-                        <Link
-                            href="/refer"
-                            className={`flex flex-col items-center justify-center transition-all duration-300 relative group ${
-                                isAmbassador 
-                                    ? 'w-14 h-14 rounded-md bg-gradient-to-br from-[var(--primary-orange)] to-[var(--primary-orange-hover)] shadow-lg border-2 border-white hover:scale-105 active:scale-95' 
-                                    : 'w-16 h-16 rounded-full bg-gradient-to-br from-blue-600 to-indigo-600 shadow-xl border-4 border-[#0f172a] hover:scale-105 active:scale-95'
+                            href={center.href}
+                            className={`flex items-center justify-center transition-all duration-200 relative group shadow-lg border-2 border-white hover:scale-105 active:scale-95 w-13 h-13 rounded-2xl ${
+                                isPathActive(center.href)
+                                    ? isAmbassador
+                                        ? 'bg-gradient-to-br from-[var(--primary-orange)] to-[var(--primary-orange-hover)] ring-2 ring-orange-200'
+                                        : 'bg-gradient-to-br from-blue-600 to-indigo-600 ring-2 ring-blue-200'
+                                    : isAmbassador
+                                        ? 'bg-gradient-to-br from-[var(--primary-orange)] to-[var(--primary-orange-hover)]'
+                                        : 'bg-gradient-to-br from-blue-600 to-indigo-600'
                             }`}
                         >
-                            <div className={`absolute inset-0 bg-white/20 blur-md opacity-0 group-hover:opacity-100 transition-opacity ${isAmbassador ? 'rounded-md' : 'rounded-full'}`} />
-                            <UserPlus size={24} className="text-white relative z-10" strokeWidth={2.5} />
+                            <center.icon size={22} className="text-white relative z-10" strokeWidth={2.5} />
                         </Link>
-                        <span className={`absolute -bottom-5 w-full text-center text-[9px] font-bold uppercase tracking-wider transition-colors ${
-                            isAmbassador ? 'text-[var(--primary-orange)]' : 'text-slate-400 group-hover:text-white'
-                        }`}>Refer</span>
+                        <span className={`text-[9px] font-black uppercase tracking-wider mt-1 text-center leading-none ${
+                            isPathActive(center.href)
+                                ? isAmbassador ? 'text-primary-orange-hover' : 'text-blue-600'
+                                : 'text-gray-500'
+                        }`}>
+                            {center.label}
+                        </span>
                     </div>
 
-                    <Link
-                        href="/profile"
-                        className={`group flex flex-col items-center justify-center w-full h-full space-y-1 transition-all duration-300 ${
-                            isActive('/profile') 
-                                ? isAmbassador ? 'text-[var(--primary-orange)]' : 'text-white' 
-                                : isAmbassador ? 'text-[var(--text-gray)] hover:text-[var(--deep-black)]' : 'text-slate-400 hover:text-white'
-                        }`}
-                    >
-                        <div className={`p-1.5 transition-all duration-300 ${
-                            isAmbassador ? 'rounded-md' : 'rounded-full'
-                        } ${
-                            isActive('/profile') 
-                                ? isAmbassador ? 'bg-[var(--primary-orange)]/10' : 'bg-white/10 shadow-[0_0_10px_rgba(255,255,255,0.2)]' 
-                                : isAmbassador ? 'group-hover:bg-[var(--soft-gray)]' : 'group-hover:bg-white/5'
-                        }`}>
-                            <User size={20} className={
-                                isActive('/profile') 
-                                    ? isAmbassador ? 'text-[var(--primary-orange)]' : 'text-blue-300' 
-                                    : isAmbassador ? 'text-[var(--text-gray)] group-hover:text-[var(--deep-black)]' : 'text-slate-400 group-hover:text-blue-200'
-                            } strokeWidth={isActive('/profile') ? 2.5 : 2} />
-                        </div>
-                        <span className="text-[9px] font-bold uppercase tracking-wider">Profile</span>
-                    </Link>
+                    {renderStandardTab(item3)}
+                    {renderStandardTab(item4)}
                 </div>
             </div>
         </div>

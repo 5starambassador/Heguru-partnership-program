@@ -9,7 +9,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { PageAnimate, PageItem } from '@/components/PageAnimate'
 import { encryptReferralCode } from '@/lib/crypto'
 
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://5starambassador.com'
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://partner.heguruindia.com'
 
 interface Asset {
     id: number

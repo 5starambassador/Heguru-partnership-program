@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Eye, EyeOff, ChevronLeft, Star } from 'lucide-react'
+import { RegistrationProgress } from './RegistrationProgress'
 
 interface RegistrationBasicProps {
     formData: any
@@ -51,7 +52,10 @@ export const RegistrationBasic = ({ formData, setFormData, onNext, onBack }: Reg
                     </div> */}
                 </div>
                 <h2 className="text-3xl font-black text-[var(--deep-black)] tracking-tighter font-heading">Create Account</h2>
-                <p className="text-[var(--text-gray)] text-[10px] font-bold uppercase tracking-[0.2em] mt-2">Step 1 of 2</p>
+                <p className="text-[var(--text-gray)] text-xs font-medium">Enter your details to create your partner account.</p>
+                <div className="pt-3">
+                    <RegistrationProgress currentStep={1} />
+                </div>
             </div>
 
             <div className="space-y-4">
@@ -138,7 +142,7 @@ export const RegistrationBasic = ({ formData, setFormData, onNext, onBack }: Reg
                         </div>
                     </div>
                     <div>
-                        <label className="text-[var(--text-gray)] text-[10px] font-bold uppercase tracking-[0.2em] mb-2 block ml-1">Confirm</label>
+                        <label className="text-[var(--text-gray)] text-[10px] font-bold uppercase tracking-[0.2em] mb-2 block ml-1">Confirm Password</label>
                         <div className="relative">
                             <input
                                 type={showConfirmPassword ? "text" : "password"}
@@ -172,7 +176,7 @@ export const RegistrationBasic = ({ formData, setFormData, onNext, onBack }: Reg
                 onClick={onNext}
                 disabled={!isFormValid()}
             >
-                Next Step
+                Continue
             </button>
         </div>
     )

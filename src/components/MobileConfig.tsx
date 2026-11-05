@@ -30,12 +30,9 @@ export function MobileConfig() {
 
                 // 3. Deep Linking
                 App.addListener('appUrlOpen', (event: URLOpenListenerEvent) => {
-                    // Example URL: heguru://ambassador/refer or https://ambassador.heguru.in/refer
-                    const slug = event.url.split('.in').pop() || event.url.split('://').pop()
-                    if (slug) {
-                        // Navigate to the path
-                        router.push(slug.startsWith('/') ? slug : `/${slug}`)
-                    }
+                    // Example URL: heguru://ambassador/refer or https://partner.heguruindia.com/refer
+                    const { pathname, search, hash } = new URL(event.url)
+                    router.push(`${pathname || '/'}${search}${hash}`)
                 })
 
             } catch (e) {

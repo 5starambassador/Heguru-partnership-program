@@ -67,7 +67,7 @@ function Badge({ label, value }: { label: string; value: string }) {
 
 import { encryptReferralCode } from '@/lib/crypto'
 
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://5starambassador.com'
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://partner.heguruindia.com'
 
 export function ActionHomeDesign({ user, recentReferrals, whatsappUrl, monthStats }: ActionHomeDesignProps) {
     const [greeting, setGreeting] = useState('Welcome')

@@ -13,48 +13,8 @@ export class ReminderService {
      * Target: Users who registered > 24 hours ago but status is still 'Pending' (Unpaid).
      */
     async sendPaymentReminders() {
-        const yesterday = new Date()
-        yesterday.setDate(yesterday.getDate() - 1)
-
-        // Find users created before yesterday who depend on payment (Ambassadors)
-        // and are still Pending
-        const pendingUsers = await prisma.user.findMany({
-            where: {
-                status: 'Pending',
-                createdAt: { lt: yesterday },
-                // Avoid spamming: check if we already sent a reminder recently? 
-                // For MVP, we'll just check if they have NO successful transactions.
-                paymentStatus: { not: 'Success' },
-                role: { in: ['Parent', 'Staff', 'Alumni', 'Others'] }
-            },
-            select: {
-                mobileNumber: true,
-                fullName: true,
-                role: true,
-                assignedCampus: true
-            },
-            take: 50 // Batch limit to be safe
-        })
-
-        console.log(`[Reminder] Found ${pendingUsers.length} users pending payment > 24h`)
-
-        for (const user of pendingUsers) {
-            if (user.mobileNumber) {
-                // Template: payment_reminder (Name, Fee)
-                await whatsappService.sendByEvent(
-                    user.mobileNumber,
-                    'PAYMENT_REMINDER',
-                    [user.fullName || 'Ambassador', (user as any).studentFee?.toString() || '0'],
-                    'REMINDER',
-                    undefined,
-                    undefined,
-                    [],
-                    user.role || 'User',
-                    user.assignedCampus || '-'
-                )
-            }
-        }
-        return { count: pendingUsers.length }
+        console.log(`[Reminder] Payment Pending Reminders disabled as onboarding payment verification is removed.`)
+        return { count: 0 }
     }
 
     /**
@@ -160,7 +120,7 @@ export class ReminderService {
                                     <li>♻️ Refund processing (Group A)</li>
                                 </ul>
                                 <p style="color: #ef4444; font-weight: bold;">Please update your bank details immediately to avoid payout delays.</p>
-                                <a href="https://ambassador.heguru.in/profile" 
+                                <a href="https://partner.heguruindia.com/profile" 
                                    style="display: inline-block; background: #1d4ed8; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; margin-top: 16px;">
                                     Update Bank Details →
                                 </a>

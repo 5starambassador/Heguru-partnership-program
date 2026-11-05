@@ -66,7 +66,7 @@ class SMSService {
     }
 
     private async sendMock(mobile: string, message: string): Promise<SMSResponse> {
-        console.log(`\n📱 [MOCK SMS] To: ${mobile} | Message: "${message}"\n`)
+        console.log(`\n📱 [MOCK SMS] To: ${mobile}\n`)
         return { success: true, messageId: 'mock-id-' + Date.now() }
     }
 
@@ -107,12 +107,10 @@ class SMSService {
             })
             const url = `https://control.msg91.com/api/v5/otp?${queryParams.toString()}`
 
-            const isTestMode = isDevelopmentMode()
             console.log('📤 [MSG91] Sending OTP:', {
                 flow,
                 templateId,
                 mobile: finalMobile,
-                otp: isTestMode ? otp : '****',  // Mask OTP in production
                 timestamp: new Date().toISOString()
             })
 
