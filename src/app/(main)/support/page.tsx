@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import { Plus, MessageSquare, Clock, AlertCircle, CheckCircle2, X, Send, Tag, Calendar, Loader2, Star, ChevronLeft, ArrowLeft } from 'lucide-react'
 import { createTicket, getUserTickets, rateSupportTicket } from '@/app/ticket-actions'
 import { TicketChatModal } from '@/components/support/ticket-chat-modal'
@@ -17,6 +18,11 @@ export default function SupportPage() {
     const [message, setMessage] = useState('')
     const [category, setCategory] = useState('Technical Issue')
     const [isSubmitting, setIsSubmitting] = useState(false)
+    const [mounted, setMounted] = useState(false)
+
+    useEffect(() => {
+        setMounted(true)
+    }, [])
 
     const loadTickets = async () => {
         const res = await getUserTickets()
@@ -236,9 +242,9 @@ export default function SupportPage() {
                 </PageItem>
 
                 {/* New Ticket Modal - Light Theme */}
-                {showNewTicket && (
+                {showNewTicket && mounted && createPortal(
                     <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm animate-in fade-in duration-300 xl:pl-[280px]">
-                        <div className="bg-white w-full max-w-lg rounded-xl border border-gray-200 shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300">
+                        <div className="bg-white w-full max-w-lg max-h-[calc(100dvh-2rem)] overflow-y-auto rounded-xl border border-gray-200 shadow-2xl animate-in zoom-in-95 duration-300">
                             <div className="bg-gradient-to-br from-[var(--primary-orange)] to-orange-600 p-6 flex justify-between items-center text-white">
                                 <div>
                                     <h2 className="text-lg font-black uppercase tracking-tight font-heading">Raise Support Ticket</h2>
@@ -246,7 +252,7 @@ export default function SupportPage() {
                                 </div>
                                 <button
                                     onClick={() => setShowNewTicket(false)}
-                                    className="p-1.5 bg-white/20 hover:bg-white/30 rounded-lg transition-colors text-white"
+                                    className="p-2.5 shrink-0 bg-white/20 hover:bg-white/30 rounded-lg transition-colors text-white"
                                     aria-label="Close Ticket Modal"
                                 >
                                     <X size={16} />
@@ -321,7 +327,8 @@ export default function SupportPage() {
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div>,
+                    document.body
                 )}
 
                 {/* Chat Modal */}
@@ -371,14 +378,14 @@ function CSATRatingCard({ ticketId }: { ticketId: number }) {
                     <p className="text-[10px] font-bold text-emerald-600 uppercase tracking-tighter">How was the resolution of this case?</p>
                 </div>
                 <div className="flex flex-col items-center md:items-end gap-3 shrink-0 w-full md:w-auto">
-                    <div className="flex gap-1.5">
+                    <div className="flex gap-0.5">
                         {[1, 2, 3, 4, 5].map((star) => (
                             <button
                                 key={star}
                                 onMouseEnter={() => setHover(star)}
                                 onMouseLeave={() => setHover(0)}
                                 onClick={() => setRating(star)}
-                                className="transition-all hover:scale-125 active:scale-95"
+                                className="p-1.5 transition-all hover:scale-125 active:scale-95"
                                 aria-label={`Rate ${star} star${star > 1 ? 's' : ''}`}
                             >
                                 <Star
@@ -394,12 +401,12 @@ function CSATRatingCard({ ticketId }: { ticketId: number }) {
                                 placeholder="Any feedback? (optional)"
                                 value={feedback}
                                 onChange={(e) => setFeedback(e.target.value)}
-                                className="bg-white border border-emerald-300 focus:border-emerald-500 rounded-xl px-4 py-2 text-[10px] font-bold text-slate-700 outline-none flex-1 min-w-[150px]"
+                                className="bg-white border border-emerald-300 focus:border-emerald-500 rounded-xl px-4 py-2 text-[10px] font-bold text-slate-700 outline-none flex-1 min-w-0"
                             />
                             <button
                                 onClick={handleRate}
                                 disabled={isSubmitting}
-                                className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all font-heading"
+                                className="shrink-0 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all font-heading"
                             >
                                 {isSubmitting ? '...' : 'Send'}
                             </button>

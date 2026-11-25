@@ -246,7 +246,7 @@ export function AuditLogPanel() {
             {/* Logs Table */}
             <div className="bg-white rounded-[24px] border border-gray-100 shadow-xl shadow-gray-200/40 overflow-hidden min-h-[400px]">
                 <div className="overflow-x-auto">
-                    <table className="w-full">
+                    <table className="w-full min-w-[720px]">
                         <thead>
                             <tr className="bg-gray-50/50 border-b border-gray-100">
                                 <th className="w-10 px-6 py-4"></th>
@@ -343,7 +343,7 @@ export function AuditLogPanel() {
                                         </tr>
                                         {expandedLogId === log.id && (
                                             <tr className="bg-gray-50/50">
-                                                <td colSpan={6} className="px-12 py-8 border-y border-gray-100 animate-in slide-in-from-top-2 duration-300">
+                                                <td colSpan={6} className="px-4 sm:px-12 py-8 border-y border-gray-100 animate-in slide-in-from-top-2 duration-300">
                                                     <div className="flex flex-col gap-4">
                                                         <div className="flex items-center gap-2 mb-2">
                                                             <div className="w-1.5 h-4 bg-red-500 rounded-full" />
@@ -355,7 +355,7 @@ export function AuditLogPanel() {
                                                                     <span className="text-[10px] font-black text-gray-400 uppercase">JSON Structure</span>
                                                                     <Database size={12} className="text-gray-400" />
                                                                 </div>
-                                                                <pre className="p-6 text-xs font-mono text-gray-700 overflow-x-auto whitespace-pre-wrap leading-relaxed selection:bg-red-100">
+                                                                <pre className="p-4 sm:p-6 text-xs font-mono text-gray-700 overflow-x-auto whitespace-pre-wrap break-words leading-relaxed selection:bg-red-100">
                                                                     {JSON.stringify(log.metadata, (key, value) => (key === 'requestId' ? undefined : value), 2)}
                                                                 </pre>
                                                                 {log.metadata?.requestId && (

@@ -21,15 +21,15 @@ export function DateRangeSelector({ currentDays }: { currentDays: number }) {
     ]
 
     return (
-        <div className="flex items-center gap-2 bg-white rounded-xl border border-gray-100 p-1 shadow-sm w-fit">
-            <div className="px-2 text-gray-400">
+        <div className="flex items-center gap-2 bg-white rounded-xl border border-gray-100 p-1 shadow-sm w-fit max-w-full overflow-x-auto">
+            <div className="px-2 text-gray-400 shrink-0">
                 <Calendar size={16} />
             </div>
             {periods.map((p) => (
                 <button
                     key={p.value}
                     onClick={() => handlePeriodChange(p.value)}
-                    className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${currentDays === p.value
+                    className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all whitespace-nowrap shrink-0 ${currentDays === p.value
                         ? 'bg-[#CC0000] text-white shadow-md'
                         : 'text-gray-500 hover:bg-gray-50'
                         }`}

@@ -15,7 +15,7 @@ const tiers = [
 
 export function BenefitGrid({ currentCount }: BenefitGridProps) {
     return (
-        <div className="grid grid-cols-5 gap-2 md:gap-4">
+        <div className="grid grid-cols-5 gap-1.5 sm:gap-2 md:gap-4">
             {tiers.map((tier) => {
                 const isCurrentTier = currentCount === tier.count
                 const isAchieved = currentCount >= tier.count
@@ -29,10 +29,10 @@ export function BenefitGrid({ currentCount }: BenefitGridProps) {
                                 ? 'bg-amber-50 border-amber-200 opacity-60'
                                 : 'bg-gray-50 border-gray-100'}
                     `}>
-                        <div className={`text-[10px] font-bold uppercase mb-1 ${isCurrentTier ? 'text-red-100' : 'text-gray-400'}`}>
+                        <div className={`text-[9px] sm:text-[10px] font-bold uppercase mb-1 whitespace-nowrap ${isCurrentTier ? 'text-red-100' : 'text-gray-400'}`}>
                             {tier.count} Ref{tier.count > 1 ? 's' : ''}
                         </div>
-                        <div className={`text-lg md:text-xl font-black ${isCurrentTier ? 'text-white' : isAchieved ? 'text-amber-700' : 'text-gray-800'}`}>
+                        <div className={`text-base sm:text-lg md:text-xl font-black ${isCurrentTier ? 'text-white' : isAchieved ? 'text-amber-700' : 'text-gray-800'}`}>
                             {tier.percent}%
                         </div>
                         {isAchieved && !isCurrentTier && (

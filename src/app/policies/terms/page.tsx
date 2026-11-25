@@ -14,7 +14,7 @@ export default function TermsPage() {
             </div>
 
             <div className="space-y-8 text-gray-700 leading-relaxed">
-                <section className="bg-white border border-gray-250/70 rounded-3xl p-8 shadow-sm">
+                <section className="bg-white border border-gray-250/70 rounded-3xl p-5 sm:p-8 shadow-sm">
                     <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
                         <CheckCircle2 size={20} className="text-[var(--primary-orange)]" />
                         1. Introduction
@@ -27,7 +27,7 @@ export default function TermsPage() {
                     </p>
                 </section>
 
-                <section className="bg-white border border-gray-250/70 rounded-3xl p-8 shadow-sm">
+                <section className="bg-white border border-gray-250/70 rounded-3xl p-5 sm:p-8 shadow-sm">
                     <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
                         <CheckCircle2 size={20} className="text-[var(--primary-orange)]" />
                         2. Partnership Program
@@ -42,7 +42,7 @@ export default function TermsPage() {
                     </ul>
                 </section>
 
-                <section className="bg-white border border-gray-250/70 rounded-3xl p-8 shadow-sm">
+                <section className="bg-white border border-gray-250/70 rounded-3xl p-5 sm:p-8 shadow-sm">
                     <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
                         <CheckCircle2 size={20} className="text-[var(--primary-orange)]" />
                         3. Registration & Payments
@@ -52,7 +52,7 @@ export default function TermsPage() {
                     </p>
                 </section>
 
-                <section className="bg-white border border-gray-250/70 rounded-3xl p-8 shadow-sm">
+                <section className="bg-white border border-gray-250/70 rounded-3xl p-5 sm:p-8 shadow-sm">
                     <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
                         <CheckCircle2 size={20} className="text-[var(--primary-orange)]" />
                         4. Limitation of Liability
@@ -62,7 +62,7 @@ export default function TermsPage() {
                     </p>
                 </section>
 
-                <section id="privacy-policy" className="scroll-mt-24 bg-emerald-50 border-2 border-emerald-200 rounded-3xl p-8 shadow-sm">
+                <section id="privacy-policy" className="scroll-mt-24 bg-emerald-50 border-2 border-emerald-200 rounded-3xl p-5 sm:p-8 shadow-sm">
                     <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
                         <Shield size={20} className="text-emerald-600" />
                         5. Privacy Policy

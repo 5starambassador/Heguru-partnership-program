@@ -12,9 +12,9 @@ export function PrivacyModal({ isOpen, onClose, sidebarOffset = true }: Props) {
     if (!isOpen) return null
 
     return (
-        <div className={`fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-[100] flex items-center justify-center p-4 ${sidebarOffset ? 'xl:pl-[280px]' : ''}`}>
-            <div className="bg-white rounded-[32px] w-full max-w-2xl max-h-[85vh] overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200">
-                <div className="p-8 border-b border-gray-100 flex justify-between items-center bg-gradient-to-r from-gray-50 to-white">
+        <div className={`fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-[100] flex items-center justify-center p-3 sm:p-4 ${sidebarOffset ? 'xl:pl-[280px]' : ''}`}>
+            <div className="bg-white rounded-3xl sm:rounded-[32px] w-full max-w-2xl max-h-[calc(100dvh-1.5rem)] sm:max-h-[85dvh] flex flex-col overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200">
+                <div className="shrink-0 p-5 sm:p-8 border-b border-gray-100 flex justify-between items-center gap-3 bg-gradient-to-r from-gray-50 to-white">
                     <div className="flex items-center gap-3">
                         <div className="p-2 bg-emerald-50 rounded-xl text-emerald-600">
                             <Shield size={24} />
@@ -26,13 +26,13 @@ export function PrivacyModal({ isOpen, onClose, sidebarOffset = true }: Props) {
                     </div>
                     <button
                         onClick={onClose}
-                        className="p-2 hover:bg-gray-100 rounded-2xl text-gray-400 hover:text-gray-600 transition-all shadow-sm bg-white"
+                        aria-label="Close privacy policy" className="shrink-0 p-2.5 hover:bg-gray-100 rounded-2xl text-gray-400 hover:text-gray-600 transition-all shadow-sm bg-white"
                     >
                         <X size={20} />
                     </button>
                 </div>
 
-                <div className="overflow-y-auto p-8 max-h-[calc(85vh-100px)] custom-scrollbar space-y-8">
+                <div className="flex-1 min-h-0 overflow-y-auto p-5 sm:p-8 custom-scrollbar space-y-8">
                     {/* Hero Section */}
                     <div className="p-6 bg-emerald-50 rounded-[24px] border border-emerald-100/50">
                         <p className="text-sm text-emerald-900 leading-relaxed font-medium">
@@ -88,7 +88,7 @@ export function PrivacyModal({ isOpen, onClose, sidebarOffset = true }: Props) {
                             Your Rights
                         </h4>
                         <p className="text-sm text-gray-600 leading-relaxed">
-                            You have the right to access, correct, or request deletion of your data through the Profile section of this app. All deletion requests are processed manually by our Super Admin to ensure data integrity. The full policy is at partner.heguruindia.com/policies/privacy.
+                            You have the right to access, correct, or request deletion of your data through the Profile section of this app. All deletion requests are processed manually by our Super Admin to ensure data integrity. The full policy is at <span className="break-all">partner.heguruindia.com/policies/privacy</span>.
                         </p>
                     </div>
 
@@ -99,7 +99,7 @@ export function PrivacyModal({ isOpen, onClose, sidebarOffset = true }: Props) {
                     </div>
                 </div>
 
-                <div className="p-6 bg-gray-50 border-t border-gray-100 flex justify-center">
+                <div className="shrink-0 p-4 sm:p-6 bg-gray-50 border-t border-gray-100 flex justify-center">
                     <button
                         onClick={onClose}
                         className="px-12 py-3 bg-gray-900 text-white font-black text-sm rounded-xl hover:bg-black transition-all shadow-lg shadow-gray-200"

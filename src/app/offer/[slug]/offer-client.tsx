@@ -47,14 +47,14 @@ export function OfferClient({ programTitle }: { programTitle: string }) {
     }
 
     return (
-        <div className="min-h-screen bg-slate-50 text-gray-900 font-[family-name:var(--font-outfit)] flex flex-col relative overflow-hidden">
+        <div className="min-h-[100dvh] bg-slate-50 text-gray-900 font-[family-name:var(--font-outfit)] flex flex-col relative overflow-hidden">
             {/* Ambient Background */}
             <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
                 <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-[var(--primary-orange)]/5 rounded-full blur-[120px]" />
                 <div className="absolute bottom-[-10%] left-[20%] w-[600px] h-[600px] bg-[var(--learning-blue)]/5 rounded-full blur-[120px]" />
             </div>
 
-            <main className="flex-1 flex flex-col items-center justify-center p-6 relative z-10">
+            <main className="flex-1 flex flex-col items-center justify-center p-4 sm:p-6 pt-[max(1rem,env(safe-area-inset-top))] pb-[max(1rem,env(safe-area-inset-bottom))] sm:pt-[max(1.5rem,env(safe-area-inset-top))] sm:pb-[max(1.5rem,env(safe-area-inset-bottom))] relative z-10">
                 <motion.div
                      initial={{ opacity: 0, y: 30 }}
                      animate={{ opacity: 1, y: 0 }}
@@ -66,12 +66,12 @@ export function OfferClient({ programTitle }: { programTitle: string }) {
                             <Star size={14} className="text-amber-500 fill-amber-500" />
                             <span className="text-[11px] font-black text-amber-800 uppercase tracking-widest">VIP Invitation</span>
                         </div>
-                        <h1 className="text-3xl font-black text-gray-900 tracking-tight mb-2">Claim Your Special Offer</h1>
+                        <h1 className="text-3xl font-black text-gray-900 tracking-tight mb-2 break-words">Claim Your Special Offer</h1>
                         <p className="text-gray-500 text-sm">You have been invited by your friend to access: <br /><span className="text-[var(--primary-orange)] font-black">{programTitle}</span></p>
                     </div>
 
                     {/* Form Card */}
-                    <div className="bg-white border border-gray-250/80 rounded-[32px] p-8 shadow-xl relative overflow-hidden">
+                    <div className="bg-white border border-gray-250/80 rounded-[32px] p-5 sm:p-8 shadow-xl relative overflow-hidden">
                         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[var(--primary-orange)] to-amber-500" />
 
                         <div className="space-y-6">
@@ -79,14 +79,14 @@ export function OfferClient({ programTitle }: { programTitle: string }) {
                                 <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">Your Mobile Number</label>
                                 <div className="relative group">
                                     <div className="absolute inset-0 bg-[var(--primary-orange)]/5 rounded-2xl blur opacity-0 group-focus-within:opacity-100 transition-opacity duration-500"></div>
-                                    <div className="relative flex items-center bg-gray-50 border border-gray-250/70 rounded-2xl h-14 px-4 transition-all group-focus-within:bg-white group-focus-within:border-[var(--primary-orange)]/50 group-focus-within:ring-2 group-focus-within:ring-[var(--primary-orange)]/10">
-                                        <Smartphone className="text-gray-400 mr-3" size={20} />
+                                    <div className="relative flex items-center bg-gray-50 border border-gray-250/70 rounded-2xl h-14 px-3 sm:px-4 transition-all group-focus-within:bg-white group-focus-within:border-[var(--primary-orange)]/50 group-focus-within:ring-2 group-focus-within:ring-[var(--primary-orange)]/10">
+                                        <Smartphone className="shrink-0 text-gray-400 mr-2 sm:mr-3" size={20} />
                                         <input
                                             type="tel"
                                             value={mobile}
                                             onChange={(e) => setMobile(e.target.value.replace(/\D/g, '').slice(0, 10))}
                                             placeholder="98765 43210"
-                                            className="w-full h-full bg-transparent border-none outline-none text-lg font-bold text-gray-900 placeholder-gray-300"
+                                            className="w-full min-w-0 h-full bg-transparent border-none outline-none text-lg font-bold text-gray-900 placeholder-gray-300"
                                         />
                                     </div>
                                 </div>
@@ -121,7 +121,7 @@ export function OfferClient({ programTitle }: { programTitle: string }) {
                         </div>
                     </div>
 
-                    <div className="mt-8 text-center text-gray-400 flex items-center justify-center gap-2">
+                    <div className="mt-8 text-center text-gray-400 flex flex-wrap items-center justify-center gap-2">
                         <ShieldCheck size={12} className="text-[var(--primary-orange)]" />
                         <span className="text-[10px] font-bold uppercase tracking-widest">Secure Redirect • Official Heguru URL</span>
                     </div>

@@ -40,7 +40,7 @@ export function MobileStatsCard({
             className={`bg-white rounded-2xl p-5 border border-gray-100 shadow-sm active:scale-[0.98] transition-all ${className}`}
         >
             <div className="flex items-start justify-between gap-4 mb-4">
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-4 min-w-0 flex-1">
                     {/* Avatar Area */}
                     {avatar && (
                         <div className="shrink-0">
@@ -53,8 +53,8 @@ export function MobileStatsCard({
                     )}
 
                     {/* Title Area */}
-                    <div>
-                        <h4 className="font-bold text-gray-900 text-[15px] leading-tight">{title}</h4>
+                    <div className="min-w-0 flex-1">
+                        <h4 className="font-bold text-gray-900 text-[15px] leading-tight break-words">{title}</h4>
                         {subtitle && <p className="text-xs font-semibold text-gray-500 mt-1">{subtitle}</p>}
 
                         {/* Tags */}

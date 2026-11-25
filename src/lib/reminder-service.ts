@@ -651,7 +651,9 @@ export class ReminderService {
         const bank = await this.sendBankDetailsReminder()
         const child = await this.sendChildDetailsReminder()
         const referral = await this.sendReferralReminder()
-        const motivation = await this.sendReferralMotivation()
+        // Paused: referral_motivation WhatsApp template not created in MSG91 yet. Re-enable once approved.
+        // const motivation = await this.sendReferralMotivation()
+        const motivation = { skipped: true }
         const followup = await this.sendReferralFollowUp()
         const programs = await this.sendExternalProgramNudges()
         const drip = await this.sendWelcomeDrip()

@@ -21,13 +21,13 @@ export function StudentSourceFilter() {
     }
 
     return (
-        <div className="flex items-center gap-2 bg-white border border-gray-100 rounded-xl px-3 py-1.5 shadow-sm hover:shadow-md transition-all">
+        <div className="flex items-center gap-2 bg-white border border-gray-100 rounded-xl px-3 py-0 md:py-1.5 shadow-sm hover:shadow-md transition-all">
             <Users size={14} className="text-gray-400" />
             <select
                 value={currentSource}
                 onChange={(e) => handleSourceChange(e.target.value)}
                 suppressHydrationWarning={true}
-                className="bg-transparent border-none focus:ring-0 text-[11px] font-black uppercase tracking-widest text-gray-700 cursor-pointer outline-none"
+                className="min-h-10 md:min-h-0 bg-transparent border-none focus:ring-0 text-[11px] font-black uppercase tracking-widest text-gray-700 cursor-pointer outline-none"
             >
                 <option value="referral">Referral Students</option>
                 <option value="organic">ERP / Organic</option>

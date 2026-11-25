@@ -303,7 +303,7 @@ export function RegistrationTable({
 
     return (
         <div className="space-y-6">
-            <div className="flex justify-between items-center px-1">
+            <div className="flex flex-wrap justify-between items-center gap-2 px-1">
                 <h3 className="text-lg font-black text-gray-900 dark:text-gray-100">Direct Registrations</h3>
                 <button
                     onClick={() => setShowExportModal(true)}

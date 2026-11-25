@@ -330,21 +330,21 @@ export default function SuperadminClient({ analytics, campusComparison = [], use
 
     return (
         <div className="bg-gray-50 min-h-screen">
-            <div className={`${['program-leads', 'permissions'].includes(selectedView) ? 'max-w-full px-2' : 'max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-10'} py-10 space-y-10`}>
+            <div className={`${['program-leads', 'permissions'].includes(selectedView) ? 'max-w-full px-2' : 'max-w-[1800px] mx-auto px-0 sm:px-2 lg:px-10'} py-4 sm:py-10 space-y-10`}>
 
                 {(selectedView === 'analytics' || selectedView === 'home') && (
                     <div className="space-y-10">
                         {/* Data Integrity / Maintenance Section */}
                         {(analyticsData?.missingStudentCount || 0) > 0 && (
-                            <div className="bg-blue-600 p-8 rounded-xl shadow-sm text-white animate-in slide-in-from-top-4 duration-700 relative overflow-hidden group">
+                            <div className="bg-blue-600 p-5 sm:p-8 rounded-xl shadow-sm text-white animate-in slide-in-from-top-4 duration-700 relative overflow-hidden group">
                                 <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full translate-x-32 -translate-y-32 group-hover:scale-110 transition-transform duration-1000" />
                                 <div className="flex flex-col md:flex-row items-center justify-between gap-8 relative z-10">
-                                    <div className="flex items-center gap-6">
-                                        <div className="w-16 h-16 bg-white/20 backdrop-blur-md rounded-xl flex items-center justify-center border border-white/30 shadow-inner group-hover:rotate-12 transition-transform">
+                                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6">
+                                        <div className="w-16 h-16 shrink-0 bg-white/20 backdrop-blur-md rounded-xl flex items-center justify-center border border-white/30 shadow-inner group-hover:rotate-12 transition-transform">
                                             <RefreshCw size={32} className="text-white animate-spin-slow" />
                                         </div>
                                         <div>
-                                            <h3 className="text-2xl font-black tracking-tight uppercase">Data Sync Required</h3>
+                                            <h3 className="text-xl sm:text-2xl font-black tracking-tight uppercase">Data Sync Required</h3>
                                             <p className="text-blue-100 text-sm font-semibold mt-1 max-w-md leading-relaxed">
                                                 We found <span className="text-white underline underline-offset-4 decoration-2">{analyticsData.missingStudentCount} confirmed leads</span> that need to be synchronized with the master student database.
                                             </p>
@@ -471,7 +471,7 @@ export default function SuperadminClient({ analytics, campusComparison = [], use
                         </div>
 
                         <div className="space-y-4">
-                            <div className="flex justify-between items-center px-2">
+                            <div className="flex flex-wrap gap-3 justify-between items-center px-2">
                                 <h3 className="text-lg font-black text-gray-800 uppercase tracking-tight">Recent Payouts</h3>
                                 <button
                                     onClick={() => setShowCalcModal(true)}

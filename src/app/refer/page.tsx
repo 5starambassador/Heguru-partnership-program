@@ -17,7 +17,7 @@ import { useWebOTP } from '@/hooks/useWebOTP'
 
 export default function ReferPage() {
     return (
-        <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-[#0f172a] text-white">Loading Referral Form...</div>}>
+        <Suspense fallback={<div className="min-h-[100dvh] flex items-center justify-center bg-[#0f172a] text-white">Loading Referral Form...</div>}>
             <ReferralFormContent />
         </Suspense>
     )
@@ -176,7 +176,7 @@ function ReferralFormContent() {
     }
 
     return (
-        <div className="relative min-h-screen w-full bg-slate-50 text-gray-900 font-[family-name:var(--font-outfit)] flex flex-col">
+        <div className="relative min-h-[100dvh] w-full bg-slate-50 text-gray-900 font-[family-name:var(--font-outfit)] flex flex-col">
             {/* Ambient Background Effects */}
             <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
                 <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-[var(--primary-orange)]/5 rounded-full blur-[120px]" />
@@ -184,14 +184,15 @@ function ReferralFormContent() {
             </div>
 
             {/* Header */}
-            <header className="px-6 pt-6 pb-6 flex items-center justify-between sticky top-0 z-20 bg-slate-50/80 backdrop-blur-md">
+            <header className="px-4 sm:px-6 pt-[max(1.5rem,env(safe-area-inset-top))] pb-6 flex items-center justify-between gap-2 sticky top-0 z-20 bg-slate-50/80 backdrop-blur-md">
                 <button
                     onClick={() => step > 1 ? setStep(prev => prev - 1) : router.push('/dashboard')}
-                    className="w-10 h-10 rounded-full flex items-center justify-center bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 hover:border-gray-300 transition-all z-50 group shadow-md"
+                    aria-label="Back"
+                    className="w-10 h-10 shrink-0 rounded-full flex items-center justify-center bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 hover:border-gray-300 transition-all z-50 group shadow-md"
                 >
                     <ChevronLeft className="w-5 h-5 flex-shrink-0 group-hover:-translate-x-0.5 transition-transform text-gray-600" strokeWidth={2.5} />
                 </button>
-                <div className="flex flex-col items-center">
+                <div className="flex flex-col items-center min-w-0 text-center">
                     <span className="text-[10px] font-black text-[var(--primary-orange)] uppercase tracking-[0.2em] mb-1">
                         {ambassadorName ? 'Public Referral Link' : 'Self-Entry Referral'}
                     </span>
@@ -199,12 +200,12 @@ function ReferralFormContent() {
                         {ambassadorName ? 'Join the Program' : 'Make a Referral'}
                     </h1>
                 </div>
-                <div className="w-10" />
+                <div className="w-10 shrink-0" />
             </header>
 
 
             {/* Main Content */}
-            <div className="flex-1 flex flex-col items-center p-6 pt-4 relative z-10 w-full max-w-lg mx-auto">
+            <div className="flex-1 flex flex-col items-center px-4 sm:px-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-4 relative z-10 w-full max-w-lg mx-auto">
 
                 <PageAnimate className="w-full">
 
@@ -255,7 +256,7 @@ function ReferralFormContent() {
                     </AnimatePresence>
 
                     {/* Main Form Area - MATCHES DASHBOARD STAT CARD DEPTH */}
-                    <div className="relative bg-white border border-gray-200 rounded-[32px] p-8 overflow-hidden shadow-2xl">
+                    <div className="relative bg-white border border-gray-200 rounded-[32px] p-5 sm:p-8 overflow-hidden shadow-2xl">
 
                         {/* Orange Glow Top */}
                         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1/2 h-1 bg-gradient-to-r from-transparent via-[var(--primary-orange)] to-transparent opacity-50 shadow-[0_0_20px_rgba(242,110,33,0.3)]"></div>
@@ -289,8 +290,8 @@ function ReferralFormContent() {
                                         <label className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] pl-1">Parent Mobile Number</label>
                                         <div className="relative group">
                                             <div className="absolute inset-0 bg-orange-500/5 rounded-2xl blur-xl opacity-0 group-focus-within:opacity-100 transition-opacity duration-500"></div>
-                                            <div className={`relative flex items-center bg-gray-50 border-2 rounded-2xl h-16 px-4 transition-all group-focus-within:bg-white ${error ? 'border-rose-500/50' : 'border-gray-200 group-focus-within:border-[var(--primary-orange)]/50'}`}>
-                                                <Smartphone className="text-gray-400 group-focus-within:text-[var(--primary-orange)] transition-colors mr-3" />
+                                            <div className={`relative flex items-center bg-gray-50 border-2 rounded-2xl h-16 px-3 sm:px-4 transition-all group-focus-within:bg-white ${error ? 'border-rose-500/50' : 'border-gray-200 group-focus-within:border-[var(--primary-orange)]/50'}`}>
+                                                <Smartphone className="shrink-0 text-gray-400 group-focus-within:text-[var(--primary-orange)] transition-colors mr-2 sm:mr-3" />
                                                 <input
                                                     type="tel"
                                                     value={formData.parentMobile}
@@ -299,7 +300,7 @@ function ReferralFormContent() {
                                                         updateFormData('parentMobile', value);
                                                     }}
                                                     placeholder="98765 43210"
-                                                    className="w-full h-full bg-transparent border-none outline-none text-xl font-bold text-gray-900 placeholder-gray-300"
+                                                    className="w-full min-w-0 h-full bg-transparent border-none outline-none text-lg sm:text-xl font-bold text-gray-900 placeholder-gray-300"
                                                 />
                                             </div>
                                         </div>
@@ -378,7 +379,7 @@ function ReferralFormContent() {
                                                 autoComplete="one-time-code"
                                                 inputMode="numeric"
                                                 pattern="[0-9]*"
-                                                className="relative w-full h-16 bg-gray-50 border-2 border-gray-250 rounded-2xl text-center text-3xl font-bold tracking-[0.5em] text-gray-900 outline-none focus:border-[var(--primary-orange)]/50 focus:bg-white transition-all placeholder-gray-300 shadow-inner"
+                                                className="relative w-full h-16 bg-gray-50 border-2 border-gray-250 rounded-2xl text-center text-3xl font-bold tracking-[0.3em] sm:tracking-[0.5em] text-gray-900 outline-none focus:border-[var(--primary-orange)]/50 focus:bg-white transition-all placeholder-gray-300 shadow-inner"
                                             />
                                         </div>
                                     </div>
@@ -554,11 +555,11 @@ function InputGroup({ icon, label, placeholder, value, onChange }: { icon: any, 
             <div className="relative group">
                 <div className="absolute inset-0 bg-orange-500/5 rounded-xl blur-lg opacity-0 group-focus-within:opacity-100 transition-opacity duration-500"></div>
                 <div className="relative flex items-center bg-gray-50 border-2 border-gray-200 rounded-xl h-14 px-4 transition-all group-focus-within:border-emerald-500/50 group-focus-within:bg-white">
-                    <div className="text-gray-400 group-focus-within:text-emerald-500 transition-colors mr-3 [&>svg]:w-5 [&>svg]:h-5">
+                    <div className="shrink-0 text-gray-400 group-focus-within:text-emerald-500 transition-colors mr-3 [&>svg]:w-5 [&>svg]:h-5">
                         {icon}
                     </div>
                     <input
-                        className="w-full h-full bg-transparent border-none outline-none text-base font-medium text-gray-900 placeholder-gray-300"
+                        className="w-full min-w-0 h-full bg-transparent border-none outline-none text-base font-medium text-gray-900 placeholder-gray-300"
                         placeholder={placeholder}
                         value={value}
                         onChange={onChange}

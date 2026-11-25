@@ -110,7 +110,7 @@ export function BottomNav({ role = '' }: { role?: string }) {
     }
 
     return (
-        <div className="fixed bottom-0 left-0 right-0 z-50 xl:hidden">
+        <div className="fixed bottom-0 left-0 right-0 z-40 xl:hidden">
             {/* Main Bar */}
             <div className="pb-[env(safe-area-inset-bottom)] backdrop-blur-xl bg-white/95 border-t border-gray-200 shadow-[0_-4px_20px_rgba(0,0,0,0.06)]">
                 <div className="flex justify-between items-center h-16 px-2 sm:px-4 max-w-lg mx-auto">
@@ -121,7 +121,7 @@ export function BottomNav({ role = '' }: { role?: string }) {
                     <div className="relative -top-4 flex flex-col items-center px-1">
                         <Link
                             href={center.href}
-                            className={`flex items-center justify-center transition-all duration-200 relative group shadow-lg border-2 border-white hover:scale-105 active:scale-95 w-13 h-13 rounded-2xl ${
+                            className={`flex items-center justify-center transition-all duration-200 relative group shadow-lg border-2 border-white hover:scale-105 active:scale-95 w-[52px] h-[52px] rounded-2xl ${
                                 isPathActive(center.href)
                                     ? isAmbassador
                                         ? 'bg-gradient-to-br from-[var(--primary-orange)] to-[var(--primary-orange-hover)] ring-2 ring-orange-200'

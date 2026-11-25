@@ -319,9 +319,9 @@ export function CommunityClient({
     activeTab === "saved" ? posts.filter((p) => p.isSavedByMe) : posts;
 
   return (
-    <PageAnimate className="max-w-[1400px] mx-auto px-4 lg:px-8 py-6 flex flex-col lg:flex-row gap-8">
+    <PageAnimate className="max-w-[1400px] mx-auto px-0 sm:px-4 lg:px-8 py-6 flex flex-col lg:flex-row gap-8">
       {/* Feed Section */}
-      <div className="flex-1 space-y-6">
+      <div className="flex-1 min-w-0 space-y-6">
         {/* Header */}
         <div className="flex flex-col sm:flex-row gap-4 justify-between sm:items-center">
           <div>
@@ -393,7 +393,7 @@ export function CommunityClient({
                     placeholder={`Share something with the community, ${
                       currentUser.fullName.split(" ")[0]
                     }...`}
-                    className="w-full min-h-[80px] bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-sm text-slate-800 placeholder-slate-400 focus:bg-white focus:ring-2 focus:ring-primary-orange-hover/20 outline-none resize-none transition-all"
+                    className="w-full min-h-[80px] bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-base sm:text-sm text-slate-800 placeholder-slate-400 focus:bg-white focus:ring-2 focus:ring-primary-orange-hover/20 outline-none resize-none transition-all"
                     maxLength={1000}
                   />
                 </div>
@@ -405,7 +405,7 @@ export function CommunityClient({
                   <img
                     src={imagePreview}
                     alt="Upload preview"
-                    className="max-h-[300px] w-auto object-contain"
+                    className="max-h-[300px] w-auto max-w-full h-auto object-contain"
                   />
                   <button
                     type="button"
@@ -631,7 +631,7 @@ export function CommunityClient({
                         )}
                       </div>
 
-                      <p className="md:text-[9px] text-[7px] text-slate-400 font-bold uppercase tracking-wider mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1">
+                      <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wider mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1">
                         <span className="flex items-center gap-1">
                           <Location size={10} className="text-slate-350" />
                           <span>{post.authorCampus}</span>
@@ -740,7 +740,7 @@ export function CommunityClient({
 
                 {/* Post content */}
                 <div className="mt-4">
-                  <p className="text-sm text-slate-700 font-medium leading-relaxed whitespace-pre-line select-text">
+                  <p className="text-sm text-slate-700 font-medium leading-relaxed whitespace-pre-line select-text break-words [overflow-wrap:anywhere]">
                     {post.content}
                   </p>
                 </div>
@@ -751,7 +751,7 @@ export function CommunityClient({
                     <img
                       src={post.image}
                       alt="Community Attachment"
-                      className="max-h-[450px] w-auto object-contain hover:scale-[1.01] transition-transform duration-300"
+                      className="max-h-[450px] w-auto max-w-full h-auto object-contain hover:scale-[1.01] transition-transform duration-300"
                     />
                   </div>
                 )}
@@ -854,7 +854,7 @@ export function CommunityClient({
                     {/* Like Toggle */}
                     <button
                       onClick={() => handleLike(post.postId)}
-                      className={`flex items-center gap-1.5 hover:text-red-500 transition-all ${
+                      className={`p-2 -m-2 flex items-center gap-1.5 hover:text-red-500 transition-all ${
                         post.isLikedByMe
                           ? "text-red-500 font-black"
                           : "text-slate-500"
@@ -881,7 +881,7 @@ export function CommunityClient({
                           [post.postId]: !prev[post.postId],
                         }))
                       }
-                      className="flex items-center gap-1.5 hover:text-primary-orange-hover transition-all text-slate-500"
+                      className="p-2 -m-2 flex items-center gap-1.5 hover:text-primary-orange-hover transition-all text-slate-500"
                     >
                       <MessageCircle size={18} className="text-slate-400" />
                       <span>{post.commentCount > 0 ?post.commentCount:""}</span>
@@ -893,8 +893,9 @@ export function CommunityClient({
                     {/* Share */}
                     <button
                       onClick={() => handleNativeShare(post)}
-                      className="flex items-center gap-1.5 hover:text-emerald-600 transition-all text-slate-500"
+                      className="p-2 -m-2 flex items-center gap-1.5 hover:text-emerald-600 transition-all text-slate-500"
                       title="Share post"
+                      aria-label="Share post"
                     >
                       <Share2 size={18} className="text-slate-400" />
                       <span className="hidden sm:inline"> Share</span>
@@ -903,7 +904,7 @@ export function CommunityClient({
                     {/* Save Bookmark (Desktop Only) */}
                     <button
                       onClick={() => handleSave(post.postId)}
-                      className={`hidden sm:flex items-center gap-1.5 hover:text-amber-500 transition-all ${
+                      className={`p-2 -m-2 hidden sm:flex items-center gap-1.5 hover:text-amber-500 transition-all ${
                         post.isSavedByMe
                           ? "text-amber-500 font-black"
                           : "text-slate-500"
@@ -952,15 +953,15 @@ export function CommunityClient({
                                 )}
                               </div>
                               <div className="flex-1 min-w-0">
-                                <div className="flex items-center justify-between">
-                                  <span className="font-extrabold text-xs text-[var(--deep-black)] uppercase tracking-tight">
+                                <div className="flex items-center justify-between gap-2">
+                                  <span className="font-extrabold text-xs text-[var(--deep-black)] uppercase tracking-tight min-w-0 truncate">
                                     {comment.authorName}
                                   </span>
                                   <span className="text-[8px] text-slate-400 font-bold uppercase tracking-wider">
                                     {comment.authorRole}
                                   </span>
                                 </div>
-                                <p className="text-xs text-slate-600 mt-1 select-text font-medium">
+                                <p className="text-xs text-slate-600 mt-1 select-text font-medium break-words [overflow-wrap:anywhere]">
                                   {comment.content}
                                 </p>
                               </div>
@@ -992,7 +993,7 @@ export function CommunityClient({
                             }))
                           }
                           placeholder="Add a comment..."
-                          className="flex-1 bg-slate-50 border border-slate-100 rounded-xl px-3.5 py-2 text-xs text-slate-800 focus:bg-white focus:ring-2 focus:ring-primary-orange-hover/20 outline-none transition-all"
+                          className="flex-1 min-w-0 bg-slate-50 border border-slate-100 rounded-xl px-3.5 py-2 text-base sm:text-xs text-slate-800 focus:bg-white focus:ring-2 focus:ring-primary-orange-hover/20 outline-none transition-all"
                           onKeyDown={(e) => {
                             if (e.key === "Enter") {
                               handleCommentSubmit(post.postId);

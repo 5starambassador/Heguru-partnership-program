@@ -278,7 +278,7 @@ export function ReferralsList({
   return (
     <div className="w-full relative">
       <div className="relative z-10 flex flex-col">
-        <div className="md:flex-row flex-col justify-between items-center mb-12 relative z-50">
+        <div className="flex md:flex-row flex-col justify-between items-start md:items-center gap-3 mb-12 relative z-50">
           <div className="flex mb-3 items-center gap-4">
             <div >
               <h1 className="text-2xl md:text-4xl font-black tracking-tight text-[var(--deep-black)] uppercase font-heading">
@@ -310,7 +310,7 @@ export function ReferralsList({
                   initial={{ opacity: 0, y: 10, scale: 0.95 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                  className="absolute right-0 top-full mt-2 w-48 bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden z-50"
+                  className="absolute left-0 md:left-auto md:right-0 top-full mt-2 w-48 bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden z-50"
                 >
                   {dropdownYears.map((year: string) => (
                     <button
@@ -474,7 +474,7 @@ function ReferralCard({
   const statusStyle = getStatusStyle(referral.leadStatus);
 
   return (
-    <div className="group relative bg-white border border-gray-200 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden">
+    <div className="group relative bg-white border border-gray-200 rounded-2xl p-4 sm:p-6 shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden">
       {/* Subtle top border accent line */}
       <div
         className={`absolute top-0 left-0 w-full h-[3px] bg-gradient-to-r from-transparent ${
@@ -512,7 +512,7 @@ function ReferralCard({
         <div className="flex-1 order-2 md:order-1 min-w-0 flex flex-col justify-between">
           <div>
             {/* 1. Student Name */}
-            <h3 className="font-heading mb-5 md:mt-0 mt-3 font-black text-md lg:text-3xl text-[var(--deep-black)] capitalize tracking-tight">
+            <h3 className="font-heading mb-5 md:mt-0 mt-3 font-black text-base lg:text-3xl text-[var(--deep-black)] capitalize tracking-tight break-words">
               {referral.studentName}
             </h3>
 

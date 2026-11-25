@@ -602,7 +602,7 @@ export function UserTable({
                 <AcademicYearFilter />
 
                 {/* Role Filter */}
-                <div className="flex bg-gray-50 p-1 rounded-xl border border-gray-100 items-center gap-1">
+                <div className="flex flex-wrap bg-gray-50 p-1 rounded-xl border border-gray-100 items-center gap-1">
                     {['Parent', 'Staff', 'Alumni', 'Others'].map(role => {
                         const isActive = roleFilterValue.includes(role)
                         return isActive ? (
@@ -635,7 +635,7 @@ export function UserTable({
                 </div>
 
                 {/* Status Filter */}
-                <div className="flex bg-gray-50 p-1 rounded-xl border border-gray-100 items-center gap-1">
+                <div className="flex flex-wrap bg-gray-50 p-1 rounded-xl border border-gray-100 items-center gap-1">
                     {['Active', 'Inactive', 'Suspended', 'Pending', 'Deleted'].map(status => {
                         const isActive = statusFilterValue.includes(status)
                         return isActive ? (
@@ -718,7 +718,7 @@ export function UserTable({
 
 
                     {showCampusDropdown && (
-                        <div className="absolute top-full left-0 mt-2 w-64 bg-white rounded-2xl shadow-2xl border border-gray-100 p-3 z-50 animate-in fade-in zoom-in-95 duration-200">
+                        <div className="absolute top-full left-0 mt-2 w-[min(16rem,calc(100vw-2rem))] bg-white rounded-2xl shadow-2xl border border-gray-100 p-3 z-50 animate-in fade-in zoom-in-95 duration-200">
                             <div className="max-h-60 overflow-y-auto space-y-1 custom-scrollbar">
                                 <button
                                     onClick={() => {
@@ -799,16 +799,16 @@ export function UserTable({
 
             {/* Bulk Action Bar (Floating) */}
             {selectedUsers.length > 0 && (
-                <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 animate-in slide-in-from-bottom-5 fade-in duration-300">
-                    <div className="bg-gray-900 text-white px-6 py-3 rounded-full shadow-2xl flex items-center gap-6 border border-gray-700">
+                <div className="fixed bottom-[calc(5.5rem+env(safe-area-inset-bottom))] xl:bottom-8 left-1/2 -translate-x-1/2 z-50 w-[calc(100vw-1.5rem)] sm:w-auto animate-in slide-in-from-bottom-5 fade-in duration-300">
+                    <div className="bg-gray-900 text-white px-4 sm:px-6 py-3 rounded-2xl sm:rounded-full shadow-2xl flex flex-wrap sm:flex-nowrap items-center justify-center gap-2 sm:gap-6 border border-gray-700">
                         <div className="flex items-center gap-2">
                             <div className="bg-white text-black font-bold h-6 w-6 rounded-full flex items-center justify-center text-xs">
                                 {selectedUsers.length}
                             </div>
                             <span className="text-sm font-medium text-gray-300">Selected</span>
                         </div>
-                        <div className="h-4 w-px bg-gray-700"></div>
-                        <div className="flex items-center gap-2">
+                        <div className="hidden sm:block h-4 w-px bg-gray-700"></div>
+                        <div className="flex flex-wrap justify-center items-center gap-2">
                             <button
                                 onClick={() => handleBulkAction('activate')}
                                 disabled={isProcessing}

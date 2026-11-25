@@ -87,7 +87,7 @@ export const AuthLayout = ({ children, animationKey }: { children: React.ReactNo
             <BrandSidebar />
 
             {/* Right Pane - Action Center */}
-            <div className="w-full lg:w-1/2 flex flex-col items-center p-4 sm:p-6 lg:p-12 relative h-full overflow-y-auto z-10">
+            <div className="w-full lg:w-1/2 flex flex-col items-center p-4 sm:p-6 lg:p-12 pt-[max(1rem,env(safe-area-inset-top))] pb-[max(1rem,env(safe-area-inset-bottom))] sm:pt-[max(1.5rem,env(safe-area-inset-top))] sm:pb-[max(1.5rem,env(safe-area-inset-bottom))] lg:pt-[max(3rem,env(safe-area-inset-top))] lg:pb-[max(3rem,env(safe-area-inset-bottom))] relative h-full overflow-y-auto z-10">
 
                 {/* Glass Container */}
                 <div className="relative z-10 w-full max-w-md sm:max-w-lg flex flex-col my-auto">
@@ -98,7 +98,7 @@ export const AuthLayout = ({ children, animationKey }: { children: React.ReactNo
                             animate={{ opacity: 1, scale: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.98, y: -10 }}
                             transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                            className="w-full bg-white p-8 py-10 sm:py-12 rounded-3xl border border-gray-300 shadow-4xl shadow-gray-600/50 min-h-[450px] sm:min-h-[500px] flex flex-col justify-center relative overflow-hidden"
+                            className="w-full bg-white p-5 py-8 sm:p-8 sm:py-12 rounded-3xl border border-gray-300 shadow-4xl shadow-gray-600/50 min-h-[450px] sm:min-h-[500px] flex flex-col justify-center relative overflow-hidden"
                         >
                             {children}
                         </motion.div>
@@ -110,11 +110,11 @@ export const AuthLayout = ({ children, animationKey }: { children: React.ReactNo
                     <p className="text-[11px] font-medium tracking-[0.3em] text-[var(--text-gray)]/60 uppercase cursor-default">
                         © 2026 Heguru Educational Public Trust
                     </p>
-                    <div className="flex justify-center gap-4 text-[11px] font-medium text-[var(--text-gray)]/40 uppercase tracking-widest">
-                        <a href="/policies/privacy" className="hover:text-[var(--primary-orange)] transition-colors">Privacy</a>
-                        <a href="/policies/terms" className="hover:text-[var(--primary-orange)] transition-colors">Terms</a>
-                        <a href="/policies/refund" className="hover:text-[var(--primary-orange)] transition-colors">Refunds</a>
-                        <a href="/policies/contact" className="hover:text-[var(--primary-orange)] transition-colors">Contact</a>
+                    <div className="flex flex-wrap justify-center gap-x-2 text-[11px] font-medium text-[var(--text-gray)]/40 uppercase tracking-widest">
+                        <a href="/policies/privacy" className="inline-block py-2 px-1 hover:text-[var(--primary-orange)] transition-colors">Privacy</a>
+                        <a href="/policies/terms" className="inline-block py-2 px-1 hover:text-[var(--primary-orange)] transition-colors">Terms</a>
+                        <a href="/policies/refund" className="inline-block py-2 px-1 hover:text-[var(--primary-orange)] transition-colors">Refunds</a>
+                        <a href="/policies/contact" className="inline-block py-2 px-1 hover:text-[var(--primary-orange)] transition-colors">Contact</a>
                     </div>
                 </div>
             </div>

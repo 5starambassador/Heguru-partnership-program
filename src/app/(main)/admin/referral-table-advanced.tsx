@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useTransition, Fragment, useRef, useMemo } from 'react'
+import { createPortal } from 'react-dom'
 import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 import { ChevronRight, CheckCircle, Filter, ChevronDown, Clock, AlertCircle, Phone, MapPin, User, Search, Square, CheckSquare, Trash, XCircle, Download, X, Pencil, ArrowUp, ArrowDown, RefreshCcw, Layout, Calendar, CreditCard, Hash, Shield, Key, Upload } from 'lucide-react'
 import { useClickOutside } from '@/hooks/use-click-outside'
@@ -195,6 +196,8 @@ export function ReferralManagementTable({
     // Filters (Mirror URL params)
     const [search, setSearch] = useState(searchParams.get('search') || '')
     const [isExporting, setIsExporting] = useState(false)
+    const [mounted, setMounted] = useState(false)
+    useEffect(() => setMounted(true), [])
 
     // Sync search state with URL when back/forward is used
     useEffect(() => {
@@ -761,7 +764,7 @@ export function ReferralManagementTable({
     }, [showColumns, setSelectedLeadForDetail])
 
     return (
-        <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 max-w-[100vw] overflow-x-hidden">
+        <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-3 sm:p-6 max-w-[100vw] overflow-x-hidden">
             {/* Header / Stats Row Placeholder if needed */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
                 <div className="flex items-center gap-3">
@@ -835,7 +838,7 @@ export function ReferralManagementTable({
                 </div>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="relative flex flex-wrap items-center gap-2">
                 {/* Live Toggle */}
                 <button
                     onClick={() => setIsLive(!isLive)}
@@ -848,7 +851,7 @@ export function ReferralManagementTable({
                 </button>
 
                 {/* Export Dropdown */}
-                <div className="relative" ref={exportMenuRef}>
+                <div className="sm:relative" ref={exportMenuRef}>
                     <button
                         onClick={() => setIsExportMenuOpen(!isExportMenuOpen)}
                         suppressHydrationWarning={true}
@@ -857,9 +860,9 @@ export function ReferralManagementTable({
                         <Download size={14} /> Export
                     </button>
                     {isExportMenuOpen && (
-                        <div className="absolute left-0 top-12 bg-white border border-gray-100 shadow-2xl rounded-xl p-4 w-[500px] z-50 animate-in fade-in slide-in-from-top-2 flex flex-col ring-1 ring-black/5">
+                        <div className="absolute left-0 top-12 bg-white border border-gray-100 shadow-2xl rounded-xl p-4 w-[min(500px,calc(100vw-2rem))] z-50 animate-in fade-in slide-in-from-top-2 flex flex-col ring-1 ring-black/5">
                             <h4 className="text-[10px] font-black uppercase text-gray-400 mb-3 tracking-widest">Select Columns to Export</h4>
-                            <div className="grid grid-cols-2 gap-2 mb-4 scrollbar-hide overflow-y-auto max-h-[60vh]">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-4 scrollbar-hide overflow-y-auto max-h-[60vh]">
                                 {ALL_EXPORT_COLUMNS.map(col => (
                                     <label key={col} className="flex items-center gap-2 text-xs p-2 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors group">
                                         <div className={`w-3.5 h-3.5 rounded border flex items-center justify-center transition-all ${selectedExportColumns.includes(col) ? 'bg-indigo-600 border-indigo-600' : 'border-gray-300 group-hover:border-indigo-400'}`}>
@@ -1043,7 +1046,7 @@ export function ReferralManagementTable({
                 </select>
 
                 {/* Date Filter (Keeping Date Range here as it's global) */}
-                <div className="flex items-center gap-2 bg-white border border-gray-200 rounded-xl px-2">
+                <div className="flex flex-wrap items-center gap-2 bg-white border border-gray-200 rounded-xl px-2 w-full sm:w-auto">
                     <label htmlFor="date-from-adv" className="sr-only">From Date</label>
                     <input
                         id="date-from-adv"
@@ -1053,7 +1056,7 @@ export function ReferralManagementTable({
                             updateParam('from', e.target.value)
                         }}
                         suppressHydrationWarning={true}
-                        className="py-2 text-sm font-medium text-gray-700 focus:outline-none"
+                        className="py-2 min-w-0 flex-1 sm:flex-none text-sm font-medium text-gray-700 focus:outline-none"
                     />
                     <span className="text-gray-400" aria-hidden="true">-</span>
                     <label htmlFor="date-to-adv" className="sr-only">To Date</label>
@@ -1065,7 +1068,7 @@ export function ReferralManagementTable({
                             updateParam('to', e.target.value)
                         }}
                         suppressHydrationWarning={true}
-                        className="py-2 text-sm font-medium text-gray-700 focus:outline-none"
+                        className="py-2 min-w-0 flex-1 sm:flex-none text-sm font-medium text-gray-700 focus:outline-none"
                     />
                 </div>
             </div>
@@ -1107,10 +1110,10 @@ export function ReferralManagementTable({
 
             {/* Floating Batch Actions */}
             {/* Bulk Actions Bar */}
-            {selectedIds.length > 0 && (
-                <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 animate-in slide-in-from-bottom-8 duration-500">
-                    <div className="bg-gray-900 border border-white/10 shadow-2xl rounded-2xl px-6 py-4 flex items-center gap-6 backdrop-blur-xl ring-1 ring-white/20">
-                        <div className="flex items-center gap-3 pr-6 border-r border-white/10">
+            {selectedIds.length > 0 && mounted && createPortal(
+                <div className="fixed bottom-[calc(5.5rem+env(safe-area-inset-bottom))] xl:bottom-8 left-1/2 -translate-x-1/2 z-50 w-[calc(100vw-1.5rem)] sm:w-auto max-h-[calc(100dvh-var(--topbar-h)-7rem)] overflow-y-auto xl:max-h-none xl:overflow-visible animate-in slide-in-from-bottom-8 duration-500">
+                    <div className="bg-gray-900 border border-white/10 shadow-2xl rounded-2xl px-3 sm:px-6 py-3 sm:py-4 flex flex-wrap items-center justify-center gap-3 sm:gap-6 backdrop-blur-xl ring-1 ring-white/20">
+                        <div className="flex items-center gap-3 pr-3 sm:pr-6 border-r border-white/10">
                             <div className="bg-red-500 text-white text-[10px] font-black w-6 h-6 rounded-full flex items-center justify-center">
                                 {selectedIds.length}
                             </div>
@@ -1124,7 +1127,7 @@ export function ReferralManagementTable({
                             </button>
                         </div>
 
-                        <div className="flex items-center gap-3">
+                        <div className="flex flex-wrap items-center justify-center gap-3">
                             {canBulkApprove && (
                                 <div className="flex items-center gap-2 pr-3 border-r border-white/10">
                                     <label htmlFor="bulk-fee-select" className="sr-only">Select Bulk Fee Plan</label>
@@ -1192,7 +1195,8 @@ export function ReferralManagementTable({
                             </button>
                         </div>
                     </div>
-                </div>
+                </div>,
+                document.body
             )}
 
             {/* Referral Detail Side Panel (Phase 2 UX) */}
@@ -1284,17 +1288,18 @@ export function ReferralManagementTable({
             />
 
             {/* Edit Modal */}
-            {editingLead && (
+            {editingLead && mounted && createPortal(
                 <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 xl:pl-[280px]">
                     <div className="absolute inset-0 bg-slate-900/50 backdrop-blur-sm animate-in fade-in" onClick={() => setEditingLead(null)} />
-                    <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-in zoom-in-95" onClick={e => e.stopPropagation()}>
-                        <div className="p-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+                    <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-md max-h-[calc(100dvh-2rem)] flex flex-col overflow-hidden animate-in zoom-in-95" onClick={e => e.stopPropagation()}>
+                        <div className="p-4 border-b border-gray-100 flex justify-between items-center bg-gray-50 shrink-0">
                             <h3 className="font-bold text-gray-900">Edit Referral Details</h3>
                             <button onClick={() => setEditingLead(null)} aria-label="Close modal" className="p-1 hover:bg-gray-200 rounded-full text-gray-500">
                                 <X size={18} />
                             </button>
                         </div>
                         <form
+                            className="flex-1 min-h-0 flex flex-col"
                             onSubmit={async (e) => {
                                 e.preventDefault()
                                 if (!editingLead) return
@@ -1331,7 +1336,7 @@ export function ReferralManagementTable({
                                 }
                             }}
                         >
-                            <div className="p-6 space-y-6 overflow-y-auto max-h-[80vh] scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent">
+                            <div className="p-6 space-y-6 flex-1 min-h-0 overflow-y-auto max-h-[80vh] scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent">
                                 {/* Section 1: Lead Information */}
                                 <div className="space-y-4">
                                     <div className="flex items-center gap-2 pb-2 border-b border-gray-100">
@@ -1568,7 +1573,7 @@ export function ReferralManagementTable({
                                 </div>
                             </div>
 
-                            <div className="p-4 flex gap-3 border-t bg-gray-50">
+                            <div className="p-4 flex gap-3 border-t bg-gray-50 shrink-0">
                                 <button
                                     type="button"
                                     onClick={() => setEditingLead(null)}
@@ -1585,7 +1590,8 @@ export function ReferralManagementTable({
                             </div>
                         </form>
                     </div>
-                </div>
+                </div>,
+                document.body
             )}
         </div>
     )

@@ -36,7 +36,7 @@ export default function CSVUploader({ type, onClose, userRole }: CSVUploaderProp
     return createPortal(
         <div className="fixed inset-0 z-[5000] flex items-center justify-center p-4 xl:pl-[280px]">
             <div className="absolute inset-0 bg-slate-900/50 backdrop-blur-sm animate-fade-in" onClick={onClose} />
-            <div className="relative bg-white rounded-2xl w-full max-w-4xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+            <div className="relative bg-white rounded-2xl w-full max-w-4xl shadow-2xl overflow-hidden flex flex-col max-h-[calc(100dvh-2rem)]">
 
                 {/* Close Button */}
                 <button
@@ -47,7 +47,7 @@ export default function CSVUploader({ type, onClose, userRole }: CSVUploaderProp
                     <X size={20} />
                 </button>
 
-                <div className="p-8 overflow-y-auto">
+                <div className="p-5 sm:p-8 flex-1 min-h-0 overflow-y-auto">
                     <ImportDataPanel
                         type={importType as any}
                         userRole={userRole}

@@ -71,7 +71,7 @@ export function Modal({
                         initial={{ opacity: 0, scale: 0.95, y: 20 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                        className={`bg-white/95 backdrop-blur-xl border border-white/20 rounded-[40px] w-full ${maxWidth} shadow-2xl relative overflow-hidden flex flex-col max-h-[90vh]`}
+                        className={`bg-white/95 backdrop-blur-xl border border-white/20 rounded-3xl sm:rounded-[40px] w-full ${maxWidth} shadow-2xl relative overflow-hidden flex flex-col max-h-[calc(100dvh-2rem)] sm:max-h-[90dvh]`}
                         onClick={e => e.stopPropagation()}
                     >
                         {/* Header */}
@@ -92,7 +92,7 @@ export function Modal({
                                 </div>
                                 <button
                                     onClick={onClose}
-                                    className="w-8 h-8 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-white hover:bg-white/20 transition-all"
+                                    className="w-10 h-10 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-white hover:bg-white/20 transition-all"
                                 >
                                     <img
                                         src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 6 6 18'/%3E%3Cpath d='m6 6 18 12'/%3E%3C/svg%3E"

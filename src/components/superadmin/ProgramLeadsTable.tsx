@@ -138,9 +138,9 @@ export function ProgramLeadsTable({ leads }: ProgramLeadsTableProps) {
 
     return (
         <div className="space-y-6">
-            <div className="flex justify-between items-center">
+            <div className="flex flex-wrap gap-3 justify-between items-center">
                 <h2 className="text-2xl font-black text-slate-800">External Program Leads</h2>
-                <div className="flex gap-2">
+                <div className="flex flex-wrap gap-2">
                     <button
                         onClick={async () => {
                             setIsSyncing(true)
@@ -272,7 +272,7 @@ export function ProgramLeadsTable({ leads }: ProgramLeadsTableProps) {
 
             {/* Table */}
             <div className="bg-white rounded-3xl border border-slate-100 shadow-xl shadow-slate-200/50 overflow-hidden">
-                <div className="custom-table-scrollbar pb-2">
+                <div className="custom-table-scrollbar overflow-x-auto pb-2">
                     <table className="table-auto force-min-width-table">
                         <thead>
                             <tr className="bg-slate-50 border-b border-slate-100">

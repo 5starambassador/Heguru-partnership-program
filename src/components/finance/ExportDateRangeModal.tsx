@@ -3,6 +3,7 @@
 import { motion, AnimatePresence } from 'framer-motion'
 import { Calendar, Download, X } from 'lucide-react'
 import { useState, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 
 interface ExportDateRangeModalProps {
     isOpen: boolean
@@ -28,6 +29,8 @@ export function ExportDateRangeModal({
     const [status, setStatus] = useState<string>('All')
     const [selectedColumns, setSelectedColumns] = useState<string[]>([])
     const [isExporting, setIsExporting] = useState(false)
+    const [mounted, setMounted] = useState(false)
+    useEffect(() => setMounted(true), [])
 
     // Initialize defaults
     useEffect(() => {
@@ -36,7 +39,7 @@ export function ExportDateRangeModal({
         }
     }, [columns])
 
-    if (!isOpen) return null
+    if (!isOpen || !mounted) return null
 
     const handleExport = async () => {
         if (!startDate || !endDate) return
@@ -62,7 +65,7 @@ export function ExportDateRangeModal({
         setStartDate(start.toISOString().split('T')[0])
     }
 
-    return (
+    return createPortal(
         <AnimatePresence>
             {isOpen && (
                 <>
@@ -80,7 +83,7 @@ export function ExportDateRangeModal({
                             animate={{ opacity: 1, scale: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.95, y: 10 }}
                             onClick={(e) => e.stopPropagation()}
-                            className="bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden border border-gray-100 z-50"
+                            className="bg-white w-full max-w-md max-h-[calc(100dvh-2rem)] overflow-y-auto rounded-2xl shadow-2xl border border-gray-100 z-50"
                         >
                             {/* Header */}
                             <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
@@ -227,6 +230,7 @@ export function ExportDateRangeModal({
                     </motion.div>
                 </>
             )}
-        </AnimatePresence>
+        </AnimatePresence>,
+        document.body
     )
 }

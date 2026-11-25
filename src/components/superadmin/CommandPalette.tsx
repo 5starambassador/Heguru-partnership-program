@@ -16,7 +16,8 @@ import {
     GraduationCap,
     Building2,
     Wallet,
-    Zap
+    Zap,
+    X
 } from 'lucide-react'
 
 export function CommandPalette() {
@@ -108,17 +109,25 @@ export function CommandPalette() {
                     >
                         {/* Search Input */}
                         <div className="flex items-center gap-3 px-4 py-4 border-b border-gray-100">
-                            <Search className="text-gray-400 w-5 h-5" />
+                            <Search className="text-gray-400 w-5 h-5 shrink-0" />
                             <input
                                 autoFocus
                                 value={search}
                                 onChange={e => setSearch(e.target.value)}
                                 placeholder="Type a command or search..."
-                                className="flex-1 bg-transparent outline-none text-base placeholder:text-gray-400 text-gray-900"
+                                className="flex-1 min-w-0 bg-transparent outline-none text-base placeholder:text-gray-400 text-gray-900"
                             />
-                            <div className="flex gap-1">
+                            <div className="hidden sm:flex gap-1">
                                 <span className="text-[10px] font-bold bg-gray-100 text-gray-500 px-1.5 py-0.5 rounded border border-gray-200">ESC</span>
                             </div>
+                            <button
+                                type="button"
+                                onClick={() => setOpen(false)}
+                                aria-label="Close command palette"
+                                className="xl:hidden -mr-2 w-10 h-10 shrink-0 flex items-center justify-center rounded-full text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
+                            >
+                                <X className="w-5 h-5" />
+                            </button>
                         </div>
 
                         {/* Results */}

@@ -33,12 +33,14 @@ export default function MobileSidebarWrapper({ children }: { children: React.Rea
     useEffect(() => {
         setMounted(true)
         if (isOpen) {
-            document.body.style.overflow = 'hidden'
-        } else {
-            document.body.style.overflow = 'unset'
-        }
-        return () => {
-            document.body.style.overflow = 'unset'
+            const html = document.documentElement
+            const body = document.body
+            html.classList.add('no-scroll')
+            body.classList.add('no-scroll')
+            return () => {
+                html.classList.remove('no-scroll')
+                body.classList.remove('no-scroll')
+            }
         }
     }, [isOpen])
 
@@ -73,7 +75,7 @@ export default function MobileSidebarWrapper({ children }: { children: React.Rea
 
                     {/* Top Dropdown Drawer - Clean Glass Light/Dark Theme */}
                     <div
-                        className="fixed top-2 left-2 right-2 bg-white shadow-2xl max-h-[90vh] overflow-hidden flex flex-col rounded-2xl border border-gray-200 z-[100000]"
+                        className="fixed top-[max(0.5rem,env(safe-area-inset-top))] left-2 right-2 bg-white shadow-2xl max-h-[calc(100dvh-1rem-env(safe-area-inset-top))] overflow-hidden flex flex-col rounded-2xl border border-gray-200 z-[100000]"
                     >
                         {/* Top decorative accent */}
                         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 z-[100001]" />

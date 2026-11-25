@@ -75,7 +75,7 @@ export function StatCard({ title, value, icon: Icon, theme, subValue, className 
                         <span className={`text-[11px] font-bold uppercase tracking-[0.15em] ${theme === 'gray' ? 'text-slate-500' : 'text-white/80'}`}>{title}</span>
                     </div>
 
-                    <p className={`text-4xl md:text-5xl font-black tracking-tight ${theme === 'gray' ? 'text-ui-text-main' : 'text-white'}`}>
+                    <p className={`text-2xl sm:text-3xl md:text-4xl xl:text-5xl font-black tracking-tight break-words tabular-nums ${theme === 'gray' ? 'text-ui-text-main' : 'text-white'}`}>
                         {value}
                     </p>
 

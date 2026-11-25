@@ -1,6 +1,7 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import { useRouter } from 'next/navigation'
 import { Plus, Trash2, Eye, EyeOff, Save, X, Upload, FileText, Loader2, ArrowRight, Share2, Pencil } from 'lucide-react'
 import { toast } from 'sonner'
@@ -17,6 +18,8 @@ interface MarketingManagerProps {
 export function MarketingManager({ assets }: MarketingManagerProps) {
     const router = useRouter()
     const [showForm, setShowForm] = useState(false)
+    const [mounted, setMounted] = useState(false)
+    useEffect(() => setMounted(true), [])
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [deletingId, setDeletingId] = useState<number | null>(null)
     const [activeCategory, setActiveCategory] = useState<string>('All')
@@ -214,10 +217,10 @@ export function MarketingManager({ assets }: MarketingManagerProps) {
                                             key={asset.id}
                                             initial={{ opacity: 0, y: 10 }}
                                             animate={{ opacity: 1, y: 0 }}
-                                            className={`grid grid-cols-[auto,1fr,auto] items-center gap-4 p-4 bg-white/60 backdrop-blur-sm border rounded-3xl transition-all group ${asset.isActive ? 'border-white/40 shadow-sm' : 'border-gray-100 opacity-60 grayscale'
+                                            className={`grid grid-cols-[1fr,auto] sm:grid-cols-[auto,1fr,auto] items-center gap-2 sm:gap-4 p-3 sm:p-4 bg-white/60 backdrop-blur-sm border rounded-3xl transition-all group ${asset.isActive ? 'border-white/40 shadow-sm' : 'border-gray-100 opacity-60 grayscale'
                                                 }`}
                                         >
-                                            <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-colors ${asset.isActive ? 'bg-blue-50 text-blue-600' : 'bg-gray-100 text-gray-400'
+                                            <div className={`hidden sm:flex w-12 h-12 rounded-2xl items-center justify-center transition-colors ${asset.isActive ? 'bg-blue-50 text-blue-600' : 'bg-gray-100 text-gray-400'
                                                 }`}>
                                                 <FileText size={20} />
                                             </div>
@@ -230,7 +233,7 @@ export function MarketingManager({ assets }: MarketingManagerProps) {
                                                 <p className="text-[11px] text-gray-400 font-medium truncate font-mono">{asset.description || 'No description provided'}</p>
                                             </div>
 
-                                            <div className="flex items-center gap-2 pr-2">
+                                            <div className="flex items-center gap-1 sm:gap-2 sm:pr-2">
                                                 <button
                                                     onClick={() => handleEdit(asset)}
                                                     className="p-2.5 bg-indigo-50 border border-indigo-100 text-indigo-600 rounded-xl hover:bg-indigo-600 hover:text-white transition-all"
@@ -279,7 +282,7 @@ export function MarketingManager({ assets }: MarketingManagerProps) {
             </div>
 
             {/* Add Asset Modal */}
-            <AnimatePresence>
+            {mounted && createPortal(<AnimatePresence>
                 {showForm && (
                     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 xl:pl-[280px]">
                         <motion.div
@@ -293,10 +296,10 @@ export function MarketingManager({ assets }: MarketingManagerProps) {
                             initial={{ opacity: 0, scale: 0.95, y: 20 }}
                             animate={{ opacity: 1, scale: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                            className="bg-white/95 backdrop-blur-xl border border-white/20 rounded-[40px] w-full max-w-lg shadow-2xl relative overflow-hidden"
+                            className="bg-white/95 backdrop-blur-xl border border-white/20 rounded-[40px] w-full max-w-lg max-h-[calc(100dvh-2rem)] overflow-y-auto overflow-x-hidden shadow-2xl relative"
                         >
                             {/* Modal Header */}
-                            <div className="bg-indigo-600 p-8 text-white relative">
+                            <div className="bg-indigo-600 p-5 sm:p-8 text-white relative">
                                 <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl" />
                                 <div className="flex justify-between items-center relative z-10">
                                     <div className="flex items-center gap-3">
@@ -324,7 +327,7 @@ export function MarketingManager({ assets }: MarketingManagerProps) {
                             </div>
 
                             {/* Modal Form */}
-                            <div className="p-8 space-y-6">
+                            <div className="p-5 sm:p-8 space-y-6">
                                 <div className="grid grid-cols-2 gap-4">
                                     <div className="col-span-2">
                                         <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 px-1">Category Segment</label>
@@ -402,10 +405,10 @@ export function MarketingManager({ assets }: MarketingManagerProps) {
                         </motion.div>
                     </div>
                 )}
-            </AnimatePresence>
+            </AnimatePresence>, document.body)}
 
             {/* Edit Asset Modal */}
-            <AnimatePresence>
+            {mounted && createPortal(<AnimatePresence>
                 {editState.isOpen && (
                     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 xl:pl-[280px]">
                         <motion.div
@@ -419,9 +422,9 @@ export function MarketingManager({ assets }: MarketingManagerProps) {
                             initial={{ opacity: 0, scale: 0.95, y: 20 }}
                             animate={{ opacity: 1, scale: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                            className="bg-white/95 backdrop-blur-xl border border-white/20 rounded-[40px] w-full max-w-lg shadow-2xl relative overflow-hidden"
+                            className="bg-white/95 backdrop-blur-xl border border-white/20 rounded-[40px] w-full max-w-lg max-h-[calc(100dvh-2rem)] overflow-y-auto overflow-x-hidden shadow-2xl relative"
                         >
-                            <div className="bg-indigo-600 p-8 text-white">
+                            <div className="bg-indigo-600 p-5 sm:p-8 text-white">
                                 <div className="flex justify-between items-center">
                                     <div>
                                         <h2 className="text-lg font-black uppercase tracking-tight italic">Edit Asset</h2>
@@ -433,7 +436,7 @@ export function MarketingManager({ assets }: MarketingManagerProps) {
                                 </div>
                             </div>
 
-                            <div className="p-8 space-y-5">
+                            <div className="p-5 sm:p-8 space-y-5">
                                 <div className="space-y-1.5">
                                     <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">Asset Name</label>
                                     <input
@@ -480,7 +483,7 @@ export function MarketingManager({ assets }: MarketingManagerProps) {
                         </motion.div>
                     </div>
                 )}
-            </AnimatePresence>
+            </AnimatePresence>, document.body)}
 
             <ConfirmDialog
                 isOpen={confirmState.isOpen}

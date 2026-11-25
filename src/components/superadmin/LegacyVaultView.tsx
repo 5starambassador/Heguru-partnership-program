@@ -161,9 +161,9 @@ export function LegacyVaultView({
                             <div className="p-6 bg-gray-50/50 border-r border-gray-100 flex items-center justify-center">
                                 <PolicyVisualizer slabs={slabs} activeTab="Long Term" />
                             </div>
-                            <div className="p-8">
+                            <div className="p-4 sm:p-8">
                                 <div className="space-y-6">
-                                    <div className="grid grid-cols-4 px-4 py-2 text-[10px] font-black text-gray-400 uppercase tracking-widest font-mono">
+                                    <div className="grid grid-cols-[auto_1fr_auto_auto] sm:grid-cols-4 gap-2 sm:gap-0 px-4 py-2 text-[10px] font-black text-gray-400 uppercase tracking-widest font-mono">
                                         <div className="col-span-1">Slot</div>
                                         <div className="col-span-1 text-center">Stability %</div>
                                         <div className="col-span-1 text-center">Delta</div>
@@ -176,7 +176,7 @@ export function LegacyVaultView({
                                             const delta = val - prevVal
 
                                             return (
-                                                <div key={slab.slabId} className="group p-4 bg-white border border-gray-100 rounded-[28px] shadow-sm hover:shadow-xl hover:border-emerald-100 transition-all duration-300 grid grid-cols-4 items-center gap-4">
+                                                <div key={slab.slabId} className="group p-4 bg-white border border-gray-100 rounded-[28px] shadow-sm hover:shadow-xl hover:border-emerald-100 transition-all duration-300 grid grid-cols-[auto_1fr_auto_auto] sm:grid-cols-4 items-center gap-2 sm:gap-4">
                                                     <div className="w-10 h-10 rounded-2xl bg-emerald-600 text-white flex items-center justify-center font-black text-lg italic">
                                                         {slab.referralCount}{slab.referralCount === 5 ? '+' : ''}
                                                     </div>
@@ -185,7 +185,7 @@ export function LegacyVaultView({
                                                             type="number"
                                                             value={val}
                                                             onChange={(e) => onUpdateSlab(slab.slabId, 'baseLongTermPercent', parseFloat(e.target.value))}
-                                                            className="w-16 p-2 bg-emerald-50 border-none rounded-xl text-center font-black text-emerald-600 text-lg outline-none font-mono"
+                                                            className="w-14 sm:w-16 p-2 bg-emerald-50 border-none rounded-xl text-center font-black text-emerald-600 text-lg outline-none font-mono"
                                                         />
                                                     </div>
                                                     <div className="flex justify-center">

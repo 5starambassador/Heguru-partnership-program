@@ -69,13 +69,13 @@ export default async function ApprovalsPage(props: { searchParams: Promise<{ pag
     const totalPages = Math.ceil(totalCount / limit)
 
     return (
-        <div className="p-8 max-w-7xl mx-auto">
-            <div className="flex items-center justify-between mb-8">
+        <div className="p-0 sm:p-8 max-w-7xl mx-auto">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
                 <div>
-                    <h1 className="text-3xl font-black text-gray-900 tracking-tight">Payment Verification</h1>
+                    <h1 className="text-2xl sm:text-3xl font-black text-gray-900 tracking-tight">Payment Verification</h1>
                     <p className="text-gray-500 mt-2">Approve manual QR code payments. Verify UTR with your bank statement first.</p>
                 </div>
-                <div className="flex gap-4 items-center">
+                <div className="flex flex-wrap gap-4 items-center">
                     <Link
                         href="/superadmin/approvals/history"
                         className="flex items-center gap-2 px-4 py-2 bg-white text-gray-700 rounded-lg text-sm font-bold border border-gray-200 hover:bg-gray-50 transition-colors shadow-sm"

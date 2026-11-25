@@ -44,12 +44,12 @@ export function AcademicYearFilter() {
     if (loading) return null
 
     return (
-        <div className="flex items-center gap-2 bg-white border border-gray-100 rounded-xl px-3 py-1.5 shadow-sm hover:shadow-md transition-all">
+        <div className="flex items-center gap-2 bg-white border border-gray-100 rounded-xl px-3 py-0 md:py-1.5 shadow-sm hover:shadow-md transition-all">
             <Calendar size={14} className="text-gray-400" />
             <select
                 value={currentYear}
                 onChange={(e) => handleYearChange(e.target.value)}
-                className="bg-transparent border-none focus:ring-0 text-[11px] font-black uppercase tracking-widest text-gray-700 cursor-pointer outline-none"
+                className="min-h-10 md:min-h-0 bg-transparent border-none focus:ring-0 text-[11px] font-black uppercase tracking-widest text-gray-700 cursor-pointer outline-none"
             >
                 <option value="All">All Years</option>
                 {years.map((y) => (

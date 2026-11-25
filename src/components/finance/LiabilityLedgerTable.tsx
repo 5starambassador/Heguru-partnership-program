@@ -344,12 +344,12 @@ export function LiabilityLedgerTable({
 
     return (
         <div className="space-y-4">
-            <div className="flex items-center justify-between bg-purple-50 p-4 rounded-xl border border-purple-100">
-                <div className="flex items-center gap-3">
-                    <div className="p-2 bg-purple-100 text-purple-700 rounded-lg">
+            <div className="flex flex-col items-start md:flex-row md:items-center md:justify-between gap-3 bg-purple-50 p-4 rounded-xl border border-purple-100">
+                <div className="flex items-center gap-3 min-w-0">
+                    <div className="p-2 bg-purple-100 text-purple-700 rounded-lg shrink-0">
                         <Info size={20} />
                     </div>
-                    <div>
+                    <div className="min-w-0">
                         <h4 className="text-sm font-black text-purple-900">
                             {mode === 'A' ? 'Group A: Institutional Fee Waivers' : 'Group B: Cash Payout Ledger'}
                         </h4>

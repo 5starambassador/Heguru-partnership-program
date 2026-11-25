@@ -372,11 +372,11 @@ export default function VerificationQueue({ initialData = [] }: VerificationQueu
             </div>
 
             {/* Toolbar & Tabs */}
-            <div className="flex flex-col md:flex-row gap-4 justify-between items-center bg-white p-4 rounded-2xl border border-gray-100 shadow-sm sticky top-4 z-30">
-                <div className="flex flex-1 items-center gap-3 w-full">
+            <div className="flex flex-col md:flex-row gap-4 justify-between items-center bg-white p-4 rounded-2xl border border-gray-100 shadow-sm xl:sticky xl:top-4 xl:z-30">
+                <div className="flex flex-1 flex-wrap items-center gap-3 w-full">
 
                     {/* Tabs */}
-                    <div className="flex p-1 bg-gray-100 rounded-xl relative mr-2" role="tablist">
+                    <div className="flex p-1 bg-gray-100 rounded-xl relative mr-2 overflow-x-auto max-w-full [&>button]:shrink-0 [&>button]:whitespace-nowrap" role="tablist">
                         {activeTab === 'pending' ? (
                             <button
                                 onClick={() => setActiveTab('pending')}
@@ -469,7 +469,7 @@ export default function VerificationQueue({ initialData = [] }: VerificationQueu
                     </div>
 
 
-                    <div className="relative flex-1 max-w-md">
+                    <div className="relative flex-1 min-w-[12rem] max-w-md">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
                         <label htmlFor="verification-search" className="sr-only">Search verification requests</label>
                         <input
@@ -683,7 +683,8 @@ export default function VerificationQueue({ initialData = [] }: VerificationQueu
             {/* Verification List - Table View */}
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
 
-                <table className="w-full border-collapse">
+                <div className="overflow-x-auto">
+                <table className="w-full min-w-[720px] border-collapse">
                     <thead>
                         <tr className="bg-gray-50/50 border-b border-gray-100">
                             <th className="px-6 py-4 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">{activeTab === 'staged' ? 'Student Name' : 'User Details'}</th>
@@ -933,6 +934,7 @@ export default function VerificationQueue({ initialData = [] }: VerificationQueu
                         ))}
                     </tbody>
                 </table>
+                </div>
 
                 {/* Pagination UI */}
                 {totalPages > 1 && (

@@ -144,7 +144,7 @@ export default async function CampusDashboard({ searchParams }: PageProps) {
                         <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary-maroon to-primary-gold">Campus Finance</h1>
                         <p className="text-gray-500 mt-1">Earnings and incentive tracking</p>
                     </div>
-                    <div className="flex items-center gap-3">
+                    <div className="flex flex-wrap items-center gap-3">
                         <AcademicYearFilter />
                         <DateRangeSelector currentDays={days} />
                     </div>
@@ -194,7 +194,7 @@ export default async function CampusDashboard({ searchParams }: PageProps) {
 
     // Default Home View
     return (
-        <div className="space-y-8 max-w-[1600px] mx-auto p-4 sm:p-6 lg:p-8">
+        <div className="space-y-8 max-w-[1600px] mx-auto p-0 sm:p-6 lg:p-8">
             {/* Premium Header - Library Component */}
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
@@ -207,7 +207,7 @@ export default async function CampusDashboard({ searchParams }: PageProps) {
                         <p className="text-sm text-gray-500 font-bold tracking-wide">Campus Overview • {user.fullName}</p>
                     </div>
                 </div>
-                <div className="flex items-center gap-3">
+                <div className="flex flex-wrap items-center gap-3">
                     {user.role === 'Super Admin' && (
                         <CampusTargetModal
                             currentLeads={target?.leadTarget}
@@ -283,7 +283,7 @@ export default async function CampusDashboard({ searchParams }: PageProps) {
             )}
 
             {/* Premium Stats Grid - Library Component */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 gap-6">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
                         <div className="flex items-center justify-between mb-4">

@@ -1,6 +1,7 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import { Target, X, Check, Loader2 } from 'lucide-react'
 import { updateCampusTargets } from '@/app/actions/campus-dashboard-actions'
 import { toast } from 'sonner'
@@ -17,6 +18,8 @@ export function CampusTargetModal({ currentLeads = 0, currentAdmissions = 0 }: C
     const [leads, setLeads] = useState(currentLeads)
     const [admissions, setAdmissions] = useState(currentAdmissions)
     const router = useRouter()
+    const [mounted, setMounted] = useState(false)
+    useEffect(() => setMounted(true), [])
 
     const handleSave = async () => {
         setLoading(true)
@@ -47,10 +50,12 @@ export function CampusTargetModal({ currentLeads = 0, currentAdmissions = 0 }: C
         )
     }
 
-    return (
+    if (!mounted) return null
+
+    return createPortal(
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 xl:pl-[280px]">
             <div className="absolute inset-0 bg-slate-900/50 backdrop-blur-sm" onClick={() => setIsOpen(false)} />
-            <div className="relative bg-white rounded-3xl w-full max-w-md shadow-2xl animate-spring-up overflow-hidden">
+            <div className="relative bg-white rounded-3xl w-full max-w-md max-h-[calc(100dvh-2rem)] overflow-y-auto shadow-2xl animate-spring-up">
                 <div className="p-6 bg-gradient-to-r from-primary-maroon to-primary-maroon/90 text-white flex justify-between items-center">
                     <div className="flex items-center gap-3">
                         <div className="p-2 bg-white/20 rounded-xl">
@@ -106,6 +111,7 @@ export function CampusTargetModal({ currentLeads = 0, currentAdmissions = 0 }: C
                     </div>
                 </div>
             </div>
-        </div>
+        </div>,
+        document.body
     )
 }

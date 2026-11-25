@@ -35,6 +35,7 @@ export const RegistrationRole = ({ formData, setFormData, campuses, onNext, onBa
                 <div className="text-center space-y-2 relative">
                     <button
                         onClick={onBack}
+                        aria-label="Back"
                         className="absolute top-0 left-0 w-10 h-10 rounded-full flex items-center justify-center bg-[var(--soft-gray)] border border-[var(--warm-gray)] text-[var(--deep-black)] hover:bg-[var(--warm-gray)] transition-all z-50 group shadow-md"
                     >
                         <ChevronLeft className="w-5 h-5 flex-shrink-0 group-hover:-translate-x-0.5 transition-transform" strokeWidth={2.5} />
@@ -61,20 +62,22 @@ export const RegistrationRole = ({ formData, setFormData, campuses, onNext, onBa
                         <label className="text-[var(--text-gray)] text-[10px] font-bold uppercase tracking-[0.2em] mb-2 block ml-1">I am a</label>
                         <div className="grid grid-cols-4 gap-2">
                             {['Parent', 'Staff', 'Alumni', 'Others'].map((role) => (
-                                <div
+                                <button
+                                    type="button"
                                     key={role}
+                                    aria-pressed={formData.role === role}
                                     onClick={() => {
                                         const newRole = role as 'Parent' | 'Staff' | 'Alumni' | 'Others'
                                         setFormData({ ...formData, role: newRole, grade: '', childCampusId: '' })
                                     }}
-                                    className={`flex flex-col items-center justify-center gap-2 py-3 px-1 rounded-xl cursor-pointer transition-all border ${formData.role === role ? 'border-[var(--primary-orange)]/60 bg-[var(--primary-orange)]/10 shadow-md shadow-[var(--primary-orange)]/5' : 'border-[var(--warm-gray)] bg-[var(--soft-gray)]/50 hover:bg-[var(--soft-gray)] hover:border-gray-300'}`}
+                                    className={`w-full min-h-[56px] flex flex-col items-center justify-center gap-2 py-3 px-1 rounded-xl cursor-pointer transition-all border ${formData.role === role ? 'border-[var(--primary-orange)]/60 bg-[var(--primary-orange)]/10 shadow-md shadow-[var(--primary-orange)]/5' : 'border-[var(--warm-gray)] bg-[var(--soft-gray)]/50 hover:bg-[var(--soft-gray)] hover:border-gray-300'}`}
                                 >
                                     {role === 'Parent' && <User size={16} className={formData.role === role ? 'text-[var(--primary-orange)]' : 'text-[var(--text-gray)]/60'} />}
                                     {role === 'Staff' && <ShieldCheck size={16} className={formData.role === role ? 'text-[var(--primary-orange)]' : 'text-[var(--text-gray)]/60'} />}
                                     {role === 'Alumni' && <GraduationCap size={16} className={formData.role === role ? 'text-[var(--primary-orange)]' : 'text-[var(--text-gray)]/60'} />}
                                     {role === 'Others' && <Star size={16} className={formData.role === role ? 'text-[var(--primary-orange)]' : 'text-[var(--text-gray)]/60'} />}
                                     <span className={`text-[9px] font-bold uppercase ${formData.role === role ? 'text-[var(--deep-black)]' : 'text-[var(--text-gray)]/60'}`}>{role}</span>
-                                </div>
+                                </button>
                             ))}
                         </div>
                     </div>
@@ -330,15 +333,16 @@ export const RegistrationRole = ({ formData, setFormData, campuses, onNext, onBa
                 <div className="mt-6 flex items-start gap-3 p-4 bg-[var(--soft-gray)] rounded-xl border border-[var(--warm-gray)]">
                     <div className="pt-0.5">
                         <input
+                            id="privacy-consent"
                             type="checkbox"
-                            className="w-4 h-4 rounded border-[var(--warm-gray)] bg-white text-[var(--primary-orange)] focus:ring-[var(--primary-orange)]"
+                            className="w-5 h-5 rounded border-[var(--warm-gray)] bg-white text-[var(--primary-orange)] focus:ring-[var(--primary-orange)]"
                             checked={agreedToPrivacy}
                             onChange={(e) => setAgreedToPrivacy(e.target.checked)}
                         />
                     </div>
-                    <p className="text-[10px] text-[var(--text-gray)]/85 leading-relaxed font-medium">
+                    <label htmlFor="privacy-consent" className="block cursor-pointer text-[10px] text-[var(--text-gray)]/85 leading-relaxed font-medium">
                         I agree to the <button type="button" onClick={() => setShowPrivacy(true)} className="text-[var(--primary-orange)] font-bold underline cursor-pointer hover:text-[var(--primary-orange-hover)] transition-colors">Privacy Policy</button> and consent to data collection for identity verification.
-                    </p>
+                    </label>
                 </div>
 
                 <div className="flex gap-4">

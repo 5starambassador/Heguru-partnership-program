@@ -170,8 +170,8 @@ export function SettingsPanel({ permissions }: { permissions?: RolePermissions }
                 <div className="lg:col-span-2 space-y-6">
                     {/* Academic Years Settings */}
                     {activeTab === 'years' && permissions?.academicCycles?.access && (
-                        <div className="bg-white rounded-3xl border border-gray-100 shadow-xl p-8 space-y-8">
-                            <div className="flex justify-between items-center">
+                        <div className="bg-white rounded-3xl border border-gray-100 shadow-xl p-5 sm:p-8 space-y-8">
+                            <div className="flex flex-wrap gap-3 justify-between items-center">
                                 <h3 className="text-xl font-black text-gray-900 flex items-center gap-2">
                                     <Calendar className="text-blue-600" size={24} />
                                     Academic Cycles
@@ -307,8 +307,8 @@ export function SettingsPanel({ permissions }: { permissions?: RolePermissions }
 
                     {/* General Settings */}
                     {activeTab === 'general' && (
-                        <div className="bg-white rounded-3xl border border-gray-100 shadow-xl p-8 space-y-8">
-                            <div className="flex justify-between items-center">
+                        <div className="bg-white rounded-3xl border border-gray-100 shadow-xl p-5 sm:p-8 space-y-8">
+                            <div className="flex flex-wrap gap-3 justify-between items-center">
                                 <h3 className="text-xl font-black text-gray-900">Global Configuration</h3>
                                 <button
                                     onClick={handleSaveSystem}
@@ -409,8 +409,8 @@ export function SettingsPanel({ permissions }: { permissions?: RolePermissions }
 
                     {/* Dashboard Settings */}
                     {activeTab === 'dashboards' && (
-                        <div className="bg-white rounded-3xl border border-gray-100 shadow-xl p-8 space-y-8">
-                            <div className="flex justify-between items-center">
+                        <div className="bg-white rounded-3xl border border-gray-100 shadow-xl p-5 sm:p-8 space-y-8">
+                            <div className="flex flex-wrap gap-3 justify-between items-center">
                                 <h3 className="text-xl font-black text-gray-900">Experience Control</h3>
                                 <button
                                     onClick={handleSaveSystem}
@@ -479,8 +479,8 @@ export function SettingsPanel({ permissions }: { permissions?: RolePermissions }
 
                     {/* Lead Logic Settings */}
                     {activeTab === 'logic' && (
-                        <div className="bg-white rounded-3xl border border-gray-100 shadow-xl p-8 space-y-8">
-                            <div className="flex justify-between items-center">
+                        <div className="bg-white rounded-3xl border border-gray-100 shadow-xl p-5 sm:p-8 space-y-8">
+                            <div className="flex flex-wrap gap-3 justify-between items-center">
                                 <h3 className="text-xl font-black text-gray-900 flex items-center gap-2">
                                     <Zap className="text-amber-500" size={24} />
                                     Lead Engine Logic
@@ -544,8 +544,8 @@ export function SettingsPanel({ permissions }: { permissions?: RolePermissions }
 
                     {/* Notifications Settings */}
                     {activeTab === 'notifications' && notificationSettings && (
-                        <div className="bg-white rounded-3xl border border-gray-100 shadow-xl p-8 space-y-8">
-                            <div className="flex justify-between items-center">
+                        <div className="bg-white rounded-3xl border border-gray-100 shadow-xl p-5 sm:p-8 space-y-8">
+                            <div className="flex flex-wrap gap-3 justify-between items-center">
                                 <h3 className="text-xl font-black text-gray-900 flex items-center gap-2">
                                     <Bell className="text-amber-500" size={24} />
                                     Notification Center
@@ -586,8 +586,8 @@ export function SettingsPanel({ permissions }: { permissions?: RolePermissions }
                         <div className="space-y-8 animate-in fade-in">
 
                             {/* 1. Retention Policy */}
-                            <div className="bg-white rounded-3xl border border-gray-100 shadow-xl p-8 space-y-6">
-                                <div className="flex justify-between items-center">
+                            <div className="bg-white rounded-3xl border border-gray-100 shadow-xl p-5 sm:p-8 space-y-6">
+                                <div className="flex flex-wrap gap-3 justify-between items-center">
                                     <h3 className="text-xl font-black text-gray-900 flex items-center gap-2">
                                         <Database className="text-blue-600" size={24} />
                                         Data Retention Policy
@@ -631,8 +631,8 @@ export function SettingsPanel({ permissions }: { permissions?: RolePermissions }
                             </div>
 
                             {/* 2. Deletion Requests */}
-                            <div className="bg-white rounded-3xl border border-gray-100 shadow-xl p-8 space-y-6">
-                                <div className="flex justify-between items-center">
+                            <div className="bg-white rounded-3xl border border-gray-100 shadow-xl p-5 sm:p-8 space-y-6">
+                                <div className="flex flex-wrap gap-3 justify-between items-center">
                                     <h3 className="text-xl font-black text-gray-900 flex items-center gap-2">
                                         <UserCheck className="text-purple-600" size={24} />
                                         Privacy Center
@@ -677,7 +677,7 @@ export function SettingsPanel({ permissions }: { permissions?: RolePermissions }
                             {/* 3. Disaster Recovery (Backup & Reset) */}
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 {/* Backup */}
-                                <div className="bg-white rounded-3xl border border-gray-100 shadow-xl p-8 space-y-6">
+                                <div className="bg-white rounded-3xl border border-gray-100 shadow-xl p-5 sm:p-8 space-y-6">
                                     <div>
                                         <h3 className="text-xl font-black text-gray-900 flex items-center gap-2 mb-2">
                                             <Database className="text-emerald-600" size={24} />
@@ -716,7 +716,7 @@ export function SettingsPanel({ permissions }: { permissions?: RolePermissions }
                                 </div>
 
                                 {/* Danger Zone: Reset */}
-                                <div className="bg-red-50 rounded-3xl border border-red-100 shadow-xl p-8 space-y-6">
+                                <div className="bg-red-50 rounded-3xl border border-red-100 shadow-xl p-5 sm:p-8 space-y-6">
                                     <div>
                                         <h3 className="text-xl font-black text-red-900 flex items-center gap-2 mb-2">
                                             <AlertCircle className="text-red-600" size={24} />

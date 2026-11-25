@@ -86,12 +86,12 @@ export function BenefitSlabTable({ slabs, onAddSlab, onEditSlab, onDeleteSlab }:
 
     return (
         <div className="bg-white rounded-3xl border border-gray-100 shadow-xl shadow-gray-200/50 overflow-hidden premium-border animate-fade-in">
-            <div className="p-8 border-b border-gray-100 flex justify-between items-center background: 'linear-gradient(to right, #ffffff, #f9fafb)'">
+            <div className="p-5 sm:p-8 border-b border-gray-100 flex flex-wrap gap-3 justify-between items-center">
                 <div>
                     <h3 className="text-xl font-black text-gray-900 tracking-tight">Benefit Tiers</h3>
                     <p className="text-sm font-medium text-gray-400 mt-1">Define referral milestones and associated fee benefits.</p>
                 </div>
-                <div className="flex gap-2">
+                <div className="flex flex-wrap gap-2">
                     <button
                         onClick={() => exportToCSV(slabs, 'Benefit_Tiers', [
                             { header: 'Tier Name', accessor: (s) => s.tierName },

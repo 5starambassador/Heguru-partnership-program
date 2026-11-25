@@ -390,7 +390,7 @@ export function DailyReferralDashboard({
 
 
             {/* Control Bar */}
-            <div className="control-bar flex flex-col sm:flex-row items-center justify-between gap-4 bg-white/50 backdrop-blur-xl p-4 rounded-[2rem] border border-white/50 shadow-xl shadow-indigo-100/20 print:hidden">
+            <div className="control-bar flex flex-col lg:flex-row flex-wrap items-center justify-between gap-4 bg-white/50 backdrop-blur-xl p-4 rounded-[2rem] border border-white/50 shadow-xl shadow-indigo-100/20 print:hidden">
                 <div className="flex items-center gap-3">
                     <div className="w-12 h-12 bg-amber-500 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-amber-200">
                         <Calendar size={24} />
@@ -433,11 +433,11 @@ export function DailyReferralDashboard({
                     </button>
                 </div>
 
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center justify-center gap-2">
                     <button 
                         onClick={downloadCSV}
                         disabled={isExporting}
-                        className="flex items-center gap-2 px-6 py-3 bg-indigo-600 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-lg shadow-indigo-100 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50"
+                        className="flex items-center gap-2 px-4 sm:px-6 py-3 bg-indigo-600 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-lg shadow-indigo-100 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50"
                     >
                         {isExporting ? <RefreshCw size={14} className="animate-spin" /> : <Download size={14} />}
                         Download CSV
@@ -445,7 +445,7 @@ export function DailyReferralDashboard({
                     <button 
                         onClick={downloadImage}
                         disabled={isImageExporting}
-                        className="flex items-center gap-2 px-6 py-3 bg-emerald-600 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-lg shadow-emerald-100 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50"
+                        className="flex items-center gap-2 px-4 sm:px-6 py-3 bg-emerald-600 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-lg shadow-emerald-100 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50"
                         title="Download as Image (PNG)"
                     >
                         {isImageExporting ? <RefreshCw size={14} className="animate-spin" /> : <ImageIcon size={14} />}
@@ -463,7 +463,8 @@ export function DailyReferralDashboard({
 
             {/* The High-Fidelity Report Table */}
             <div ref={reportRef} className="report-print-container overflow-hidden bg-white rounded-[1.5rem] border-2 border-slate-900/5 shadow-2xl relative print:border-none print:shadow-none">
-                <div className="overflow-x-auto min-w-[800px] print:min-w-0 print:overflow-visible">
+                <div className="overflow-x-auto print:overflow-visible">
+                <div className="min-w-[800px] print:min-w-0">
                     <div className="w-full text-center py-6 bg-[#FFFF00] border-b-2 border-slate-900 print:py-2">
                         <h1 className="text-3xl font-black text-slate-900 uppercase tracking-tight italic print:text-xl">Achievement Summary - {new Date(date).toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' })}</h1>
                     </div>
@@ -577,6 +578,7 @@ export function DailyReferralDashboard({
                             </tr>
                         </tbody>
                     </table>
+                </div>
                 </div>
             </div>
 

@@ -284,7 +284,7 @@ export function PaymentApprovalTable({ initialPayments, page, totalPages, totalC
                     </div>
                 </div>
 
-                <div className="flex items-center gap-3">
+                <div className="flex flex-wrap items-center gap-3">
                     <span className="text-sm font-bold text-gray-500 hidden sm:inline">{totalCount} Found</span>
                     {selectedIds.length > 0 && <span className="text-xs font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded-md">{selectedIds.length} selected</span>}
 
@@ -325,7 +325,7 @@ export function PaymentApprovalTable({ initialPayments, page, totalPages, totalC
                 </div>
             ) : (
                 <div className="overflow-x-auto">
-                    <table className="w-full text-left">
+                    <table className="w-full min-w-[800px] text-left">
                         <thead className="bg-gray-50/50 border-b border-gray-100 uppercase text-xs font-bold text-gray-500 tracking-wider">
                             <tr>
                                 <th className="px-6 py-4 w-10">
@@ -368,7 +368,8 @@ export function PaymentApprovalTable({ initialPayments, page, totalPages, totalC
                                     <td className="px-6 py-4 text-right">
                                         <span className="font-bold text-emerald-600">₹{payment.orderAmount}</span>
                                     </td>
-                                    <td className="px-6 py-4 flex justify-center gap-2">
+                                    <td className="px-6 py-4">
+                                        <div className="flex justify-center gap-2">
                                         {rejectOrderId === payment.orderId ? (
                                             <div className="flex items-center gap-2 animate-in slide-in-from-right-2">
                                                 <input
@@ -389,7 +390,7 @@ export function PaymentApprovalTable({ initialPayments, page, totalPages, totalC
                                                     suppressHydrationWarning
                                                     onClick={() => handleSingleApprove(payment.orderId)}
                                                     disabled={!!loadingMap[payment.orderId]}
-                                                    className="p-2 bg-emerald-100 text-emerald-700 rounded-lg hover:bg-emerald-200 transition-colors disabled:opacity-50"
+                                                    className="p-2 min-h-10 min-w-10 flex items-center justify-center bg-emerald-100 text-emerald-700 rounded-lg hover:bg-emerald-200 transition-colors disabled:opacity-50"
                                                 >
                                                     {loadingMap[payment.orderId] === 'approve' ? <Loader2 size={16} className="animate-spin" /> : <Check size={16} />}
                                                 </button>
@@ -397,12 +398,13 @@ export function PaymentApprovalTable({ initialPayments, page, totalPages, totalC
                                                     suppressHydrationWarning
                                                     onClick={() => { setRejectOrderId(payment.orderId); setRejectReason(''); }}
                                                     disabled={!!loadingMap[payment.orderId]}
-                                                    className="p-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition-colors disabled:opacity-50"
+                                                    className="p-2 min-h-10 min-w-10 flex items-center justify-center bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition-colors disabled:opacity-50"
                                                 >
                                                     <X size={16} />
                                                 </button>
                                             </>
                                         )}
+                                        </div>
                                     </td>
                                 </tr>
                             ))}
@@ -436,7 +438,7 @@ export function PaymentApprovalTable({ initialPayments, page, totalPages, totalC
 
             {/* Sticky Bulk Actions Bar */}
             {selectedIds.length > 0 && (
-                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-gray-900 text-white px-6 py-3 rounded-2xl shadow-2xl flex items-center gap-4 animate-in slide-in-from-bottom-5 z-20">
+                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] sm:w-auto bg-gray-900 text-white px-4 sm:px-6 py-3 rounded-2xl shadow-2xl flex items-center justify-between sm:justify-start gap-4 animate-in slide-in-from-bottom-5 z-20">
                     <span className="text-sm font-bold text-gray-300">{selectedIds.length} Selected</span>
                     <div className="h-4 w-px bg-gray-700"></div>
                     <button

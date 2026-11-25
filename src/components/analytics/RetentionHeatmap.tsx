@@ -43,9 +43,9 @@ export function RetentionHeatmap({ campus }: { campus?: string }) {
     }
 
     return (
-        <div className="bg-white rounded-3xl p-8 border border-gray-100 shadow-sm animate-fade-in">
-            <div className="flex justify-between items-start mb-8">
-                <div>
+        <div className="bg-white rounded-3xl p-4 md:p-8 border border-gray-100 shadow-sm animate-fade-in">
+            <div className="flex flex-wrap justify-between items-start gap-3 mb-8">
+                <div className="min-w-0">
                     <h3 className="text-xl font-black text-gray-900 tracking-tight flex items-center gap-3">
                         <Users className="text-red-600" size={24} />
                         Ambassador Retention Heatmap
@@ -61,7 +61,7 @@ export function RetentionHeatmap({ campus }: { campus?: string }) {
             </div>
 
             <div className="overflow-x-auto">
-                <table className="w-full border-collapse">
+                <table className="w-full min-w-[560px] border-collapse">
                     <thead>
                         <tr>
                             <th className="text-left py-3 px-4 text-[10px] font-black text-gray-400 uppercase tracking-widest border-b border-gray-50">Join Cohort</th>
@@ -108,9 +108,9 @@ export function RetentionHeatmap({ campus }: { campus?: string }) {
                 </table>
             </div>
 
-            <div className="mt-8 flex items-center gap-6">
+            <div className="mt-8 flex flex-wrap items-center gap-3 md:gap-6">
                 <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Legend:</p>
-                <div className="flex items-center gap-4">
+                <div className="flex flex-wrap items-center gap-3 md:gap-4">
                     {[
                         { label: '80%+', color: 'bg-emerald-600' },
                         { label: '40%+', color: 'bg-emerald-400' },

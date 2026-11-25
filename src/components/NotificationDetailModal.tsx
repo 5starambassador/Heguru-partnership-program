@@ -39,12 +39,14 @@ export function NotificationDetailModal({
     useEffect(() => {
         setMounted(true)
         if (isOpen) {
-            document.body.style.overflow = 'hidden'
-        } else {
-            document.body.style.overflow = 'unset'
-        }
-        return () => {
-            document.body.style.overflow = 'unset'
+            const html = document.documentElement
+            const body = document.body
+            html.classList.add('no-scroll')
+            body.classList.add('no-scroll')
+            return () => {
+                html.classList.remove('no-scroll')
+                body.classList.remove('no-scroll')
+            }
         }
     }, [isOpen])
 
@@ -104,13 +106,13 @@ export function NotificationDetailModal({
                         {/* Mobile Drag Handle */}
                         <div className="sm:hidden w-12 h-1.5 bg-gray-200 rounded-full mx-auto -mt-4 mb-6" />
 
-                        <div className="flex justify-between items-start mb-6">
-                            <div className="flex items-center gap-4">
-                                <div className="p-3 bg-gray-50 rounded-2xl border border-gray-100">
+                        <div className="flex justify-between items-start gap-3 mb-6">
+                            <div className="flex items-center gap-4 min-w-0 flex-1">
+                                <div className="p-3 bg-gray-50 rounded-2xl border border-gray-100 shrink-0">
                                     {getIcon(notification.type)}
                                 </div>
-                                <div>
-                                    <h3 className="text-lg font-black text-gray-900 leading-tight">
+                                <div className="min-w-0 flex-1">
+                                    <h3 className="text-lg font-black text-gray-900 leading-tight break-words">
                                         {formattedTitle}
                                     </h3>
                                     <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mt-1 font-heading">
@@ -118,7 +120,7 @@ export function NotificationDetailModal({
                                     </p>
                                 </div>
                             </div>
-                            <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-2 shrink-0">
                                 <button
                                     onClick={handleShare}
                                     className="w-10 h-10 bg-emerald-50 border border-emerald-100 hover:bg-emerald-100 rounded-full flex items-center justify-center transition-all shadow-sm"

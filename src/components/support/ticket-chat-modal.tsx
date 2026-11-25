@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
+import { createPortal } from 'react-dom'
 import { X, Send, User, Shield, Loader2, Clock, AlertTriangle, CheckCircle2, MessageSquare } from 'lucide-react'
 import { addTicketMessage, getTicketMessages, escalateTicket, getSupportSnippets } from '@/app/ticket-actions'
 import { toast } from 'sonner'
@@ -61,7 +62,7 @@ export function TicketChatModal({ ticket, currentUserType, currentUserId, onClos
 
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-    }, [messages])
+    }, [messages, mounted])
 
     useEffect(() => {
         let pollingInterval = 10000 // Default 10s
@@ -177,15 +178,17 @@ export function TicketChatModal({ ticket, currentUserType, currentUserId, onClos
         }
     }
 
-    return (
+    if (!mounted) return null
+
+    return createPortal(
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 xl:pl-[280px]">
             <div className="absolute inset-0 bg-gray-900/60 backdrop-blur-md" onClick={onClose} />
 
-            <div className="relative w-full max-w-2xl h-[85vh] bg-white rounded-[3rem] shadow-2xl shadow-black/20 flex flex-col overflow-hidden animate-in zoom-in-95 duration-300">
+            <div className="relative w-full max-w-2xl h-[85dvh] max-h-[calc(100dvh-2rem)] bg-white rounded-2xl sm:rounded-[3rem] shadow-2xl shadow-black/20 flex flex-col overflow-hidden animate-in zoom-in-95 duration-300">
                 {/* Header */}
-                <div className="bg-gray-900 px-8 py-6 flex items-center justify-between border-b border-white/10">
-                    <div className="space-y-1">
-                        <div className="flex items-center gap-3">
+                <div className="bg-gray-900 px-4 sm:px-8 py-4 sm:py-6 flex items-center justify-between gap-3 border-b border-white/10">
+                    <div className="space-y-1 min-w-0 flex-1">
+                        <div className="flex flex-wrap items-center gap-2 sm:gap-3">
                             <span className={`text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full border ${ticket.status === 'Open' ? 'bg-blue-500/10 text-blue-400 border-blue-500/20' :
                                 ticket.status === 'Resolved' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' :
                                     'bg-amber-500/10 text-amber-400 border-amber-500/20'
@@ -204,7 +207,7 @@ export function TicketChatModal({ ticket, currentUserType, currentUserId, onClos
                         )}
                     </div>
 
-                    <div className="flex gap-3">
+                    <div className="flex gap-3 shrink-0">
                         {currentUserType === 'Admin' && (!ticket.escalationLevel || ticket.escalationLevel < 4) && (
                             <button
                                 onClick={handleEscalate}
@@ -221,9 +224,9 @@ export function TicketChatModal({ ticket, currentUserType, currentUserId, onClos
                 </div>
 
                 {/* Messages */}
-                <div className="flex-1 bg-gray-50/50 overflow-y-auto p-8 space-y-6">
+                <div className="flex-1 bg-gray-50/50 overflow-y-auto p-4 sm:p-8 space-y-6">
                     <div className="flex justify-center mb-8">
-                        <div className="bg-indigo-100/50 backdrop-blur-sm border border-indigo-200 px-6 py-2 rounded-2xl flex items-center gap-3">
+                        <div className="bg-indigo-100/50 backdrop-blur-sm border border-indigo-200 px-4 sm:px-6 py-2 rounded-2xl flex items-center gap-3 max-w-full">
                             <Shield size={14} className="text-indigo-600" />
                             <span className="text-[10px] font-black uppercase tracking-widest text-indigo-700">Encrypted Communication Protocol Active</span>
                         </div>
@@ -243,7 +246,7 @@ export function TicketChatModal({ ticket, currentUserType, currentUserId, onClos
 
                         return (
                             <div key={idx} className={`flex ${isMe ? 'justify-end' : 'justify-start'} w-full group animate-in slide-in-from-bottom-2 duration-300`}>
-                                <div className={`flex flex-col max-w-[85%] ${isMe ? 'items-end' : 'items-start'}`}>
+                                <div className={`flex flex-col max-w-[85%] min-w-0 ${isMe ? 'items-end' : 'items-start'}`}>
                                     <div className="flex items-center gap-2 mb-1.5 px-2">
                                         {!isMe && (
                                             <div className={`p-1 rounded-lg ${isAdmin ? 'bg-red-100 text-red-600' : 'bg-indigo-100 text-indigo-600'}`}>
@@ -259,14 +262,14 @@ export function TicketChatModal({ ticket, currentUserType, currentUserId, onClos
                                         </span>
                                     </div>
 
-                                    <div className={`px-6 py-4 rounded-[2rem] text-sm font-bold leading-relaxed shadow-sm border ${isInternalNote
+                                    <div className={`px-4 sm:px-6 py-4 rounded-[2rem] text-sm font-bold leading-relaxed shadow-sm border break-words [overflow-wrap:anywhere] max-w-full ${isInternalNote
                                         ? 'bg-amber-50 border-amber-200 text-amber-900 rounded-tr-none'
                                         : isMe
                                             ? 'bg-gray-900 text-white border-transparent rounded-tr-none'
                                             : 'bg-white text-gray-900 border-gray-100 rounded-tl-none shadow-blue-500/5'
                                         }`}>
                                         {msg.attachmentUrl && (
-                                            <div className="mb-3 rounded-xl overflow-hidden border border-gray-100/20 max-w-sm">
+                                            <div className="mb-3 rounded-xl overflow-hidden border border-gray-100/20 max-w-full sm:max-w-sm">
                                                 {msg.attachmentUrl.startsWith('data:image/') || msg.attachmentUrl.startsWith('http') && msg.attachmentUrl.match(/\.(jpeg|jpg|gif|png)$/) ? (
                                                     <img src={msg.attachmentUrl} alt="Attachment" className="w-full h-auto object-cover max-h-60" />
                                                 ) : (
@@ -289,7 +292,7 @@ export function TicketChatModal({ ticket, currentUserType, currentUserId, onClos
                 </div>
 
                 {/* Footer/Input */}
-                <div className="p-8 bg-white border-t border-gray-100">
+                <div className="p-4 sm:p-8 bg-white border-t border-gray-100">
                     {currentUserType === 'Admin' && (
                         <div className="flex items-center gap-2 mb-4 px-2">
                             <label className="flex items-center gap-3 cursor-pointer group">
@@ -373,7 +376,7 @@ export function TicketChatModal({ ticket, currentUserType, currentUserId, onClos
                         </div>
                     )}
 
-                    <div className="relative flex items-end gap-4">
+                    <div className="relative flex items-end gap-2 sm:gap-4">
                         <input
                             type="file"
                             ref={fileInputRef}
@@ -385,7 +388,7 @@ export function TicketChatModal({ ticket, currentUserType, currentUserId, onClos
                         <button
                             onClick={() => fileInputRef.current?.click()}
                             disabled={isSending}
-                            className={`w-[70px] h-[70px] rounded-[2rem] flex items-center justify-center transition-all bg-gray-50 border border-gray-100 text-gray-400 hover:text-indigo-600 hover:border-indigo-100 hover:bg-white active:scale-95 ${isSending ? 'opacity-50 pointer-events-none' : ''}`}
+                            className={`w-12 h-12 sm:w-[70px] sm:h-[70px] shrink-0 rounded-2xl sm:rounded-[2rem] flex items-center justify-center transition-all bg-gray-50 border border-gray-100 text-gray-400 hover:text-indigo-600 hover:border-indigo-100 hover:bg-white active:scale-95 ${isSending ? 'opacity-50 pointer-events-none' : ''}`}
                             aria-label="Attach file"
                         >
                             <Paperclip size={24} />
@@ -397,14 +400,14 @@ export function TicketChatModal({ ticket, currentUserType, currentUserId, onClos
                             suppressHydrationWarning
                             placeholder={ticket.status === 'Resolved' && currentUserType === 'User' ? "Case is closed." : isInternal ? "Enter private internal note..." : "Protocol update..."}
                             disabled={(ticket.status === 'Resolved' && currentUserType === 'User') || ticket.status === 'Closed' || isSending}
-                            className={`flex-1 bg-gray-50 border-2 border-transparent focus:bg-white rounded-[2rem] px-8 py-5 text-sm font-bold outline-none transition-all resize-none shadow-inner min-h-[70px] max-h-[150px] ${isInternal ? 'focus:border-amber-500 text-amber-950' : 'focus:border-indigo-500 text-gray-900'}`}
+                            className={`flex-1 bg-gray-50 border-2 border-transparent focus:bg-white rounded-2xl sm:rounded-[2rem] px-4 sm:px-8 py-3 sm:py-5 min-w-0 text-sm font-bold outline-none transition-all resize-none shadow-inner min-h-12 sm:min-h-[70px] max-h-[150px] ${isInternal ? 'focus:border-amber-500 text-amber-950' : 'focus:border-indigo-500 text-gray-900'}`}
                         />
                         <button
                             onClick={handleSend}
                             disabled={!newMessage.trim() || isSending || (ticket.status === 'Resolved' && currentUserType === 'User')}
                             suppressHydrationWarning
                             aria-label="Send message"
-                            className={`w-[70px] h-[70px] rounded-[2rem] flex items-center justify-center transition-all shadow-lg active:scale-90 ${!newMessage.trim() || isSending || ticket.status === 'Resolved'
+                            className={`w-12 h-12 sm:w-[70px] sm:h-[70px] shrink-0 rounded-2xl sm:rounded-[2rem] flex items-center justify-center transition-all shadow-lg active:scale-90 ${!newMessage.trim() || isSending || ticket.status === 'Resolved'
                                 ? 'bg-gray-100 text-gray-300 pointer-events-none shadow-none'
                                 : isInternal
                                     ? 'bg-amber-500 text-white hover:bg-amber-600 hover:shadow-amber-500/20'
@@ -435,6 +438,7 @@ export function TicketChatModal({ ticket, currentUserType, currentUserId, onClos
                 onCancel={() => setShowEscalatePrompt(false)}
                 variant="warning"
             />
-        </div>
+        </div>,
+        document.body
     )
 }

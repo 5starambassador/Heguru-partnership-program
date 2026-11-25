@@ -242,7 +242,7 @@ export function CampusClient({ campus, analytics, referrals, confirmReferral }: 
             </div>
 
             {/* Charts & Insights Section - Matching Admin Style */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '24px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(400px, 100%), 1fr))', gap: '24px' }}>
                 {/* Campus & Role Distribution */}
                 <div style={{
                     background: 'white',

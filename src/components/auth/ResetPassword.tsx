@@ -19,6 +19,7 @@ export const ResetPassword = ({ onReset, onCancel, loading }: ResetPasswordProps
             <div className="text-center space-y-2 relative">
                 <button
                     onClick={onCancel}
+                    aria-label="Back"
                     className="absolute top-0 left-0 w-10 h-10 rounded-full flex items-center justify-center bg-[var(--soft-gray)] border border-[var(--warm-gray)] text-[var(--deep-black)] hover:bg-[var(--warm-gray)] transition-all z-50 group shadow-md"
                 >
                     <ChevronLeft className="w-5 h-5 flex-shrink-0 group-hover:-translate-x-0.5 transition-transform" strokeWidth={2.5} />
@@ -51,7 +52,8 @@ export const ResetPassword = ({ onReset, onCancel, loading }: ResetPasswordProps
                         />
                         <button
                             type="button"
-                            className="absolute right-5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[var(--primary-orange)] transition-colors"
+                            aria-label={showPassword ? 'Hide password' : 'Show password'}
+                            className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center text-gray-400 hover:text-[var(--primary-orange)] transition-colors"
                             onClick={() => setShowPassword(!showPassword)}
                         >
                             {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
@@ -67,22 +69,22 @@ export const ResetPassword = ({ onReset, onCancel, loading }: ResetPasswordProps
                             <div className={`h-1 flex-1 rounded-full transition-all duration-300 ${/[!@#$%^&*]/.test(newPassword) ? 'bg-emerald-500 shadow-[0_0_12px_rgba(16,185,129,0.4)]' : 'bg-gray-100'}`}></div>
                         </div>
 
-                        <div className="grid grid-cols-2 gap-x-6 gap-y-3">
+                        <div className="grid grid-cols-1 min-[360px]:grid-cols-2 gap-x-3 gap-y-3">
                             <div className={`flex items-center gap-3 transition-all ${newPassword.length >= 8 ? 'text-emerald-500' : 'text-gray-300'}`}>
                                 <div className={`w-1.5 h-1.5 rounded-full ${newPassword.length >= 8 ? 'bg-emerald-500' : 'bg-gray-200'}`}></div>
-                                <span className="text-[10px] font-black uppercase tracking-widest">8+ Characters</span>
+                                <span className="text-[10px] font-black uppercase tracking-wide sm:tracking-widest">8+ Characters</span>
                             </div>
                             <div className={`flex items-center gap-3 transition-all ${/[A-Z]/.test(newPassword) ? 'text-emerald-500' : 'text-gray-300'}`}>
                                 <div className={`w-1.5 h-1.5 rounded-full ${/[A-Z]/.test(newPassword) ? 'bg-emerald-500' : 'bg-gray-200'}`}></div>
-                                <span className="text-[10px] font-black uppercase tracking-widest">1 Uppercase</span>
+                                <span className="text-[10px] font-black uppercase tracking-wide sm:tracking-widest">1 Uppercase</span>
                             </div>
                             <div className={`flex items-center gap-3 transition-all ${/[0-9]/.test(newPassword) ? 'text-emerald-500' : 'text-gray-300'}`}>
                                 <div className={`w-1.5 h-1.5 rounded-full ${/[0-9]/.test(newPassword) ? 'bg-emerald-500' : 'bg-gray-200'}`}></div>
-                                <span className="text-[10px] font-black uppercase tracking-widest">1 Number</span>
+                                <span className="text-[10px] font-black uppercase tracking-wide sm:tracking-widest">1 Number</span>
                             </div>
                             <div className={`flex items-center gap-3 transition-all ${/[!@#$%^&*]/.test(newPassword) ? 'text-emerald-500' : 'text-gray-300'}`}>
                                 <div className={`w-1.5 h-1.5 rounded-full ${/[!@#$%^&*]/.test(newPassword) ? 'bg-emerald-500' : 'bg-gray-200'}`}></div>
-                                <span className="text-[10px] font-black uppercase tracking-widest">1 Special</span>
+                                <span className="text-[10px] font-black uppercase tracking-wide sm:tracking-widest">1 Special</span>
                             </div>
                         </div>
                     </div>

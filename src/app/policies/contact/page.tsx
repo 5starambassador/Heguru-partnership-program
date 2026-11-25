@@ -14,12 +14,12 @@ export default function ContactPage() {
 
             <div className="grid md:grid-cols-2 gap-6">
                 {/* Address Card */}
-                <div className="col-span-1 md:col-span-2 bg-white border border-gray-250/70 rounded-3xl p-8 shadow-sm hover:shadow-md hover:border-gray-300 transition-all">
+                <div className="col-span-1 md:col-span-2 bg-white border border-gray-250/70 rounded-3xl p-5 sm:p-8 shadow-sm hover:shadow-md hover:border-gray-300 transition-all">
                     <div className="flex items-start gap-4">
-                        <div className="p-3 bg-[var(--primary-orange)]/10 rounded-2xl text-[var(--primary-orange)]">
+                        <div className="p-3 bg-[var(--primary-orange)]/10 rounded-2xl shrink-0 text-[var(--primary-orange)]">
                             <MapPin size={24} />
                         </div>
-                        <div>
+                        <div className="min-w-0 flex-1">
                             <h3 className="text-lg font-bold text-gray-900 mb-2">Registered Office</h3>
                             <p className="text-gray-600 leading-relaxed font-medium">
                                 HEGURU EDUCATIONAL PUBLIC TRUST<br />
@@ -31,12 +31,12 @@ export default function ContactPage() {
                 </div>
 
                 {/* Phone Card */}
-                <div className="bg-white border border-gray-250/70 rounded-3xl p-8 shadow-sm hover:shadow-md hover:border-gray-300 transition-all">
+                <div className="bg-white border border-gray-250/70 rounded-3xl p-5 sm:p-8 shadow-sm hover:shadow-md hover:border-gray-300 transition-all">
                     <div className="flex items-start gap-4">
-                        <div className="p-3 bg-emerald-50 rounded-2xl text-emerald-600">
+                        <div className="p-3 bg-emerald-50 rounded-2xl shrink-0 text-emerald-600">
                             <Phone size={24} />
                         </div>
-                        <div>
+                        <div className="min-w-0 flex-1">
                             <h3 className="text-lg font-bold text-gray-900 mb-2">Phone Support</h3>
                             <p className="text-gray-600 mb-1">General Inquiries:</p>
                             <a href="tel:+919363494745" className="text-xl font-bold text-gray-900 hover:text-emerald-600 transition-colors block mb-4">
@@ -48,15 +48,15 @@ export default function ContactPage() {
                 </div>
 
                 {/* Email Card */}
-                <div className="bg-white border border-gray-250/70 rounded-3xl p-8 shadow-sm hover:shadow-md hover:border-gray-300 transition-all">
+                <div className="bg-white border border-gray-250/70 rounded-3xl p-5 sm:p-8 shadow-sm hover:shadow-md hover:border-gray-300 transition-all">
                     <div className="flex items-start gap-4">
-                        <div className="p-3 bg-purple-50 rounded-2xl text-purple-600">
+                        <div className="p-3 bg-purple-50 rounded-2xl shrink-0 text-purple-600">
                             <Mail size={24} />
                         </div>
-                        <div>
+                        <div className="min-w-0 flex-1">
                             <h3 className="text-lg font-bold text-gray-900 mb-2">Email Us</h3>
                             <p className="text-gray-600 mb-1">Support & Queries:</p>
-                            <a href="mailto:5star@heguru.org" className="text-xl font-bold text-gray-900 hover:text-purple-650 transition-colors block mb-4">
+                            <a href="mailto:5star@heguru.org" className="text-xl font-bold text-gray-900 hover:text-purple-650 transition-colors block mb-4 break-all">
                                 5star@heguru.org
                             </a>
                             <p className="text-xs text-gray-400 uppercase tracking-wider">Response within 24 hours</p>

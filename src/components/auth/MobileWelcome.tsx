@@ -79,14 +79,14 @@ export function MobileWelcome({ onGetStarted }: MobileWelcomeProps) {
                 </motion.div>
             </div>
 
-            <div className="p-4 flex justify-center gap-4 text-[9px] uppercase tracking-widest text-[var(--text-gray)]/50 font-bold relative z-10 border-t border-[var(--soft-gray)] bg-white rounded-b-3xl">
-                <a href="/policies/privacy" className="hover:text-[var(--primary-orange)] transition-colors">Privacy</a>
+            <div className="px-4 py-2 flex flex-wrap items-center justify-center gap-x-1.5 text-[11px] uppercase tracking-widest text-[var(--text-gray)]/50 font-bold relative z-10 border-t border-[var(--soft-gray)] bg-white rounded-b-3xl">
+                <a href="/policies/privacy" className="inline-block py-2 px-1 hover:text-[var(--primary-orange)] transition-colors">Privacy</a>
                 <span>•</span>
-                <a href="/policies/terms" className="hover:text-[var(--primary-orange)] transition-colors">Terms</a>
+                <a href="/policies/terms" className="inline-block py-2 px-1 hover:text-[var(--primary-orange)] transition-colors">Terms</a>
                 <span>•</span>
-                <a href="/policies/refund" className="hover:text-[var(--primary-orange)] transition-colors">Refunds</a>
+                <a href="/policies/refund" className="inline-block py-2 px-1 hover:text-[var(--primary-orange)] transition-colors">Refunds</a>
                 <span>•</span>
-                <a href="/policies/contact" className="hover:text-[var(--primary-orange)] transition-colors">Contact</a>
+                <a href="/policies/contact" className="inline-block py-2 px-1 hover:text-[var(--primary-orange)] transition-colors">Contact</a>
             </div>
         </div>
     )

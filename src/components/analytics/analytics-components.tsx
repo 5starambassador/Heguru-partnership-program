@@ -37,11 +37,29 @@ const useMounted = () => {
     return mounted
 }
 
+// Small-screen detection for chart axis sizing (phones only)
+const useIsSmall = () => {
+    const [isSmall, setIsSmall] = useState(false)
+    useEffect(() => {
+        if (typeof window === 'undefined' || !window.matchMedia) return
+        const mq = window.matchMedia('(max-width: 639px)')
+        const update = () => setIsSmall(mq.matches)
+        update()
+        mq.addEventListener?.('change', update)
+        return () => mq.removeEventListener?.('change', update)
+    }, [])
+    return isSmall
+}
+
+const truncateLabel = (value: string, max: number) =>
+    value.length > max ? `${value.slice(0, max - 1)}…` : value
+
 // --- Components ---
 
 // 1. Bar Chart (Campus Performance)
 export const CampusBarChart = ({ data }: { data: any[] }) => {
     const isMounted = useMounted()
+    const isSmall = useIsSmall()
     if (!isMounted) return <div className="h-[300px] w-full bg-slate-50/50 animate-pulse rounded-2xl" />
 
     return (
@@ -54,7 +72,13 @@ export const CampusBarChart = ({ data }: { data: any[] }) => {
                 >
                     <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} stroke="#E5E7EB" />
                     <XAxis type="number" hide />
-                    <YAxis dataKey="campus" type="category" width={150} tick={{ fontSize: 12 }} />
+                    <YAxis
+                        dataKey="campus"
+                        type="category"
+                        width={isSmall ? 90 : 150}
+                        tick={{ fontSize: isSmall ? 10 : 12 }}
+                        tickFormatter={isSmall ? (v: any) => truncateLabel(String(v ?? ''), 12) : undefined}
+                    />
                     <Tooltip
                         contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}
                         cursor={{ fill: '#F3F4F6' }}
@@ -152,7 +176,7 @@ export const GenericPieChart = ({ data, dataKey = 'value', nameKey = 'name' }: {
                                 </text>
                             );
                         }}
-                        outerRadius={100}
+                        outerRadius="70%"
                         fill="#8884d8"
                         dataKey={dataKey}
                         nameKey={nameKey}
@@ -172,6 +196,7 @@ export const GenericPieChart = ({ data, dataKey = 'value', nameKey = 'name' }: {
 // 5. Campus Efficiency (Conversion Rate)
 export const CampusEfficiencyChart = ({ data }: { data: any[] }) => {
     const isMounted = useMounted()
+    const isSmall = useIsSmall()
     if (!isMounted) return <div className="h-[300px] w-full bg-slate-50/50 animate-pulse rounded-2xl" />
 
     return (
@@ -184,7 +209,13 @@ export const CampusEfficiencyChart = ({ data }: { data: any[] }) => {
                 >
                     <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} stroke="#E5E7EB" />
                     <XAxis type="number" unit="%" domain={[0, 100]} />
-                    <YAxis dataKey="campus" type="category" width={150} tick={{ fontSize: 12 }} />
+                    <YAxis
+                        dataKey="campus"
+                        type="category"
+                        width={isSmall ? 90 : 150}
+                        tick={{ fontSize: isSmall ? 10 : 12 }}
+                        tickFormatter={isSmall ? (v: any) => truncateLabel(String(v ?? ''), 12) : undefined}
+                    />
                     <Tooltip
                         formatter={(value: any) => [`${value}%`, 'Conversion Rate']}
                         contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}

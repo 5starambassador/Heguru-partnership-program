@@ -153,14 +153,14 @@ export function CampusManagementTable({ campuses, onEdit, onDelete, onAdd, onBul
                 <div className="flex justify-end gap-2" onClick={(e) => e.stopPropagation()}>
                     <button
                         onClick={() => onEdit(campus)}
-                        className="p-1.5 text-gray-400 hover:text-blue-600 transition-colors"
+                        className="p-2.5 xl:p-1.5 text-gray-400 hover:text-blue-600 transition-colors"
                         suppressHydrationWarning
                     >
                         <Edit size={16} />
                     </button>
                     <button
                         onClick={() => onDelete(campus.id, campus.campusName)}
-                        className="p-1.5 text-gray-400 hover:text-red-500 transition-colors"
+                        className="p-2.5 xl:p-1.5 text-gray-400 hover:text-red-500 transition-colors"
                         suppressHydrationWarning
                     >
                         <Trash size={16} />

@@ -31,7 +31,7 @@ export default async function CompletePaymentPage() {
     const amount = 25
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-slate-50 p-4">
+        <div className="min-h-[100dvh] flex items-center justify-center bg-slate-50 p-4">
             <div className="w-full max-w-md shadow-xl bg-white rounded-xl overflow-hidden border border-gray-100">
                 <div className="p-6 text-center border-b border-gray-100">
                     <h2 className="text-2xl font-bold text-amber-600">Complete Registration</h2>

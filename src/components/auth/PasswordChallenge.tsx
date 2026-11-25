@@ -20,6 +20,7 @@ export const PasswordChallenge = ({ mobile, onLogin, onBack, onForgotPassword, l
             <div className="text-center space-y-2 relative">
                 <button
                     onClick={onBack}
+                    aria-label="Back"
                     className="absolute top-0 left-0 w-10 h-10 rounded-full flex items-center justify-center bg-[var(--soft-gray)] border border-[var(--warm-gray)] text-[var(--deep-black)] hover:bg-[var(--warm-gray)] transition-all z-50 group shadow-md"
                 >
                     <ArrowLeft className="w-5 h-5 flex-shrink-0 group-hover:-translate-x-0.5 transition-transform" strokeWidth={2.5} />
@@ -64,7 +65,8 @@ export const PasswordChallenge = ({ mobile, onLogin, onBack, onForgotPassword, l
                         />
                         <button
                             type="button"
-                            className="absolute right-5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[var(--primary-orange)] transition-colors"
+                            aria-label={showPassword ? 'Hide password' : 'Show password'}
+                            className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center text-gray-400 hover:text-[var(--primary-orange)] transition-colors"
                             onClick={() => setShowPassword(!showPassword)}
                         >
                             {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}

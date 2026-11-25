@@ -339,7 +339,7 @@ export function DashboardClient({
                     initial={{ opacity: 0, y: -20 }}
                     animate={{ opacity: 1, y: 0 }}
                     style={{backgroundColor:"rgba(255, 217, 0, 0.14)"}}
-                    className="relative overflow-hidden rounded-full border border-[var(--primary-orange)]/20 p-6 shadow-sm"
+                    className="relative overflow-hidden rounded-2xl md:rounded-full border border-[var(--primary-orange)]/20 p-6 shadow-sm"
                 >
                     <div className="absolute top-0 right-0 p-8 opacity-[0.04]">
                         <IndianRupee size={80} className="text-[var(--primary-orange)]" />

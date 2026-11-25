@@ -274,7 +274,7 @@ export function DataTable<T>({
                                     onSearchChange?.('')
                                     if (!manualPagination) setInternalPage(1)
                                 }}
-                                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 p-0.5 hover:bg-gray-200 rounded-full transition-all"
+                                className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 p-1.5 hover:bg-gray-200 rounded-full transition-all"
                                 title="Clear search"
                                 aria-label="Clear search"
                                 suppressHydrationWarning
@@ -390,7 +390,7 @@ export function DataTable<T>({
                                                     {openFilterColumn === i && (
                                                         <div
                                                             ref={filterRef}
-                                                            className="absolute top-full right-0 mt-3 w-64 bg-white/95 backdrop-blur-xl rounded-[24px] shadow-2xl shadow-gray-200/50 border border-gray-100 z-50 animate-in fade-in zoom-in-95 duration-200 overflow-hidden min-w-[240px]"
+                                                            className={`absolute top-full ${i < 2 ? 'left-0' : 'right-0'} mt-3 w-64 bg-white/95 backdrop-blur-xl rounded-[24px] shadow-2xl shadow-gray-200/50 border border-gray-100 z-50 animate-in fade-in zoom-in-95 duration-200 overflow-hidden min-w-[240px]`}
                                                             onClick={(e) => e.stopPropagation()}
                                                         >
                                                             <div className="p-4 border-b border-gray-50 flex justify-between items-center bg-gray-50/50">
@@ -521,8 +521,8 @@ export function DataTable<T>({
                                                     key={j}
                                                     className={`block md:table-cell px-2 py-3 text-sm font-medium text-gray-600 border-b last:border-0 md:border-none md:first:pl-4 flex justify-between items-center md:block ${!enableMultiSelection && j === 0 ? 'md:first:pl-4' : ''}`}
                                                 >
-                                                    <span className="md:hidden font-black text-gray-400 text-[10px] uppercase tracking-widest">{column.header}</span>
-                                                    <div className="text-right md:text-left w-full md:w-auto pl-4 md:pl-0 group-hover:text-gray-900 transition-colors">
+                                                    <span className="md:hidden shrink-0 font-black text-gray-400 text-[10px] uppercase tracking-widest">{column.header}</span>
+                                                    <div className="min-w-0 break-words text-right md:text-left w-full md:w-auto pl-4 md:pl-0 group-hover:text-gray-900 transition-colors">
                                                         {column.cell
                                                             ? column.cell(row)
                                                             : typeof column.accessorKey === 'function'
@@ -548,7 +548,7 @@ export function DataTable<T>({
                             })
                         ) : (
                             <tr>
-                                <td colSpan={columns.length + (enableMultiSelection ? 1 : 0)} className="p-24 text-center block md:table-cell">
+                                <td colSpan={columns.length + (enableMultiSelection ? 1 : 0)} className="p-8 md:p-24 text-center block md:table-cell">
                                     {emptyState ? (
                                         emptyState
                                     ) : (

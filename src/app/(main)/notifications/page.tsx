@@ -113,22 +113,21 @@ export default function NotificationsPage() {
             </div>
 
             <div className="relative z-10 max-w-md mx-auto min-h-screen flex flex-col">
-                <div className="w-full h-32 shrink-0 md:hidden" />
-
                 {/* Header */}
-                <header className="px-6 pt-6 pb-6 flex items-center justify-between sticky top-0 z-20 bg-slate-50/80 backdrop-blur-md border-b border-gray-250/50">
-                    <div className="flex items-center gap-4">
-                        <Link href="/dashboard" className="w-10 h-10 rounded-full bg-white border border-gray-250/70 flex items-center justify-center hover:bg-gray-50 hover:border-gray-300 text-gray-600 transition-colors shadow-sm">
+                <header className="px-3 sm:px-6 pt-6 pb-6 flex items-center justify-between gap-3 sticky top-[var(--topbar-h)] xl:top-0 z-20 bg-slate-50/80 backdrop-blur-md border-b border-gray-250/50">
+                    <div className="flex items-center gap-3 sm:gap-4 min-w-0">
+                        <Link href="/dashboard" aria-label="Back to dashboard" className="w-10 h-10 shrink-0 rounded-full bg-white border border-gray-250/70 flex items-center justify-center hover:bg-gray-50 hover:border-gray-300 text-gray-600 transition-colors shadow-sm">
                             <ChevronLeft size={20} className="text-gray-600" />
                         </Link>
-                        <h1 className="text-2xl font-bold tracking-tight text-gray-900">Notifications</h1>
+                        <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-gray-900 truncate min-w-0">Notifications</h1>
                     </div>
                     <button
                         onClick={handleMarkAllRead}
-                        className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-[var(--primary-orange)]/10 border border-[var(--primary-orange)]/20 text-[var(--primary-orange)] text-xs font-bold uppercase tracking-wider hover:bg-[var(--primary-orange)]/20 transition-all shadow-sm"
+                        aria-label="Mark all read"
+                        className="shrink-0 min-h-10 min-w-10 xl:min-h-0 xl:min-w-0 justify-center flex items-center gap-2 px-3 py-1.5 rounded-full bg-[var(--primary-orange)]/10 border border-[var(--primary-orange)]/20 text-[var(--primary-orange)] text-xs font-bold uppercase tracking-wider hover:bg-[var(--primary-orange)]/20 transition-all shadow-sm"
                     >
                         <CheckCheck size={14} />
-                        Mark all read
+                        <span className="hidden sm:inline">Mark all read</span>
                     </button>
                 </header>
 
@@ -165,7 +164,7 @@ export default function NotificationsPage() {
                                                 : 'bg-white/70 border-gray-200 opacity-85'
                                                 }`}
                                         >
-                                            <div className="p-5 flex gap-4">
+                                            <div className="p-5 pr-12 xl:pr-5 flex gap-4">
                                                 {/* Icon */}
                                                 <div className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 border border-gray-200/50 ${bg} ${color}`}>
                                                     <Icon size={20} />
@@ -188,19 +187,21 @@ export default function NotificationsPage() {
 
                                                 {/* Unread Dot */}
                                                 {!n.isRead && (
-                                                    <div className="absolute top-6 right-4 w-2 h-2 rounded-full bg-[var(--primary-orange)] shadow-[0_0_8px_rgba(242,110,33,0.6)] animate-pulse" />
+                                                    <div className="absolute bottom-5 right-4 xl:bottom-auto xl:top-6 w-2 h-2 rounded-full bg-[var(--primary-orange)] shadow-[0_0_8px_rgba(242,110,33,0.6)] animate-pulse" />
                                                 )}
 
                                                 {/* Dismiss Button */}
-                                                <div
+                                                <button
+                                                    type="button"
+                                                    aria-label="Dismiss notification"
                                                     onClick={(e) => {
                                                         e.stopPropagation()
                                                         removeNotification(n.id)
                                                     }}
-                                                    className="absolute top-2 right-2 w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center text-gray-400 hover:bg-red-50 hover:text-red-600 border border-gray-200 opacity-0 group-hover:opacity-100 transition-all z-10"
+                                                    className="absolute top-2 right-2 w-9 h-9 xl:w-6 xl:h-6 rounded-full bg-gray-100 flex items-center justify-center text-gray-400 hover:bg-red-50 hover:text-red-600 border border-gray-200 opacity-100 xl:opacity-0 xl:group-hover:opacity-100 focus-visible:opacity-100 transition-all z-10"
                                                 >
                                                     <X size={12} />
-                                                </div>
+                                                </button>
                                             </div>
                                         </motion.div>
                                     )

@@ -243,13 +243,13 @@ export function AdminClient({ referrals, referralMeta, referralStats, analytics,
     }
 
     return (
-        <div className="animate-fade-in space-y-8 p-6 bg-gray-50/50 min-h-screen">
-            <div className="flex items-center justify-between mb-8">
-                <div>
+        <div className="animate-fade-in space-y-8 p-0 sm:p-6 bg-gray-50/50 min-h-screen">
+            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-8">
+                <div className="min-w-0">
                     <h1 className="text-2xl font-bold text-gray-900">{getTitle()}</h1>
                     <p className="text-sm text-gray-500 mt-1">{getSubtitle()}</p>
                 </div>
-                <div className="flex items-center gap-4">
+                <div className="flex flex-wrap items-center gap-2 lg:gap-4">
                     {['home', 'analytics', 'referrals', 'users', 'students', 'reports'].includes(selectedView || 'analytics') && (
                         <>
                             <StudentSourceFilter />
@@ -966,7 +966,7 @@ export function AdminClient({ referrals, referralMeta, referralStats, analytics,
                     </div>
 
                     <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-                        <div className="p-6 border-b border-gray-100 flex justify-between items-center">
+                        <div className="p-6 border-b border-gray-100 flex flex-wrap justify-between items-center gap-3">
                             <div className="flex items-center gap-3">
                                 <div className="p-2.5 bg-red-50 text-red-600 rounded-xl">
                                     <GraduationCap size={20} strokeWidth={2.5} />
@@ -1048,7 +1048,7 @@ export function AdminClient({ referrals, referralMeta, referralStats, analytics,
                                                                 setShowStudentModal(true)
                                                             }}
                                                             aria-label="Edit Student Details"
-                                                            className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                                                            className="p-2 min-h-10 min-w-10 inline-flex items-center justify-center text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                                                         >
                                                             <Pencil size={16} />
                                                         </button>
@@ -1133,8 +1133,8 @@ export function AdminClient({ referrals, referralMeta, referralStats, analytics,
                         className="absolute inset-0 bg-slate-900/50 backdrop-blur-sm"
                         onClick={() => setShowStudentModal(false)}
                     />
-                    <div className="bg-white rounded-[40px] w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl animate-in fade-in zoom-in duration-300 relative">
-                        <div className="p-8 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
+                    <div className="bg-white rounded-[40px] w-full max-w-2xl max-h-[calc(100dvh-2rem)] overflow-y-auto shadow-2xl animate-in fade-in zoom-in duration-300 relative">
+                        <div className="p-5 sm:p-8 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
                             <div>
                                 <h3 className="text-xl font-black text-gray-900 tracking-tight uppercase italic">
                                     {editingStudent ? 'Edit Student Details' : 'Register New Student'}

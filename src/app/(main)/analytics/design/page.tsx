@@ -29,9 +29,9 @@ export default async function AnalyticsDesignPage() {
     return (
         <div className="-mx-2 xl:mx-0 min-h-screen bg-slate-50/50 pb-20 p-4">
             {/* Back Navigation & Header */}
-            <div className="flex items-center justify-between mb-8">
-                <div className="flex items-center gap-4">
-                    <Link href="/analytics" className="w-10 h-10 bg-white rounded-full flex items-center justify-center border border-slate-200 text-slate-600 hover:bg-slate-50 transition-colors shadow-sm">
+            <div className="flex flex-wrap items-center justify-between gap-3 mb-8">
+                <div className="flex items-center gap-4 min-w-0">
+                    <Link href="/analytics" className="w-10 h-10 bg-white rounded-full flex items-center justify-center border border-slate-200 text-slate-600 hover:bg-slate-50 transition-colors shadow-sm shrink-0">
                         <ArrowLeft size={20} strokeWidth={2.5} />
                     </Link>
                     <div>
@@ -41,7 +41,7 @@ export default async function AnalyticsDesignPage() {
                 </div>
 
                 <div className="bg-white rounded-full px-4 py-2 shadow-sm border border-slate-200 flex items-center gap-3">
-                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Academic Year</span>
+                    <span className="hidden sm:inline text-[10px] font-bold text-slate-400 uppercase tracking-widest">Academic Year</span>
                     <YearDropdown currentYear={userData.academicYear || '2025-2026'} />
                 </div>
             </div>
@@ -87,16 +87,16 @@ export default async function AnalyticsDesignPage() {
                 </div>
 
                 {/* 3. Estimated Savings (Green Card) */}
-                <div className={`rounded-3xl p-8 relative overflow-hidden shadow-lg ${isBenefitActive ? 'bg-[#059669]' : 'bg-slate-800'}`}>
+                <div className={`rounded-3xl p-6 sm:p-8 relative overflow-hidden shadow-lg ${isBenefitActive ? 'bg-[#059669]' : 'bg-slate-800'}`}>
                     <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none" />
 
-                    <div className="flex justify-between items-start relative z-10">
-                        <div>
+                    <div className="flex justify-between items-start gap-3 relative z-10">
+                        <div className="min-w-0">
                             <p className="text-white/60 text-xs font-bold uppercase tracking-widest mb-4">
                                 ESTIMATED SAVINGS ({userData.academicYear || '2025-2026'})
                             </p>
-                            <div className="flex items-center gap-3 mb-2">
-                                <h2 className="text-5xl font-black text-white">
+                            <div className="flex flex-wrap items-center gap-3 mb-2">
+                                <h2 className="text-4xl sm:text-5xl font-black text-white">
                                     ₹{benefitValue.toLocaleString('en-IN')}
                                 </h2>
                                 <span className="bg-white/20 backdrop-blur-md text-white px-3 py-1 rounded-full text-xs font-bold border border-white/10">
@@ -104,7 +104,7 @@ export default async function AnalyticsDesignPage() {
                                 </span>
                             </div>
                         </div>
-                        <div className="w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center border border-white/20 backdrop-blur-sm">
+                        <div className="w-14 h-14 shrink-0 bg-white/10 rounded-2xl flex items-center justify-center border border-white/20 backdrop-blur-sm">
                             <Wallet size={24} className="text-white" />
                         </div>
                     </div>

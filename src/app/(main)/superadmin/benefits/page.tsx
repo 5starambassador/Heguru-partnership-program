@@ -13,7 +13,7 @@ export default async function BenefitsPage() {
     const slabs = success && data ? data : []
 
     return (
-        <div className="p-8 max-w-[1600px] mx-auto space-y-8 animate-fade-in">
+        <div className="p-0 sm:p-8 max-w-[1600px] mx-auto space-y-8 animate-fade-in">
             <div className="flex items-center gap-4">
                 <Link href="/superadmin" className="p-2 bg-white rounded-full shadow-sm hover:shadow-md transition-all text-gray-600">
                     <ArrowLeft size={20} />

@@ -192,7 +192,7 @@ export function SettlementTable({ settlements, onProcess, onDelete }: Settlement
             {showModal && selectedSettlement && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 xl:pl-[280px]">
                     <div className="absolute inset-0 bg-slate-900/50 backdrop-blur-sm animate-in fade-in duration-300" onClick={() => setShowModal(false)} />
-                    <div className="relative bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden animate-in zoom-in-95 duration-300">
+                    <div className="relative bg-white rounded-3xl shadow-2xl w-full max-w-md max-h-[calc(100dvh-2rem)] overflow-y-auto animate-in zoom-in-95 duration-300">
                         <div className="bg-gray-900 p-6 text-white text-center relative">
                             <button
                                 onClick={() => setShowModal(false)}

@@ -52,8 +52,8 @@ export default async function CampusReferrals({ searchParams }: PageProps) {
 
     return (
         <div className="space-y-6">
-            <div className="flex justify-between items-center mb-6">
-                <div>
+            <div className="flex flex-wrap justify-between items-center gap-3 mb-6">
+                <div className="min-w-0">
                     <Link href="/campus" className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 text-sm font-medium mb-2">
                         <ArrowLeft size={16} /> Back to Home
                     </Link>

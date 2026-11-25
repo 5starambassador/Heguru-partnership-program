@@ -56,20 +56,20 @@ export default function Verify2FAPage() {
     }
 
     return (
-        <div className="min-h-screen bg-[#FDFCFB] flex items-center justify-center p-6">
-            <div className="max-w-md w-full bg-white rounded-[40px] shadow-[0_32px_64px_-16px_rgba(0,0,0,0.1)] border border-gray-100 p-12 space-y-10">
+        <div className="min-h-[100dvh] bg-[#FDFCFB] flex items-center justify-center p-4 sm:p-6">
+            <div className="max-w-md w-full bg-white rounded-[40px] shadow-[0_32px_64px_-16px_rgba(0,0,0,0.1)] border border-gray-100 p-6 sm:p-12 space-y-10">
                 <div className="text-center space-y-4">
                     <div className="w-20 h-20 bg-red-50 rounded-3xl flex items-center justify-center mx-auto rotate-3">
                         <ShieldCheck size={40} className="text-red-600 -rotate-3" />
                     </div>
-                    <h1 className="text-3xl font-black text-gray-900 tracking-tight">Two-Step Verification</h1>
+                    <h1 className="text-3xl font-black text-gray-900 tracking-tight break-words">Two-Step Verification</h1>
                     <p className="text-gray-400 font-medium text-sm leading-relaxed">
                         Enter the 4-digit code sent to your registered device to access the Super Admin portal.
                     </p>
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-8">
-                    <div className="flex justify-between gap-2 mb-8">
+                    <div className="w-full max-w-[280px] mx-auto grid grid-cols-4 gap-2 sm:gap-3 mb-8">
                         {code.map((digit, index) => (
                             <input
                                 key={index}
@@ -79,7 +79,9 @@ export default function Verify2FAPage() {
                                 value={digit}
                                 onChange={(e) => handleChange(index, e.target.value)}
                                 onKeyDown={(e) => handleKeyDown(index, e)}
-                                className="w-16 h-16 rounded-xl bg-white/5 border border-white/10 text-center text-2xl font-bold text-white focus:border-amber-400/50 focus:ring-2 focus:ring-amber-400/20 outline-none transition-all"
+                                inputMode="numeric"
+                                aria-label={`Digit ${index + 1}`}
+                                className="w-full aspect-square h-auto min-w-0 p-0 rounded-xl bg-gray-50 border border-gray-200 text-center text-2xl font-bold text-gray-900 focus:border-amber-400/50 focus:ring-2 focus:ring-amber-400/20 outline-none transition-all"
                             />
                         ))}
                     </div>
@@ -97,7 +99,7 @@ export default function Verify2FAPage() {
                 <div className="pt-2 text-center">
                     <button
                         onClick={() => router.push('/dashboard')}
-                        className="text-xs font-black text-gray-400 uppercase tracking-widest hover:text-red-600 transition-colors inline-flex items-center gap-2"
+                        className="text-xs font-black text-gray-400 uppercase tracking-widest hover:text-red-600 transition-colors inline-flex items-center gap-2 py-3 px-2"
                     >
                         <ArrowLeft size={14} />
                         Back to Dashboard

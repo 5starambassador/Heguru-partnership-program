@@ -129,17 +129,17 @@ export function RefundReadyTable({ data, totalResults = 0, currentPage = 1, onPa
 
     return (
         <div className="space-y-4">
-            <div className="flex justify-between items-center px-1">
-                <div className="flex items-center gap-2">
-                    <div className="p-2 bg-amber-100 text-amber-600 rounded-lg">
+            <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-3 px-1">
+                <div className="flex items-center gap-2 min-w-0">
+                    <div className="p-2 bg-amber-100 text-amber-600 rounded-lg shrink-0">
                         <CreditCard size={18} />
                     </div>
-                    <div>
+                    <div className="min-w-0">
                         <h3 className="text-lg font-black text-gray-900">Eligible for Refund</h3>
                         <p className="text-xs text-gray-500">Ambassadors who paid ₹25 and have bank info ready</p>
                     </div>
                 </div>
-                <div className="flex gap-2">
+                <div className="flex flex-wrap gap-2">
                     <button
                         onClick={() => setShowExportModal(true)}
                         suppressHydrationWarning

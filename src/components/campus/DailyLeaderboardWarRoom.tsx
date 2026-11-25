@@ -106,32 +106,32 @@ export function DailyLeaderboardWarRoom() {
 
             {/* Header */}
 
-            <div className="bg-gray-900 text-white p-8 rounded-[32px] border border-gray-800 shadow-2xl relative overflow-hidden">
+            <div className="bg-gray-900 text-white p-5 md:p-8 rounded-[32px] border border-gray-800 shadow-2xl relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-64 h-64 bg-red-600/10 blur-[100px] rounded-full -mr-20 -mt-20" />
                 <div className="relative z-10 flex flex-col md:flex-row justify-between items-center gap-6">
-                    <div>
+                    <div className="min-w-0 w-full md:w-auto">
                         <div className="flex items-center gap-3 mb-2">
                             <span className="w-3 h-3 bg-red-600 rounded-full animate-ping" />
                             <span className="text-red-500 font-black text-xs uppercase tracking-[0.3em]">Live Drive Status</span>
                         </div>
-                        <h1 className="text-5xl md:text-7xl font-black tracking-tighter leading-[0.9]">
+                        <h1 className="text-4xl md:text-7xl font-black tracking-tighter leading-[0.9]">
                             HOC APP DRIVE <br />
                             <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-amber-500 to-yellow-400">
                                 DAILY LEADERBOARD
                             </span>
                         </h1>
-                        <p className="text-gray-400 font-black mt-4 uppercase tracking-[0.2em] text-lg">
+                        <p className="text-gray-400 font-black mt-4 uppercase tracking-[0.2em] text-sm md:text-lg">
                             Date: {new Date(data.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}
                         </p>
                     </div>
-                    <div className="flex gap-6">
-                        <div className="bg-gray-800 border border-gray-700 p-6 rounded-3xl text-center min-w-[160px]">
+                    <div className="grid grid-cols-2 gap-3 w-full md:flex md:w-auto md:gap-6">
+                        <div className="bg-gray-800 border border-gray-700 p-4 md:p-6 rounded-3xl text-center min-w-0 md:min-w-[160px]">
                             <p className="text-gray-500 text-xs font-black uppercase tracking-widest mb-1">Total Referrals</p>
-                            <p className="text-5xl font-black text-white">{data.totalReferrals}</p>
+                            <p className="text-3xl md:text-5xl font-black text-white">{data.totalReferrals}</p>
                         </div>
-                        <div className="bg-gray-800 border border-gray-700 p-6 rounded-3xl text-center min-w-[160px]">
+                        <div className="bg-gray-800 border border-gray-700 p-4 md:p-6 rounded-3xl text-center min-w-0 md:min-w-[160px]">
                             <p className="text-gray-500 text-xs font-black uppercase tracking-widest mb-1">Summer Camp</p>
-                            <p className="text-5xl font-black text-amber-500">{data.summerCampReferrals}</p>
+                            <p className="text-3xl md:text-5xl font-black text-amber-500">{data.summerCampReferrals}</p>
                         </div>
 
                     </div>
@@ -143,7 +143,7 @@ export function DailyLeaderboardWarRoom() {
                 {top3.map((branch: any, idx: number) => (
                     <div 
                         key={branch.id} 
-                        className={`relative p-8 rounded-[32px] border transition-all duration-500 hover:scale-[1.02] ${
+                        className={`relative p-6 md:p-8 rounded-[32px] border transition-all duration-500 hover:scale-[1.02] ${
                             idx === 0 
                             ? 'bg-gradient-to-br from-amber-500 to-yellow-600 text-white shadow-[0_20px_50px_-12px_rgba(245,158,11,0.4)] border-amber-400' 
                             : idx === 1 
@@ -156,7 +156,7 @@ export function DailyLeaderboardWarRoom() {
                         </div>
                         <div className="relative z-10">
                             <Trophy className={`mb-6 ${idx === 0 ? 'text-yellow-200' : idx === 1 ? 'text-gray-400' : 'text-amber-600'}`} size={48} />
-                            <h3 className={`text-3xl font-black mb-1 ${idx === 0 ? 'text-white' : 'text-gray-900'}`}>{branch.name}</h3>
+                            <h3 className={`text-2xl md:text-3xl font-black mb-1 break-words ${idx === 0 ? 'text-white' : 'text-gray-900'}`}>{branch.name}</h3>
                             <div className="grid grid-cols-2 gap-6 mt-8">
                                 <div>
                                     <p className={`text-xs font-black uppercase tracking-widest ${idx === 0 ? 'text-amber-100' : 'text-gray-400'}`}>Referrals</p>
@@ -183,19 +183,19 @@ export function DailyLeaderboardWarRoom() {
                 </div>
                 <div className="divide-y divide-gray-50">
                     {rest.map((branch: any, idx: number) => (
-                        <div key={branch.id} className="flex items-center justify-between p-6 hover:bg-gray-50 transition-colors">
-                            <div className="flex items-center gap-6">
-                                <span className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center text-lg font-black text-gray-500 shadow-inner">
+                        <div key={branch.id} className="flex items-center justify-between gap-3 p-4 md:p-6 hover:bg-gray-50 transition-colors">
+                            <div className="flex items-center gap-3 md:gap-6 min-w-0">
+                                <span className="w-10 h-10 md:w-12 md:h-12 shrink-0 rounded-full bg-gray-100 flex items-center justify-center text-lg font-black text-gray-500 shadow-inner">
                                     {idx + 4}
                                 </span>
-                                <p className="text-2xl font-black text-gray-800 tracking-tight">{branch.name}</p>
+                                <p className="min-w-0 truncate text-lg md:text-2xl font-black text-gray-800 tracking-tight">{branch.name}</p>
                             </div>
-                            <div className="flex items-center gap-10">
+                            <div className="flex items-center gap-4 md:gap-10 shrink-0">
                                 <div className="text-right">
                                     <p className="text-xs font-black text-gray-400 uppercase tracking-widest">Referrals</p>
-                                    <p className="text-3xl font-black text-gray-900">{branch.referrals}</p>
+                                    <p className="text-2xl md:text-3xl font-black text-gray-900">{branch.referrals}</p>
                                 </div>
-                                <div className="w-20 h-2.5 bg-gray-100 rounded-full overflow-hidden shadow-inner">
+                                <div className="hidden sm:block w-20 h-2.5 bg-gray-100 rounded-full overflow-hidden shadow-inner">
                                     <div 
                                         className="h-full bg-gradient-to-r from-blue-500 to-indigo-600 shadow-[0_0_10px_rgba(59,130,246,0.5)]" 
                                         style={{ width: `${Math.min(100, (branch.referrals / 10) * 100)}%` }}

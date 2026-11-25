@@ -369,7 +369,7 @@ export function ReferralDetailPanel({
                     className="relative w-full max-w-lg bg-white shadow-2xl h-full flex flex-col overflow-hidden"
                 >
                     {/* Header */}
-                    <div className="p-8 border-b border-gray-100 bg-gradient-to-br from-gray-50 to-white">
+                    <div className="p-5 sm:p-8 border-b border-gray-100 bg-gradient-to-br from-gray-50 to-white">
                         <div className="flex justify-between items-start mb-6">
                             <div className="flex items-center gap-4">
                                 <div className="w-16 h-16 bg-indigo-50 rounded-2xl flex items-center justify-center border border-indigo-100 shadow-inner">
@@ -412,10 +412,10 @@ export function ReferralDetailPanel({
                                     const isActive = stepNum === currentStep
 
                                     return (
-                                        <div key={step} className="flex flex-col items-center gap-2 bg-white px-2">
+                                        <div key={step} className="flex flex-col items-center gap-2 bg-white px-1 sm:px-2">
                                             <div className={`w-3 h-3 rounded-full border-2 transition-all ${isCompleted ? 'bg-indigo-500 border-indigo-500' : 'bg-white border-gray-200'
                                                 }`} />
-                                            <span className={`text-[9px] font-bold uppercase tracking-widest ${isActive ? 'text-indigo-600' : 'text-gray-300'
+                                            <span className={`text-[9px] font-bold uppercase tracking-normal sm:tracking-widest ${isActive ? 'text-indigo-600' : 'text-gray-300'
                                                 }`}>
                                                 {step}
                                             </span>
@@ -443,7 +443,7 @@ export function ReferralDetailPanel({
                     </div>
 
                     {/* Scrollable Content */}
-                    <div className="flex-1 overflow-y-auto custom-scrollbar-panel p-8 space-y-10 min-h-0">
+                    <div className="flex-1 overflow-y-auto custom-scrollbar-panel p-5 sm:p-8 space-y-10 min-h-0">
                         {/* Lead Breakdown */}
                         <section>
                             <div className="flex items-center justify-between mb-6">
@@ -477,8 +477,8 @@ export function ReferralDetailPanel({
                             </div>
 
                             {isEditing ? (
-                                <div className="grid grid-cols-2 gap-6 bg-gray-50/50 p-6 rounded-2xl border border-gray-100">
-                                    <div className="space-y-2 col-span-2">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 bg-gray-50/50 p-4 sm:p-6 rounded-2xl border border-gray-100">
+                                    <div className="space-y-2 sm:col-span-2">
                                         <label htmlFor="edit-student-name" className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Student Name</label>
                                         <input
                                             id="edit-student-name"
@@ -508,7 +508,7 @@ export function ReferralDetailPanel({
                                             className="w-full px-4 py-2 bg-white border border-gray-200 rounded-xl text-sm font-bold focus:ring-2 focus:ring-indigo-500/20 outline-none"
                                         />
                                     </div>
-                                    <div className="space-y-2 col-span-2">
+                                    <div className="space-y-2 sm:col-span-2">
                                         <label htmlFor="edit-grade" className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Grade Interested</label>
                                         <select
                                             id="edit-grade"

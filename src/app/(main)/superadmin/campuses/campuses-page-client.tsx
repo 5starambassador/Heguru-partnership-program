@@ -244,7 +244,7 @@ export default function CampusesPageClient({
             {
                 showCampusModal && (
                     <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100, padding: '20px' }}>
-                        <div style={{ background: 'white', borderRadius: '16px', width: '100%', maxWidth: '500px', padding: '32px', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)' }}>
+                        <div className="p-5 sm:p-8 max-h-[calc(100dvh-2.5rem)] overflow-y-auto" style={{ background: 'white', borderRadius: '16px', width: '100%', maxWidth: '500px', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)' }}>
                             <div className="flex justify-between items-center mb-6">
                                 <h2 style={{ fontSize: '20px', fontWeight: '800', color: '#111827' }}>
                                     {editingCampus ? 'Edit Campus' : 'Add New Campus'}
@@ -263,7 +263,7 @@ export default function CampusesPageClient({
                                         style={{ width: '100%', padding: '10px 12px', border: '1px solid #D1D5DB', borderRadius: '8px', fontSize: '14px' }}
                                     />
                                 </div>
-                                <div className="grid grid-cols-2 gap-4">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     <div>
                                         <label style={{ display: 'block', fontSize: '13px', fontWeight: '600', color: '#374151', marginBottom: '6px' }}>Campus Code</label>
                                         <input
@@ -285,7 +285,7 @@ export default function CampusesPageClient({
                                         />
                                     </div>
                                 </div>
-                                <div className="grid grid-cols-2 gap-4">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     <div>
                                         <label style={{ display: 'block', fontSize: '13px', fontWeight: '600', color: '#374151', marginBottom: '6px' }}>Contact Email</label>
                                         <input
@@ -313,7 +313,7 @@ export default function CampusesPageClient({
 
                             <div style={{ maxHeight: '300px', overflowY: 'auto', paddingRight: '8px' }}>
                                 <h3 style={{ fontSize: '13px', fontWeight: '700', color: '#111827', marginBottom: '12px' }}>School Grades</h3>
-                                <div className="grid grid-cols-3 gap-3">
+                                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                                     {[
                                         "Pre-Mont", "Pre Mont FD", "Pre Mont HD", "Pre Mont TD",
                                         "Mont-1", "Mont-2",

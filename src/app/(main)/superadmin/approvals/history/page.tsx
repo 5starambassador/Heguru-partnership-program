@@ -14,9 +14,9 @@ export default async function RejectionHistoryPage(props: { searchParams: Promis
     const payments = response.success ? response.data : []
 
     return (
-        <div className="p-8 max-w-7xl mx-auto">
-            <div className="mb-8 flex items-center justify-between">
-                <div className="flex items-center gap-4">
+        <div className="p-0 sm:p-8 max-w-7xl mx-auto">
+            <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
+                <div className="flex items-center gap-4 min-w-0">
                     <Link
                         href="/superadmin/approvals"
                         className="p-2 hover:bg-gray-100 rounded-lg transition-colors text-gray-500"
@@ -24,8 +24,8 @@ export default async function RejectionHistoryPage(props: { searchParams: Promis
                         <ArrowLeft size={20} />
                     </Link>
                     <div>
-                        <div className="flex items-center gap-2">
-                            <h1 className="text-3xl font-black text-gray-900 tracking-tight">Rejection History</h1>
+                        <div className="flex flex-wrap items-center gap-2">
+                            <h1 className="text-2xl sm:text-3xl font-black text-gray-900 tracking-tight">Rejection History</h1>
                             <div className="p-1 px-2 bg-red-50 text-red-600 rounded-md text-[10px] font-bold uppercase tracking-wider border border-red-100">
                                 History
                             </div>

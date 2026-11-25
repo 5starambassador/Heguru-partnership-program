@@ -81,11 +81,11 @@ export function AnalyticsDashboard({ analyticsData: initialAnalytics, trendData,
 
                 <div className="flex flex-wrap items-center gap-2.5 w-full sm:w-auto justify-between sm:justify-end">
                     {/* Period Filter */}
-                    <div className="hidden md:flex items-center gap-2 bg-gray-50 border border-gray-100 rounded-xl px-3 py-1.5">
+                    <div className="flex w-full sm:w-auto items-center gap-2 bg-gray-50 border border-gray-100 rounded-xl px-3 py-1.5">
                         <Calendar size={14} className="text-gray-400" />
                         <input
                             type="date"
-                            className="bg-transparent text-[11px] font-bold text-gray-700 focus:outline-none w-24"
+                            className="bg-transparent text-[11px] font-bold text-gray-700 focus:outline-none flex-1 min-w-0 sm:flex-none sm:w-24"
                             value={dateRange.start}
                             onChange={(e) => setDateRange(prev => ({ ...prev, start: e.target.value }))}
                             suppressHydrationWarning
@@ -93,7 +93,7 @@ export function AnalyticsDashboard({ analyticsData: initialAnalytics, trendData,
                         <span className="text-gray-300">-</span>
                         <input
                             type="date"
-                            className="bg-transparent text-[11px] font-bold text-gray-700 focus:outline-none w-24"
+                            className="bg-transparent text-[11px] font-bold text-gray-700 focus:outline-none flex-1 min-w-0 sm:flex-none sm:w-24"
                             value={dateRange.end}
                             onChange={(e) => setDateRange(prev => ({ ...prev, end: e.target.value }))}
                             suppressHydrationWarning
@@ -130,23 +130,23 @@ export function AnalyticsDashboard({ analyticsData: initialAnalytics, trendData,
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                     {/* User Growth */}
-                    <div className="bg-white p-8 rounded-[32px] border border-gray-100 shadow-[0_10px_15px_-3px_rgba(0,0,0,0.05)]">
+                    <div className="bg-white p-4 sm:p-8 rounded-[32px] border border-gray-100 shadow-[0_10px_15px_-3px_rgba(0,0,0,0.05)]">
                         <div className="mb-6">
                             <h3 className="text-xl font-black text-gray-900 tracking-tight">Growth Velocity</h3>
                             <p className="text-[13px] font-semibold text-gray-400">Ambassador registration trend</p>
                         </div>
-                        <div className="h-[350px]">
+                        <div className="h-[260px] sm:h-[350px]">
                             {isMounted && <GrowthTrendChart data={trendData} />}
                         </div>
                     </div>
 
                     {/* Role Distribution */}
-                    <div className="bg-white p-8 rounded-[32px] border border-gray-100 shadow-[0_10px_15px_-3px_rgba(0,0,0,0.05)]">
+                    <div className="bg-white p-4 sm:p-8 rounded-[32px] border border-gray-100 shadow-[0_10px_15px_-3px_rgba(0,0,0,0.05)]">
                         <div className="mb-6">
                             <h3 className="text-xl font-black text-gray-900 tracking-tight">Lead Structure</h3>
                             <p className="text-[13px] font-semibold text-gray-400">Referrer role breakdown</p>
                         </div>
-                        <div className="h-[350px]">
+                        <div className="h-[260px] sm:h-[350px]">
                             {isMounted && <GenericPieChart data={displayedAnalytics.userRoleDistribution || []} dataKey="value" nameKey="name" />}
                         </div>
                     </div>
@@ -167,23 +167,23 @@ export function AnalyticsDashboard({ analyticsData: initialAnalytics, trendData,
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
                     {/* Enrollment Mix */}
-                    <div className="bg-white p-8 rounded-[32px] border border-gray-100 shadow-[0_10px_15px_-3px_rgba(0,0,0,0.05)]">
+                    <div className="bg-white p-4 sm:p-8 rounded-[32px] border border-gray-100 shadow-[0_10px_15px_-3px_rgba(0,0,0,0.05)]">
                         <div className="mb-6">
                             <h3 className="text-xl font-black text-gray-900 tracking-tight">Campus Enrollment Mix</h3>
                             <p className="text-[13px] font-semibold text-gray-400">Yield distribution across Heguru network</p>
                         </div>
-                        <div className="h-[350px]">
+                        <div className="h-[260px] sm:h-[350px]">
                             <CampusBarChart data={displayedCampusData} />
                         </div>
                     </div>
 
                     {/* Efficiency Chart */}
-                    <div className="bg-white p-8 rounded-[32px] border border-gray-100 shadow-[0_10px_15px_-3px_rgba(0,0,0,0.05)]">
+                    <div className="bg-white p-4 sm:p-8 rounded-[32px] border border-gray-100 shadow-[0_10px_15px_-3px_rgba(0,0,0,0.05)]">
                         <div className="mb-6">
                             <h3 className="text-xl font-black text-gray-900 tracking-tight">Conversion Efficiency (%)</h3>
                             <p className="text-[13px] font-semibold text-gray-400">Performance by campus</p>
                         </div>
-                        <div className="h-[350px]">
+                        <div className="h-[260px] sm:h-[350px]">
                             <CampusEfficiencyChart data={displayedCampusData || []} />
                         </div>
                     </div>

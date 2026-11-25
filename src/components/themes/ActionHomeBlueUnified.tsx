@@ -386,7 +386,7 @@ export function ActionHomeBlueUnified({
           <motion.div variants={itemVariants} className="space-y-6">
             {/* Hero Section - Elite Greeting */}
             <DashboardCard className="flex-1 relative overflow-hidden !bg-gradient-to-br !from-orange-50/40 !via-white !to-blue-50/40 border-gray-300 p-6">
-              <div className="relative z-10 flex flex-col justify-between h-full p-4">
+              <div className="relative z-10 flex flex-col justify-between h-full p-0 sm:p-4">
                  <div className="text-right mb-3">
                     {/* <p className="text-[10px] uppercase tracking-[0.25em] text-slate-500 font-bold mb-2">
                       Account Status
@@ -436,7 +436,7 @@ export function ActionHomeBlueUnified({
                   </p> */}
                 </div>
 
-                <div className="lg:mt-8 mt-4 flex flex-col md:flex-row items-start gap-6 md:gap-10 opacity-100">
+                <div className="lg:mt-8 mt-4 flex flex-col md:flex-row md:flex-wrap items-start gap-6 md:gap-x-10 md:gap-y-4 opacity-100">
                   <div className="text-left md:block hidden">
                     <p className="text-[10px] uppercase tracking-[0.25em] text-slate-500 font-bold mb-2">
                       Account Status
@@ -478,7 +478,7 @@ export function ActionHomeBlueUnified({
                     </div>
                   )}
                   <div className="hidden md:block w-px h-12 bg-gray-200" />
-                  <div className="text-left w-full md:w-auto overflow-hidden">
+                  <div className="text-left w-full md:w-auto max-w-full">
                     <p className="text-[10px] uppercase tracking-[0.25em] text-slate-500 font-bold mb-2">
                       Campus
                     </p>
@@ -487,7 +487,7 @@ export function ActionHomeBlueUnified({
                     </p>
                   </div>
                   <div className="hidden md:block w-px h-12 bg-gray-200" />
-                  <div className="text-left relative z-20">
+                  <div className="text-left relative z-20 max-w-full">
                     <p className="text-[10px] uppercase tracking-[0.25em] text-slate-500 font-bold mb-3 pl-1">
                       Partner ID
                     </p>
@@ -496,9 +496,9 @@ export function ActionHomeBlueUnified({
                         navigator.clipboard.writeText(user.referralCode);
                         toast.success("Partner ID copied to clipboard");
                       }}
-                      className="group/id relative justify-between border border-gray-200 flex items-center gap-4  bg-[var(--soft-gray)] rounded-xl underline underline-offset-8 decoration-primary-orange hover:border-gray-300 transition-all duration-300 shadow-sm overflow-hidden"
+                      className="group/id relative justify-between border border-gray-200 flex items-center gap-4 max-w-full bg-[var(--soft-gray)] rounded-xl underline underline-offset-8 decoration-primary-orange hover:border-gray-300 transition-all duration-300 shadow-sm overflow-hidden"
                     >
-                      <p className="text-[var(--deep-black)] font-black text-sm md:text-lg tracking-[0.15em] uppercase leading-none font-mono relative z-10">
+                      <p className="text-[var(--deep-black)] font-black text-sm md:text-lg tracking-[0.15em] uppercase leading-none font-mono relative z-10 whitespace-nowrap">
                         {user.referralCode}
                       </p>
 
@@ -625,8 +625,8 @@ export function ActionHomeBlueUnified({
                     <div className="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em] mb-1">
                       Secured Balance
                     </div>
-                    <div className="flex items-baseline gap-4">
-                      <div className="text-4xl md:text-7xl font-black tracking-[-0.05em] text-[var(--deep-black)] leading-none tabular-nums font-heading">
+                    <div className="flex flex-wrap items-baseline gap-x-4 gap-y-2 min-w-0">
+                      <div className="text-4xl md:text-5xl 2xl:text-7xl font-black tracking-[-0.05em] text-[var(--deep-black)] leading-none tabular-nums font-heading">
                         ₹{currentBenefitAmount.toLocaleString("en-IN")}
                       </div>
                       <div className="text-[12px] font-black text-[var(--primary-orange)] bg-[var(--primary-orange)]/10 px-3 py-1 rounded-xl border border-[var(--primary-orange)]/20 mb-2 shadow-sm">
@@ -634,7 +634,7 @@ export function ActionHomeBlueUnified({
                       </div>
                     </div>
                     {overrideSettledAmount && overrideSettledAmount > 0 ? (
-                      <div className="flex items-center gap-3 mt-2">
+                      <div className="flex flex-wrap items-center gap-2 sm:gap-3 mt-2">
                         <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-xl bg-emerald-50 border border-emerald-200 text-[10px] font-black text-emerald-700 uppercase tracking-widest">
                           <CheckCircle size={10} />
                           Paid: ₹{overrideSettledAmount.toLocaleString("en-IN")}
@@ -651,12 +651,12 @@ export function ActionHomeBlueUnified({
                 </div>
 
                 <div className="relative z-20 p-6 md:px-10 mt-auto border-t border-gray-150 bg-slate-50/50 rounded-b-md">
-                  <div className="flex items-center justify-between">
-                    <div>
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="min-w-0">
                       <div className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] mb-2">
                         Projected Potential
                       </div>
-                      <div className="flex items-center gap-4">
+                      <div className="flex flex-wrap items-center gap-2 sm:gap-4">
                         <div className="text-2xl font-black text-[var(--deep-black)] tracking-tighter tabular-nums font-heading">
                           ₹{potentialBenefitAmount.toLocaleString("en-IN")}
                         </div>
@@ -666,7 +666,7 @@ export function ActionHomeBlueUnified({
                         </div>
                       </div>
                     </div>
-                    <div className="w-2.5 h-2.5 rounded-full bg-[var(--primary-orange)] shadow-[0_0_12px_rgba(242,110,33,0.5)] animate-pulse" />
+                    <div className="w-2.5 h-2.5 shrink-0 rounded-full bg-[var(--primary-orange)] shadow-[0_0_12px_rgba(242,110,33,0.5)] animate-pulse" />
                   </div>
                 </div>
               </DashboardCard>
@@ -1176,8 +1176,9 @@ export function ActionHomeBlueUnified({
                                       );
                                     }
                                   }}
-                                  className="p-1.5 rounded-xl bg-[var(--soft-gray)] hover:bg-[var(--warm-gray)] text-[var(--text-gray)] transition-colors"
+                                  className="p-2.5 min-h-10 min-w-10 inline-flex items-center justify-center rounded-xl bg-[var(--soft-gray)] hover:bg-[var(--warm-gray)] text-[var(--text-gray)] transition-colors"
                                   title="Share Message"
+                                  aria-label="Share Message"
                                 >
                                   <Share2 size={13} />
                                 </button>
@@ -1245,8 +1246,8 @@ export function ActionHomeBlueUnified({
                         <span className="text-[10px] font-medium uppercase tracking-wider text-slate-500 block mb-2 relative z-10">
                           Pending
                         </span>
-                        <div className="flex items-end gap-1.5 font-black text-[var(--deep-black)]">
-                          <span className="text-4xl tracking-tighter tabular-nums leading-none font-heading">
+                        <div className="flex flex-wrap items-end gap-x-1.5 gap-y-1 min-w-0 font-black text-[var(--deep-black)]">
+                          <span className="text-3xl xl:text-4xl tracking-tighter tabular-nums leading-none font-heading">
                             {totalLeadsCount || 0}
                           </span>
                           <span className="text-[10px] text-slate-500 font-bold uppercase mb-1.5 opacity-60">
@@ -1270,8 +1271,8 @@ export function ActionHomeBlueUnified({
                         <span className="text-[10px] font-medium uppercase tracking-wider text-slate-500 block mb-2 relative z-10">
                           Confirmed
                         </span>
-                        <div className="flex items-end gap-1.5 font-black text-[var(--deep-black)]">
-                          <span className="text-4xl tracking-tighter tabular-nums leading-none font-heading">
+                        <div className="flex flex-wrap items-end gap-x-1.5 gap-y-1 min-w-0 font-black text-[var(--deep-black)]">
+                          <span className="text-3xl xl:text-4xl tracking-tighter tabular-nums leading-none font-heading">
                             {displayCount}
                           </span>
                           <span className="text-[10px] text-slate-500 font-bold uppercase mb-1.5 opacity-60">
@@ -1301,7 +1302,7 @@ export function ActionHomeBlueUnified({
               </div>
               <DashboardCard className="h-full p-0 border border-gray-300 rounded-xl bg-white shadow-sm">
                 <div className="p-3 mt-6">
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between p-5 md:p-6 border-b border-gray-200 relative z-10 bg-slate-50/50 rounded-t-md gap-3 sm:gap-0">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between p-5 md:p-6 sm:pr-20 md:pr-20 border-b border-gray-200 relative z-10 bg-slate-50/50 rounded-t-md gap-3 sm:gap-0">
                     <div className="flex items-center gap-3 mb-3 relative z-10 ">
                       <div className="w-1 h-8 bg-gradient-to-b from-[var(--primary-orange)] to-[var(--primary-orange-hover)] rounded-sm" />
                       <div>

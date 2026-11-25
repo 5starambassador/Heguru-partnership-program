@@ -115,7 +115,7 @@ export function EarningsClient({ stats, user, activeYears, selectedYear }: Earni
     return (
         <div className="relative font-[family-name:var(--font-sans)] pb-28">
 
-            <PageAnimate className="relative z-10 max-w-4xl mx-auto flex flex-col px-5 pb-8">
+            <PageAnimate className="relative z-10 max-w-4xl mx-auto flex flex-col px-0 sm:px-5 pb-8">
 
                 {/* Bank Detail Reminder Banner */}
                 {showBankReminder && (
@@ -124,7 +124,7 @@ export function EarningsClient({ stats, user, activeYears, selectedYear }: Earni
                             initial={{ opacity: 0, y: -20 }}
                             animate={{ opacity: 1, y: 0 }}
                             style={{backgroundColor:"rgba(255, 217, 0, 0.14)"}}
-                            className="relative overflow-hidden rounded-full border border-[var(--primary-orange)]/20 p-6 shadow-sm"
+                            className="relative overflow-hidden rounded-2xl md:rounded-full border border-[var(--primary-orange)]/20 p-6 shadow-sm"
                         >
                             <div className="absolute top-0 right-0 p-8 opacity-[0.04]">
                                 <IndianRupee size={80} className="text-[var(--primary-orange)]" />
@@ -229,7 +229,7 @@ export function EarningsClient({ stats, user, activeYears, selectedYear }: Earni
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-6">
 
                         {/* Primary Balance Card */}
-                        <div className="md:col-span-2 bg-gradient-to-br from-blue-600 to-blue-800 border border-blue-500/20 p-7 md:p-8 shadow-sm rounded-2xl relative overflow-hidden group text-white">
+                        <div className="md:col-span-2 bg-gradient-to-br from-blue-600 to-blue-800 border border-blue-500/20 p-5 sm:p-7 md:p-8 shadow-sm rounded-2xl relative overflow-hidden group text-white">
                             {/* Ambient layers */}
                             <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 blur-[80px] rounded-full pointer-events-none" />
 
@@ -251,18 +251,18 @@ export function EarningsClient({ stats, user, activeYears, selectedYear }: Earni
                             <p className="text-[10px] font-black text-blue-100/60 uppercase tracking-[0.3em] mb-2">
                                 Confirmed Residual Yield
                             </p>
-                            <h2 className="text-5xl md:text-6xl font-black text-white tracking-tighter tabular-nums leading-none font-heading">
+                            <p className="text-3xl sm:text-5xl md:text-6xl font-black text-white tracking-tighter tabular-nums leading-none font-heading break-words">
                                 ₹{stats.totalEarned.toLocaleString('en-IN')}
-                            </h2>
+                            </p>
 
                             {/* Sub-metrics */}
-                            <div className="grid grid-cols-2 gap-3 mt-8">
+                            <div className="grid grid-cols-1 min-[400px]:grid-cols-2 gap-3 mt-8">
                                 {/* Settled */}
-                                <div className="p-5 rounded-2xl bg-white/10 border border-white/15 flex flex-col justify-between hover:bg-white/15 transition-all text-white">
+                                <div className="p-3 sm:p-5 min-w-0 rounded-2xl bg-white/10 border border-white/15 flex flex-col justify-between hover:bg-white/15 transition-all text-white">
                                     <p className="text-[9px] font-black text-blue-100/60 uppercase tracking-[0.2em] mb-3">
                                         {isWaiverUser ? 'Applied Credits' : 'Paid Settlements'}
                                     </p>
-                                    <div className="flex items-end justify-between">
+                                    <div className="flex flex-wrap items-end justify-between gap-2">
                                         <p className="text-2xl md:text-3xl font-black text-white tabular-nums tracking-tighter font-heading">
                                             ₹{stats.totalSettled.toLocaleString('en-IN')}
                                         </p>
@@ -273,11 +273,11 @@ export function EarningsClient({ stats, user, activeYears, selectedYear }: Earni
                                 </div>
 
                                 {/* Pending */}
-                                <div className="p-5 rounded-2xl bg-white/10 border border-white/15 flex flex-col justify-between hover:bg-white/15 transition-all text-white">
+                                <div className="p-3 sm:p-5 min-w-0 rounded-2xl bg-white/10 border border-white/15 flex flex-col justify-between hover:bg-white/15 transition-all text-white">
                                     <p className="text-[9px] font-black text-blue-100/60 uppercase tracking-[0.2em] mb-3">
                                         Pending Balance
                                     </p>
-                                    <div className="flex items-end justify-between">
+                                    <div className="flex flex-wrap items-end justify-between gap-2">
                                         <p className="text-2xl md:text-3xl font-black text-white tabular-nums tracking-tighter font-heading">
                                             ₹{stats.remainingBalance.toLocaleString('en-IN')}
                                         </p>
@@ -408,8 +408,8 @@ export function EarningsClient({ stats, user, activeYears, selectedYear }: Earni
                                     className="group p-5 rounded-2xl bg-white border border-gray-200 hover:border-[var(--primary-orange)]/30 transition-all duration-200 shadow-sm hover:bg-gray-50"
                                 >
                                     {/* Row header */}
-                                    <div className="flex items-center justify-between">
-                                        <div className="flex items-center gap-4">
+                                    <div className="flex items-center justify-between gap-3">
+                                        <div className="flex items-center gap-3 sm:gap-4 min-w-0">
                                             {/* Status icon */}
                                             <div className={`w-10 h-10 rounded-xl flex items-center justify-center border shrink-0 ${s.status === 'Processed'
                                                 ? 'bg-emerald-50 border-emerald-200 text-emerald-600'
@@ -418,8 +418,8 @@ export function EarningsClient({ stats, user, activeYears, selectedYear }: Earni
                                                 {s.status === 'Processed' ? <CheckCircle2 size={16} /> : <Clock size={16} />}
                                             </div>
 
-                                            <div>
-                                                <p className="text-sm font-black text-gray-800 tracking-tight uppercase leading-none mb-1.5 font-heading">
+                                            <div className="min-w-0">
+                                                <p className="text-sm font-black text-gray-800 tracking-tight uppercase leading-none mb-1.5 font-heading break-all">
                                                     Settlement #{s.id}
                                                 </p>
                                                 <div className="flex items-center gap-1.5">
@@ -432,7 +432,7 @@ export function EarningsClient({ stats, user, activeYears, selectedYear }: Earni
                                         </div>
 
                                         {/* Amount + badge */}
-                                        <div className="text-right">
+                                        <div className="text-right shrink-0">
                                             <div className={`text-xl font-black tabular-nums tracking-tighter leading-none mb-2 font-heading ${s.status === 'Processed' ? 'text-gray-800' : 'text-amber-600'}`}>
                                                 ₹{s.amount.toLocaleString('en-IN')}
                                             </div>

@@ -75,8 +75,8 @@ export function CampusStudentsClient({ students: initialStudents, query }: Campu
     return (
         <div className="space-y-4">
             {/* Header with Search and Export */}
-            <div className="flex justify-between items-center bg-white p-4 rounded-md border border-gray-150 shadow-sm">
-                <div className="bg-gray-50 rounded-md px-3 py-2 flex items-center gap-2 w-72 focus-within:ring-2 focus-within:ring-primary-maroon/20 transition-all">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 bg-white p-4 rounded-md border border-gray-150 shadow-sm">
+                <div className="bg-gray-50 rounded-md px-3 py-2 flex items-center gap-2 w-full sm:w-72 focus-within:ring-2 focus-within:ring-primary-maroon/20 transition-all">
                     <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                     </svg>
@@ -172,12 +172,12 @@ export function CampusStudentsClient({ students: initialStudents, query }: Campu
                                         {expandedId === student.studentId && (
                                             <tr>
                                                 <td colSpan={5} className="p-0 border-t-0">
-                                                    <div className="bg-gray-50/50 p-8 animate-in slide-in-from-top-2 duration-300">
+                                                    <div className="bg-gray-50/50 p-4 sm:p-8 animate-in slide-in-from-top-2 duration-300">
                                                         <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-8">
 
                                                             {/* Left: General Info */}
                                                             <div className="md:col-span-8 space-y-6">
-                                                                <div className="grid grid-cols-2 gap-4">
+                                                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                                                     <div className="bg-white p-4 rounded-md border border-gray-200 shadow-sm">
                                                                         <div className="flex items-center gap-2 mb-2 text-primary-maroon">
                                                                             <GraduationCap size={16} />
@@ -243,14 +243,14 @@ export function CampusStudentsClient({ students: initialStudents, query }: Campu
 
                                                                 {/* Fee Structure Display */}
                                                                 <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-                                                                    <div className="flex items-center justify-between mb-4">
+                                                                    <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
                                                                         <div className="flex items-center gap-2 text-gray-900">
                                                                             <CreditCard size={18} />
                                                                             <h4 className="font-bold">Fee Breakdown</h4>
                                                                         </div>
                                                                         <span className="text-[10px] font-semibold bg-blue-50 text-blue-600 px-2 py-0.5 rounded-md uppercase">2025-26 Academic Year</span>
                                                                     </div>
-                                                                    <div className="grid grid-cols-3 gap-6">
+                                                                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
                                                                         <div>
                                                                             <p className="text-[10px] font-semibold text-gray-500 uppercase">Annual Base Fee</p>
                                                                             <p className="text-xl font-bold text-gray-900">₹{student.baseFee?.toLocaleString()}</p>

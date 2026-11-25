@@ -85,10 +85,10 @@ export function ProgramLeadsList({ leads, programs = [], user }: ProgramLeadsLis
             </div>
 
             {/* Filter Tabs */}
-            <div className="flex items-center gap-3 pb-2 overflow-x-auto relative z-10 scrollbar-none">
+            <div className="flex flex-wrap items-center gap-2 sm:gap-3 pb-2 relative z-10">
                 <button
                     onClick={() => setFilter('CLICKED')}
-                    className={`px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-[0.2em] transition-all border shrink-0 flex items-center gap-1.5 ${filter === 'CLICKED'
+                    className={`px-4 sm:px-5 py-2.5 sm:py-2 rounded-full text-[10px] font-black uppercase tracking-[0.15em] sm:tracking-[0.2em] transition-all border shrink-0 flex items-center gap-1.5 ${filter === 'CLICKED'
                         ? 'bg-[var(--primary-orange)] text-white border-[var(--primary-orange)] shadow-sm'
                         : 'bg-white text-slate-700 border-gray-300 hover:bg-slate-50'}`}
                 >
@@ -96,7 +96,7 @@ export function ProgramLeadsList({ leads, programs = [], user }: ProgramLeadsLis
                 </button>
                 <button
                     onClick={() => setFilter('REGISTERED')}
-                    className={`px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-[0.2em] transition-all border shrink-0 flex items-center gap-1.5 ${filter === 'REGISTERED'
+                    className={`px-4 sm:px-5 py-2.5 sm:py-2 rounded-full text-[10px] font-black uppercase tracking-[0.15em] sm:tracking-[0.2em] transition-all border shrink-0 flex items-center gap-1.5 ${filter === 'REGISTERED'
                         ? 'bg-emerald-500 text-white border-emerald-500 shadow-sm'
                         : 'bg-white text-slate-700 border-gray-300 hover:bg-slate-50'}`}
                 >
@@ -104,7 +104,7 @@ export function ProgramLeadsList({ leads, programs = [], user }: ProgramLeadsLis
                 </button>
                 <button
                     onClick={() => setFilter('ALL')}
-                    className={`px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-[0.2em] transition-all border shrink-0 ${filter === 'ALL'
+                    className={`px-4 sm:px-5 py-2.5 sm:py-2 rounded-full text-[10px] font-black uppercase tracking-[0.15em] sm:tracking-[0.2em] transition-all border shrink-0 ${filter === 'ALL'
                         ? 'bg-slate-800 text-white border-slate-800 shadow-sm'
                         : 'bg-white text-slate-700 border-gray-300 hover:bg-slate-50'}`}
                 >
@@ -194,7 +194,7 @@ function LeadListItem({ lead, user }: { lead: any, user: any }) {
                     </div>
                 </div>
 
-                <div className="flex flex-row items-center justify-between sm:justify-end gap-6 sm:gap-10 shrink-0 border-t sm:border-t-0 border-gray-100 pt-4 sm:pt-0">
+                <div className="flex flex-row flex-wrap items-center justify-between sm:justify-end gap-3 sm:gap-10 shrink-0 border-t sm:border-t-0 border-gray-100 pt-4 sm:pt-0">
                     <div className="flex flex-col items-start sm:items-end leading-none gap-2">
                         <span className="text-[11px] font-bold text-slate-600 tracking-wide flex items-center gap-2 group/meta">
                             <Phone size={11} className={`${theme.icon}`} />
@@ -206,7 +206,7 @@ function LeadListItem({ lead, user }: { lead: any, user: any }) {
                         </span>
                     </div>
 
-                    <div className="flex items-center gap-4">
+                    <div className="flex flex-wrap items-center gap-2 sm:gap-4">
                         {/* WhatsApp Nudge Button */}
                         <a 
                             href={`https://wa.me/${lead.visitorMobile}?text=${encodeURIComponent(`Hello! I'm *${user?.fullName || 'an Ambassador'}*, an Ambassador from HEGURU. I'm reaching out regarding your interest in the *${lead.program?.title || 'Program'}*. I'd love to share more details and help with your inquiry!`)}`}

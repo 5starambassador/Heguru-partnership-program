@@ -128,10 +128,10 @@ export function NotificationTicker({
   if (!current) return null; // Final safety guard
 
   return (
-    <div className="max-w-[1400px] fixed top-16 left-0 right-0 xl:sticky xl:top-2 z-[110] mt-4 px-8 py-2 bg-transparent">
-   
-     
-      <div className="max-w-container mx-auto flex items-center gap-6 w-full">
+    // Sticky (in normal flow) at every width so it reserves its own space under the
+    // fixed mobile top bar instead of covering page content.
+    <div className="sticky top-[var(--topbar-h)] xl:top-2 z-[35] mt-2 xl:mt-4 px-3 sm:px-6 xl:px-8 py-2 bg-transparent">
+      <div className="mx-auto flex items-center gap-3 sm:gap-6 w-full">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}

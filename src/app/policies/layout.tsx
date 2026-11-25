@@ -7,7 +7,7 @@ export default function PolicyLayout({
     children: React.ReactNode
 }) {
     return (
-        <div className="min-h-screen bg-slate-50 text-gray-800 selection:bg-[var(--primary-orange)]/10 font-[family-name:var(--font-outfit)]">
+        <div className="min-h-[100dvh] bg-slate-50 text-gray-800 selection:bg-[var(--primary-orange)]/10 font-[family-name:var(--font-outfit)]">
             {/* Background Ambience */}
             <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
                 <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-[var(--primary-orange)]/[0.03] rounded-full blur-[120px]" />
@@ -15,32 +15,33 @@ export default function PolicyLayout({
             </div>
 
             {/* Navigation Header */}
-            <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-250/80">
-                <div className="max-w-4xl mx-auto px-6 h-16 flex items-center justify-between">
+            <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-250/80 pt-[env(safe-area-inset-top)]">
+                <div className="max-w-4xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-3">
                     <Link
                         href="/"
-                        className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors group"
+                        aria-label="Back to Home"
+                        className="flex items-center gap-2 min-w-10 text-gray-600 hover:text-gray-900 transition-colors group"
                     >
                         <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
-                        <span className="text-sm font-bold uppercase tracking-widest">Back to Home</span>
+                        <span className="hidden sm:inline text-sm font-bold uppercase tracking-widest">Back to Home</span>
                     </Link>
 
-                    <div className="flex items-center gap-2 text-gray-900">
-                        <Shield size={18} className="text-[var(--primary-orange)]" />
-                        <span className="font-bold tracking-tight">HEGURU POLICIES</span>
+                    <div className="flex items-center gap-2 text-gray-900 min-w-0">
+                        <Shield size={18} className="text-[var(--primary-orange)] shrink-0" />
+                        <span className="text-sm sm:text-base whitespace-nowrap font-bold tracking-tight">HEGURU POLICIES</span>
                     </div>
                 </div>
             </nav>
 
             {/* Main Content Area */}
-            <main className="relative z-10 pt-24 pb-20 px-6">
+            <main className="relative z-10 pt-[calc(6rem+env(safe-area-inset-top))] pb-20 px-4 sm:px-6">
                 <div className="max-w-3xl mx-auto">
                     {children}
                 </div>
             </main>
 
             {/* Footer */}
-            <footer className="border-t border-gray-200 bg-white py-8 relative z-10">
+            <footer className="border-t border-gray-200 bg-white pt-8 pb-[calc(2rem+env(safe-area-inset-bottom))] relative z-10">
                 <div className="max-w-4xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-gray-500">
                     <p>© {new Date().getFullYear()} Heguru Educational Public Trust. All rights reserved.</p>
                     <div className="flex gap-6">

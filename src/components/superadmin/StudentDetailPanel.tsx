@@ -98,7 +98,7 @@ export function StudentDetailPanel({ student, campuses, onClose, onEdit, onUpdat
                 animate={{ x: 0, opacity: 1 }}
                 exit={{ x: '100%', opacity: 0 }}
                 transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-                className="fixed inset-y-0 right-0 w-full max-w-lg bg-white shadow-2xl border-l border-gray-100 z-[70] flex flex-col h-screen overflow-hidden"
+                className="fixed inset-y-0 right-0 w-full max-w-lg bg-white shadow-2xl border-l border-gray-100 z-[70] flex flex-col h-dvh overflow-hidden"
             >
                 {/* Header */}
                 <div className="flex-none p-6 border-b border-gray-100 bg-gradient-to-br from-gray-50 to-white flex justify-between items-start relative overflow-hidden">
@@ -139,7 +139,7 @@ export function StudentDetailPanel({ student, campuses, onClose, onEdit, onUpdat
                 </div>
 
                 {/* Scrollable Content */}
-                <div className="flex-1 overflow-y-auto custom-scrollbar p-8 space-y-10 bg-white">
+                <div className="flex-1 overflow-y-auto custom-scrollbar p-5 sm:p-8 space-y-10 bg-white">
 
                     {/* Student Profile Section */}
                     <section>
@@ -190,7 +190,7 @@ export function StudentDetailPanel({ student, campuses, onClose, onEdit, onUpdat
                             )}
                         </div>
 
-                        <div className={`grid grid-cols-2 gap-4 ${isEditing ? 'bg-indigo-50/50 p-6 rounded-2xl border border-indigo-100/50' : ''}`}>
+                        <div className={`grid grid-cols-1 sm:grid-cols-2 gap-4 ${isEditing ? 'bg-indigo-50/50 p-4 sm:p-6 rounded-2xl border border-indigo-100/50' : ''}`}>
                             {/* Academic Year */}
                             <div className="col-span-1">
                                 <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 block">Academic Year</label>
@@ -229,7 +229,7 @@ export function StudentDetailPanel({ student, campuses, onClose, onEdit, onUpdat
                             </div>
 
                             {/* Campus */}
-                            <div className="col-span-2">
+                            <div className="sm:col-span-2">
                                 <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 block">Campus</label>
                                 {isEditing ? (
                                     <select
@@ -291,7 +291,7 @@ export function StudentDetailPanel({ student, campuses, onClose, onEdit, onUpdat
                             </div>
 
                             {/* Identifiers */}
-                            <div className="col-span-2">
+                            <div className="sm:col-span-2">
                                 <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1 block">ERP Number</label>
                                 {isEditing ? (
                                     <input

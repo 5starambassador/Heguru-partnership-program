@@ -16,6 +16,7 @@ export const PaymentGateway = ({ onBack, loading, userId }: PaymentGatewayProps)
             <div className="text-center space-y-2 relative">
                 <button
                     onClick={onBack}
+                    aria-label="Back"
                     className="absolute top-0 left-0 w-10 h-10 rounded-full flex items-center justify-center bg-[var(--soft-gray)] border border-[var(--warm-gray)] text-[var(--deep-black)] hover:bg-[var(--warm-gray)] transition-all z-50 group shadow-md"
                 >
                     <ChevronLeft className="w-5 h-5 flex-shrink-0 group-hover:-translate-x-0.5 transition-transform" strokeWidth={2.5} />
@@ -45,12 +46,12 @@ export const PaymentGateway = ({ onBack, loading, userId }: PaymentGatewayProps)
                 </div>
             </div>
 
-            <div className="flex justify-center gap-4 text-[9px] uppercase tracking-widest text-[var(--text-gray)]/50 font-bold mt-4 pt-4 border-t border-[var(--warm-gray)]">
-                <a href="/policies/terms" target="_blank" className="hover:text-[var(--primary-orange)] transition-colors">Terms</a>
+            <div className="flex flex-wrap items-center justify-center gap-x-2 text-[11px] uppercase tracking-widest text-[var(--text-gray)]/50 font-bold mt-4 pt-4 border-t border-[var(--warm-gray)]">
+                <a href="/policies/terms" target="_blank" className="inline-block py-2 px-1 hover:text-[var(--primary-orange)] transition-colors">Terms</a>
                 <span className="text-[var(--warm-gray)]">•</span>
-                <a href="/policies/refund" target="_blank" className="hover:text-[var(--primary-orange)] transition-colors">Refunds</a>
+                <a href="/policies/refund" target="_blank" className="inline-block py-2 px-1 hover:text-[var(--primary-orange)] transition-colors">Refunds</a>
                 <span className="text-[var(--warm-gray)]">•</span>
-                <a href="/policies/contact" target="_blank" className="hover:text-[var(--primary-orange)] transition-colors">Contact</a>
+                <a href="/policies/contact" target="_blank" className="inline-block py-2 px-1 hover:text-[var(--primary-orange)] transition-colors">Contact</a>
             </div>
         </div>
     )

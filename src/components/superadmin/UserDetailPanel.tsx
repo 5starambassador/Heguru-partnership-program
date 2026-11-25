@@ -127,14 +127,14 @@ export function UserDetailPanel({ user, onClose, onEdit, onResetPassword, onView
                         animate={{ x: 0 }}
                         exit={{ x: '100%' }}
                         transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-                        className="relative w-full max-w-lg bg-white shadow-[0_0_50px_-12px_rgba(0,0,0,0.3)] h-screen flex flex-col overflow-hidden"
+                        className="relative w-full max-w-lg bg-white shadow-[0_0_50px_-12px_rgba(0,0,0,0.3)] h-dvh flex flex-col overflow-hidden"
                         onClick={(e) => e.stopPropagation()}
                     >
                         {/* Header Area */}
-                        <div className="p-8 pb-6 border-b border-gray-100 bg-gradient-to-br from-gray-50/80 to-white backdrop-blur-md">
+                        <div className="p-5 sm:p-8 pb-6 sm:pb-6 border-b border-gray-100 bg-gradient-to-br from-gray-50/80 to-white backdrop-blur-md">
                             <div className="flex justify-between items-start mb-6">
-                                <div className="flex items-center gap-5">
-                                    <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center border border-indigo-100 shadow-inner relative overflow-hidden group">
+                                <div className="flex items-center gap-3 sm:gap-5 min-w-0">
+                                    <div className="w-16 h-16 shrink-0 bg-white rounded-2xl flex items-center justify-center border border-indigo-100 shadow-inner relative overflow-hidden group">
                                         <div className="absolute inset-0 bg-gradient-to-br from-indigo-50/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                                         <User size={32} className="text-indigo-500 relative z-10" />
                                     </div>
@@ -198,14 +198,14 @@ export function UserDetailPanel({ user, onClose, onEdit, onResetPassword, onView
                         </div>
 
                         {/* Scrollable Content */}
-                        <div className="flex-1 overflow-y-auto custom-scrollbar-panel p-8 space-y-12 bg-white pb-20">
+                        <div className="flex-1 overflow-y-auto custom-scrollbar-panel p-5 sm:p-8 space-y-12 bg-white pb-20">
                             
                             {/* 1. Profile Insights */}
                             <section id="section-profile" className="scroll-mt-4">
                                 <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.25em] mb-6 flex items-center gap-3">
                                     <div className="w-1.5 h-1.5 bg-indigo-500 rounded-full" /> Ambassador Profile
                                 </h3>
-                                <div className="grid grid-cols-2 gap-8">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-8">
                                     <div className="space-y-2 flex flex-col">
                                         <div className="flex items-center gap-2 text-gray-400">
                                             <Calendar size={14} />
@@ -250,7 +250,7 @@ export function UserDetailPanel({ user, onClose, onEdit, onResetPassword, onView
                                             </span>
                                         </div>
                                     </div>
-                                    <div className="grid grid-cols-2 gap-4">
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                         <div className="p-5 rounded-2xl bg-gray-50/50 border border-gray-100 text-left hover:bg-white hover:shadow-lg hover:shadow-gray-100/50 transition-all">
                                             <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-2">Base Campus</p>
                                             <p className="text-sm font-bold text-gray-900 flex items-center gap-2 uppercase tracking-tight">

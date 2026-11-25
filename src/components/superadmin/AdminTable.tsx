@@ -155,7 +155,7 @@ export function AdminTable({
     ]
 
     const renderExpandedRow = (admin: Admin) => (
-        <div className="p-10 bg-gradient-to-br from-gray-50/50 to-white/30 border-x border-b border-gray-100/50">
+        <div className="p-5 sm:p-10 bg-gradient-to-br from-gray-50/50 to-white/30 border-x border-b border-gray-100/50">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
                 <div className="space-y-2">
                     <p className="text-[9px] font-black text-gray-400 uppercase tracking-[0.2em] flex items-center gap-2 font-mono">
@@ -189,7 +189,7 @@ export function AdminTable({
                     </p>
                 </div>
             </div>
-            <div className="mt-10 pt-8 border-t border-gray-100 flex gap-4">
+            <div className="mt-10 pt-8 border-t border-gray-100 flex flex-wrap gap-4">
                 <button
                     onClick={() => onResetPassword?.(admin.adminId, admin.adminName, 'admin')}
                     className="px-6 py-3.5 bg-white border border-amber-100 text-amber-600 rounded-2xl font-black text-[9px] uppercase tracking-[0.2em] hover:bg-amber-50 transition-all flex items-center gap-2 shadow-sm"
@@ -206,7 +206,7 @@ export function AdminTable({
     return (
         <div className="space-y-6 animate-fade-in">
             {/* Premium Header */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-white/80 backdrop-blur-md p-8 rounded-[40px] border border-white/50 shadow-xl shadow-gray-200/50">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-white/80 backdrop-blur-md p-5 sm:p-8 rounded-[32px] sm:rounded-[40px] border border-white/50 shadow-xl shadow-gray-200/50">
                 <div className="flex items-center gap-5">
                     <div className="p-4 bg-gray-900 text-white rounded-[20px] shadow-lg shadow-gray-200 border border-gray-800">
                         <ShieldCheck size={28} strokeWidth={2.5} />
@@ -217,7 +217,7 @@ export function AdminTable({
                     </div>
                 </div>
 
-                <div className="flex items-center gap-3">
+                <div className="flex flex-wrap items-center gap-3">
                     <button
                         onClick={() => exportToCSV(admins, 'System_Admins', [
                             { header: 'Name', accessor: (a) => a.adminName },
@@ -227,14 +227,14 @@ export function AdminTable({
                             { header: 'Status', accessor: (a) => a.status },
                             { header: 'Created On', accessor: (a) => a.createdAt }
                         ])}
-                        className="px-6 py-4 bg-white border border-gray-100 text-gray-500 rounded-2xl font-black text-[10px] hover:bg-gray-50 hover:text-black transition-all flex items-center gap-2 uppercase tracking-widest"
+                        className="w-full sm:w-auto justify-center px-4 sm:px-6 py-4 bg-white border border-gray-100 text-gray-500 rounded-2xl font-black text-[10px] hover:bg-gray-50 hover:text-black transition-all flex items-center gap-2 uppercase tracking-widest"
                         suppressHydrationWarning
                     >
                         <Download size={16} /> Export Intelligence
                     </button>
                     <button
                         onClick={onAddAdmin}
-                        className="px-8 py-4 bg-red-600 text-white rounded-2xl font-black text-[10px] shadow-xl shadow-red-100 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center gap-2 uppercase tracking-[0.2em] border border-red-500"
+                        className="w-full sm:w-auto justify-center px-4 sm:px-8 py-4 bg-red-600 text-white rounded-2xl font-black text-[10px] shadow-xl shadow-red-100 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center gap-2 uppercase tracking-[0.2em] border border-red-500"
                         suppressHydrationWarning
                     >
                         <ShieldCheck size={16} /> Ignite Executive
@@ -244,16 +244,16 @@ export function AdminTable({
 
             {/* Floating Bulk Action Bar */}
             {selectedAdmins.length > 0 && (
-                <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 animate-in slide-in-from-bottom-4 duration-300">
-                    <div className="bg-gray-900 text-white rounded-2xl shadow-2xl px-6 py-4 flex items-center gap-6 border border-gray-700">
+                <div className="fixed bottom-[calc(5.5rem+env(safe-area-inset-bottom))] xl:bottom-8 left-1/2 -translate-x-1/2 z-50 w-[calc(100vw-1.5rem)] sm:w-auto animate-in slide-in-from-bottom-4 duration-300">
+                    <div className="bg-gray-900 text-white rounded-2xl shadow-2xl px-4 sm:px-6 py-4 flex flex-wrap sm:flex-nowrap items-center justify-center gap-3 sm:gap-6 border border-gray-700">
                         <div className="flex items-center gap-2">
                             <div className="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center">
                                 <Shield size={16} className="text-white" />
                             </div>
                             <span className="text-sm font-bold">{selectedAdmins.length} Selected</span>
                         </div>
-                        <div className="h-6 w-px bg-gray-700"></div>
-                        <div className="flex items-center gap-3">
+                        <div className="hidden sm:block h-6 w-px bg-gray-700"></div>
+                        <div className="flex flex-wrap justify-center items-center gap-3">
                             <button
                                 onClick={() => handleBulkAction('activate')}
                                 disabled={isProcessing}

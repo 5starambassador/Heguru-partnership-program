@@ -576,7 +576,7 @@ export function StudentTable({
             </div>
 
             {/* Toolbar - Redesigned for Clarity */}
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 flex flex-col lg:flex-row flex-wrap gap-4 items-start lg:items-center justify-between sticky top-4 z-30">
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 flex flex-col lg:flex-row flex-wrap gap-4 items-start lg:items-center justify-between xl:sticky xl:top-4 xl:z-30">
 
                 {/* Left Zone: Discovery (Search + Filters) */}
                 <div className="flex flex-col md:flex-row flex-wrap gap-3 w-full lg:w-auto items-stretch md:items-center flex-grow lg:flex-grow-0">
@@ -597,7 +597,7 @@ export function StudentTable({
                     </div>
 
                     {/* Global View Filters (Grouped) */}
-                    <div className="flex items-center gap-2 bg-gray-50/50 p-1 rounded-2xl border border-gray-100 shadow-sm">
+                    <div className="flex flex-wrap items-center gap-2 bg-gray-50/50 p-1 rounded-2xl border border-gray-100 shadow-sm">
                         <AcademicYearFilter />
                         <div className="w-px h-6 bg-gray-200 hidden md:block"></div>
                         <StudentSourceFilter />
@@ -605,7 +605,7 @@ export function StudentTable({
 
                     {/* Data Filters Column-specific */}
                     <div className="flex items-center gap-2 flex-wrap">
-                        <div className="flex items-center gap-1.5 p-1 bg-white border border-gray-200 rounded-2xl shadow-sm">
+                        <div className="flex flex-wrap items-center gap-1.5 p-1 bg-white border border-gray-200 rounded-2xl shadow-sm">
                             {(() => {
                                 const filterOptionsList = [
                                     { id: 'campus', label: 'Campus', icon: Building, count: filters.campus.length, options: filterOptions.campus },

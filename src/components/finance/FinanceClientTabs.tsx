@@ -142,11 +142,11 @@ export function FinanceClientTabs({
             <div className="w-full space-y-4">
                 {/* Level 1: Main Categories & Actions */}
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                    <div className="flex flex-wrap items-center gap-2 p-1 bg-white/50 border border-gray-200/50 rounded-2xl w-fit">
+                    <div className="flex flex-wrap items-center gap-2 p-1 bg-white/50 border border-gray-200/50 rounded-2xl w-fit max-w-full">
                         <button
                             onClick={() => handleTabChange('payouts')}
                             suppressHydrationWarning={true}
-                            className={`flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-black transition-all duration-300 ${['payouts', 'liabilities_b', 'payout_history'].includes(activeTab)
+                            className={`flex items-center gap-2 px-4 sm:px-6 py-3 rounded-xl text-sm font-black transition-all duration-300 ${['payouts', 'liabilities_b', 'payout_history'].includes(activeTab)
                                 ? 'bg-gradient-to-br from-gray-900 to-gray-800 text-white shadow-lg shadow-gray-900/20 scale-105'
                                 : 'text-gray-500 hover:text-gray-900 hover:bg-gray-100'
                                 }`}
@@ -157,7 +157,7 @@ export function FinanceClientTabs({
                         <button
                             onClick={() => handleTabChange('liabilities_a')}
                             suppressHydrationWarning={true}
-                            className={`flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-black transition-all duration-300 ${['liabilities_a', 'waiver_history'].includes(activeTab)
+                            className={`flex items-center gap-2 px-4 sm:px-6 py-3 rounded-xl text-sm font-black transition-all duration-300 ${['liabilities_a', 'waiver_history'].includes(activeTab)
                                 ? 'bg-gradient-to-br from-purple-600 to-purple-800 text-white shadow-lg shadow-purple-900/20 scale-105'
                                 : 'text-gray-500 hover:text-purple-700 hover:bg-purple-50'
                                 }`}
@@ -168,7 +168,7 @@ export function FinanceClientTabs({
                         <button
                             onClick={() => handleTabChange('registrations')}
                             suppressHydrationWarning={true}
-                            className={`flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-black transition-all duration-300 ${['registrations', 'ready_refund', 'refund_history'].includes(activeTab)
+                            className={`flex items-center gap-2 px-4 sm:px-6 py-3 rounded-xl text-sm font-black transition-all duration-300 ${['registrations', 'ready_refund', 'refund_history'].includes(activeTab)
                                 ? 'bg-gradient-to-br from-emerald-500 to-emerald-700 text-white shadow-lg shadow-emerald-900/20 scale-105'
                                 : 'text-gray-500 hover:text-emerald-700 hover:bg-emerald-50'
                                 }`}
@@ -178,7 +178,7 @@ export function FinanceClientTabs({
                         </button>
                     </div>
 
-                    <div className="flex items-center gap-4">
+                    <div className="flex flex-wrap items-center gap-2 sm:gap-4">
                         {availableYears.length > 0 && (
                             <div className="flex items-center gap-2 bg-white/50 border border-gray-200 px-3 py-1.5 rounded-xl shadow-sm">
                                 <span className="text-[10px] font-black text-gray-900 uppercase tracking-tighter">Cycle:</span>

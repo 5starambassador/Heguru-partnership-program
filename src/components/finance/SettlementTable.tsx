@@ -570,9 +570,9 @@ export function SettlementTable({
 
     return (
         <div className="space-y-6">
-            <div className="flex justify-between items-center px-1">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 px-1">
                 <h3 className="text-lg font-black text-gray-900 dark:text-gray-100">Settlements</h3>
-                <div className="flex gap-2">
+                <div className="flex flex-wrap gap-2">
                     {selectedIds.length > 0 && (
                         <div className="flex items-center gap-2 mr-2 px-3 py-1.5 bg-blue-50 border border-blue-100 rounded-xl">
                             <span className="text-xs font-bold text-blue-700">{selectedIds.length} Selected</span>

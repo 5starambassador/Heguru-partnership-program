@@ -99,6 +99,7 @@ export function NotificationDropdown({ userName, referralCode }: { userName?: st
                 onClick={() => setIsOpen(!isOpen)}
                 className={`relative p-2 transition-colors ${isAmbassador ? 'rounded-full' : 'rounded-full '}`}
                 title="Notifications"
+                aria-label="Notifications"
                 suppressHydrationWarning
             >
                 <Bell size={20} className="text-white" />
@@ -112,7 +113,7 @@ export function NotificationDropdown({ userName, referralCode }: { userName?: st
             </button>
 
             {isOpen && (
-                <div className={`absolute right-0 sm:right-0 mt-3 w-[280px] xs:w-80 glass-panel !bg-white/95 dark:!bg-slate-900/95 shadow-2xl border border-black z-50 overflow-hidden transform origin-top-right transition-all animate-in fade-in zoom-in-95 duration-200 ${isAmbassador ? 'rounded-md' : 'rounded-2xl'}`}>
+                <div className={`absolute right-0 mt-3 w-[min(20rem,calc(100vw-1.5rem))] glass-panel !bg-white/95 dark:!bg-slate-900/95 shadow-2xl border border-black z-50 overflow-hidden transform origin-top-right transition-all animate-in fade-in zoom-in-95 duration-200 ${isAmbassador ? 'rounded-md' : 'rounded-2xl'}`}>
                     <div className="px-5 py-4 border-b border-gray-400 flex justify-between items-center bg-gray-50/50 dark:bg-white/5 backdrop-blur-md">
                         <h3 className="text-sm font-black text-gray-900 dark:text-white tracking-tight uppercase">Notifications</h3>
                         {unreadCount > 0 && (
@@ -125,7 +126,7 @@ export function NotificationDropdown({ userName, referralCode }: { userName?: st
                         )}
                     </div>
 
-                    <div className="max-h-[400px] overflow-y-auto">
+                    <div className="max-h-[min(400px,60dvh)] overflow-y-auto overscroll-contain">
                         {isLoading ? (
                             <div className="p-4 text-center text-gray-500 text-sm">Loading...</div>
                         ) : notifications.length === 0 ? (
@@ -147,7 +148,7 @@ export function NotificationDropdown({ userName, referralCode }: { userName?: st
                                             <div className={`mt-0.5 flex-shrink-0 p-2 bg-gray-100 dark:bg-white/10 group-hover:scale-110 transition-transform self-start h-fit ${isAmbassador ? 'rounded-md' : 'rounded-xl'}`}>
                                                 {getIcon(notification.type)}
                                             </div>
-                                            <div className="flex-1 space-y-1">
+                                            <div className="flex-1 min-w-0 break-words space-y-1">
                                                 <p className={`text-sm tracking-tight leading-snug ${!notification.isRead ? 'font-black text-gray-900 dark:text-white' : 'font-bold text-gray-600 dark:text-white/70'}`}>
                                                     {notification.title
                                                         .replace(/{userName}|{Ambassador}/g, userName || 'Ambassador')

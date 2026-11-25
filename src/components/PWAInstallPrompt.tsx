@@ -69,7 +69,7 @@ export function PWAInstallPrompt() {
                 animate={{ y: 0, opacity: 1 }}
                 exit={{ y: 100, opacity: 0 }}
                 transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-                className="fixed bottom-6 left-6 right-6 md:left-auto md:right-6 md:max-w-md z-50"
+                className="fixed bottom-[calc(5.5rem+env(safe-area-inset-bottom))] xl:bottom-6 left-3 right-3 sm:left-6 sm:right-6 md:left-auto md:right-6 md:max-w-md z-50"
             >
                 <div className="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-3xl shadow-2xl shadow-blue-900/50 p-6 text-white relative overflow-hidden border border-white/10">
                     {/* Background Pattern */}
@@ -81,7 +81,8 @@ export function PWAInstallPrompt() {
                     {/* Close Button */}
                     <button
                         onClick={handleDismiss}
-                        className="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-all"
+                        aria-label="Dismiss"
+                        className="absolute top-3 right-3 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-all"
                     >
                         <X size={16} />
                     </button>
@@ -92,7 +93,7 @@ export function PWAInstallPrompt() {
                             <div className="w-14 h-14 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center border border-white/20">
                                 <Smartphone size={28} className="text-white" />
                             </div>
-                            <div className="flex-1">
+                            <div className="flex-1 min-w-0 pr-8">
                                 <h3 className="text-lg font-black mb-1">Install Heguru App</h3>
                                 <p className="text-sm text-blue-100 leading-relaxed">
                                     Get instant access with one tap. Works offline and launches like a native app!

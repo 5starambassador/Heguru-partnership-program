@@ -111,8 +111,8 @@ export function WaiverHistoryTable({ data, totalResults = 0, currentPage = 1, on
 
     return (
         <div className="space-y-4">
-            <div className="flex justify-between items-center px-1">
-                <div className="flex items-center gap-2">
+            <div className="flex flex-wrap justify-between items-center gap-2 px-1">
+                <div className="flex items-center gap-2 min-w-0">
                     <div className="p-2 bg-purple-100 text-purple-600 rounded-lg">
                         <FileText size={18} />
                     </div>

@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from 'framer-motion'
 import { MessageSquare, X, Edit3, ShieldAlert, AlertCircle, Info } from 'lucide-react'
 import { useState, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 
 interface PromptDialogProps {
     isOpen: boolean
@@ -31,6 +32,9 @@ export function PromptDialog({
     initialValue = '',
     sidebarOffset = true
 }: PromptDialogProps) {
+    // Portal to <body> so no ancestor stacking context can trap the dialog under the mobile top bar / bottom nav
+    const [mounted, setMounted] = useState(false)
+    useEffect(() => setMounted(true), [])
     const [value, setValue] = useState(initialValue)
 
     useEffect(() => {
@@ -74,10 +78,12 @@ export function PromptDialog({
 
     const config = variantConfig[variant]
 
-    return (
+    if (!mounted) return null
+
+    return createPortal(
         <AnimatePresence>
             {isOpen && (
-                <div className={`fixed inset-0 z-[100] flex items-center justify-center p-4 ${sidebarOffset ? 'xl:pl-[280px]' : ''}`}>
+                <div className={`fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-4 ${sidebarOffset ? 'xl:pl-[280px]' : ''}`}>
                     {/* Backdrop */}
                     <motion.div
                         initial={{ opacity: 0 }}
@@ -93,13 +99,13 @@ export function PromptDialog({
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.9, y: 20 }}
                         transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-                        className="bg-white w-full max-w-sm rounded-[42px] shadow-[0_32px_64px_-12px_rgba(0,0,0,0.14)] overflow-hidden relative border border-gray-100/50"
+                        className="bg-white w-full max-w-sm rounded-[32px] sm:rounded-[42px] shadow-[0_32px_64px_-12px_rgba(0,0,0,0.14)] overflow-hidden overflow-y-auto max-h-[calc(100dvh-1.5rem)] relative border border-gray-100/50"
                         onClick={(e) => e.stopPropagation()}
                     >
                         {/* Top Decoration */}
                         <div className={`h-2 w-full bg-gradient-to-r ${config.bg}`} />
 
-                        <div className="p-10">
+                        <div className="p-6 sm:p-10">
                             {/* Icon & Title */}
                             <div className="flex flex-col items-center text-center space-y-4">
                                 <div className={`w-16 h-16 rounded-[24px] ${config.lightBg} ${config.textColor} flex items-center justify-center shadow-inner`}>
@@ -157,6 +163,7 @@ export function PromptDialog({
                     </motion.div>
                 </div>
             )}
-        </AnimatePresence>
+        </AnimatePresence>,
+        document.body
     )
 }

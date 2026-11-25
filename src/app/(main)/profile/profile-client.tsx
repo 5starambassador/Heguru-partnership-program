@@ -313,7 +313,7 @@ export default function ProfileClient({
             </div>
 
             {/* Upload Button */}
-            <label className="absolute bottom-0 right-0 w-7 h-7 rounded-full bg-white text-slate-600 hover:text-slate-800 flex items-center justify-center border border-gray-200 shadow-sm cursor-pointer hover:bg-slate-50 transition-colors">
+            <label aria-label="Upload profile photo" className="absolute bottom-0 right-0 w-9 h-9 rounded-full bg-white text-slate-600 hover:text-slate-800 flex items-center justify-center border border-gray-200 shadow-sm cursor-pointer hover:bg-slate-50 transition-colors">
               <Camera size={12} />
               <input
                 type="file"
@@ -918,8 +918,9 @@ export default function ProfileClient({
                       </p>
                       <button
                         onClick={() => setIsEditingBank(true)}
-                        className="p-1 rounded-lg border border-gray-200 hover:bg-slate-100 text-slate-500 hover:text-[var(--primary-orange)] transition-colors"
+                        className="p-2 rounded-lg border border-gray-200 hover:bg-slate-100 text-slate-500 hover:text-[var(--primary-orange)] transition-colors"
                         title="Edit Bank Details"
+                        aria-label="Edit Bank Details"
                       >
                         <Edit2 size={10} strokeWidth={3} />
                       </button>

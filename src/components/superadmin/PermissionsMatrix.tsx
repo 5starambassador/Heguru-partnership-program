@@ -196,7 +196,7 @@ export function PermissionsMatrix({
                     <table className="w-full border-collapse separate border-spacing-0">
                         <thead className="sticky top-0 z-20">
                             <tr>
-                                <th className="p-4 text-left bg-white sticky left-0 z-30 border-b border-gray-200 border-r border-gray-50 min-w-[320px] shadow-[4px_0_8px_-4px_rgba(0,0,0,0.1)]">
+                                <th className="p-4 text-left bg-white sticky left-0 z-30 border-b border-gray-200 border-r border-gray-50 min-w-[150px] sm:min-w-[320px] shadow-[4px_0_8px_-4px_rgba(0,0,0,0.1)]">
                                     <div className="flex items-center justify-between">
                                         <span className="text-[11px] font-black text-gray-400 uppercase tracking-widest">Module / Capability</span>
                                         {searchQuery && <span className="text-[10px] bg-red-50 text-red-800 px-1.5 py-0.5 rounded font-bold uppercase">Filtered</span>}
@@ -214,7 +214,7 @@ export function PermissionsMatrix({
                                             onMouseEnter={() => setHoveredRole(role)}
                                             onMouseLeave={() => setHoveredRole(null)}
                                             className={`
-                                                px-2 py-4 text-center border-b border-gray-200 min-w-[180px] transition-colors backdrop-blur-md sticky top-0
+                                                px-2 py-4 text-center border-b border-gray-200 min-w-[110px] md:min-w-[180px] transition-colors backdrop-blur-md sticky top-0
                                                 ${hoveredRole === role ? 'bg-red-50/50' : 'bg-white/95'}
                                             `}
                                         >

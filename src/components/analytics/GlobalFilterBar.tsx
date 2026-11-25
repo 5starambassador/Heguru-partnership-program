@@ -20,11 +20,11 @@ export function GlobalFilterBar({ filters, onFilterChange, campuses }: FilterBar
     return (
         <div className="bg-white/80 backdrop-blur-xl border border-gray-200/50 rounded-[28px] p-4 shadow-xl shadow-gray-200/20 flex flex-wrap items-center gap-6">
             {/* Date Preset Filter */}
-            <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-red-50 text-red-600 flex items-center justify-center">
+            <div className="flex items-center gap-3 min-w-0 max-w-full">
+                <div className="w-10 h-10 shrink-0 rounded-xl bg-red-50 text-red-600 flex items-center justify-center">
                     <Calendar size={18} />
                 </div>
-                <div className="flex bg-gray-100/50 p-1 rounded-2xl gap-1">
+                <div className="flex bg-gray-100/50 p-1 rounded-2xl gap-1 min-w-0 max-w-full overflow-x-auto">
                     {presets.map((preset) => (
                         <button
                             key={preset.id}
@@ -32,7 +32,7 @@ export function GlobalFilterBar({ filters, onFilterChange, campuses }: FilterBar
                                 ...filters,
                                 dateRange: { ...filters.dateRange, preset: preset.id }
                             })}
-                            className={`px-4 py-2 rounded-xl text-xs font-black transition-all ${filters.dateRange?.preset === preset.id
+                            className={`px-3 sm:px-4 py-2 rounded-xl text-xs font-black whitespace-nowrap shrink-0 transition-all ${filters.dateRange?.preset === preset.id
                                     ? 'bg-white text-red-600 shadow-md'
                                     : 'text-gray-500 hover:text-gray-900'
                                 }`}

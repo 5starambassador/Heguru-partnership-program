@@ -412,7 +412,7 @@ export default async function MainLayout({
       <div className="flex-1 flex flex-col w-full min-w-0 items-center relative">
         {/* Mobile Topbar */}
         <div
-          className={`mobile-topbar xl:hidden fixed top-0 left-0 right-0 h-20 border-b z-[120] flex items-center justify-between px-4 backdrop-blur-xl shadow-lg ${
+          className={`mobile-topbar xl:hidden fixed top-0 left-0 right-0 h-[var(--topbar-h)] pt-[env(safe-area-inset-top)] border-b z-40 flex items-center justify-between px-4 backdrop-blur-xl shadow-lg ${
             isDarkTheme
               ? "bg-[#0f172a]/80 border-white/10 text-white"
               : "bg-white/80 border-gray-100 text-gray-900"
@@ -423,7 +423,7 @@ export default async function MainLayout({
             alt="Heguru Partnership Program"
             width={60}
             height={60}
-            className="shadow-sm"
+            className="shadow-sm shrink-0"
           />
           <div className="flex items-center justify-between gap-3">
             <MobileSidebarWrapper>
@@ -439,7 +439,8 @@ export default async function MainLayout({
                 hideLogo={true}
               />
             </MobileSidebarWrapper>
-            <div className="relative md:hidden block shrink-0 h-12 w-12 group">
+            {/* Ambassadors get the bell inside the ticker from md up; everyone else needs it here until the xl header takes over */}
+            <div className={`relative ${isAmbassadorRole ? "md:hidden" : ""} block shrink-0 h-12 w-12 group`}>
               <div className="absolute inset-0 rounded-full bg-gradient-to-br from-orange-300 via-primary-orange to-orange-700 shadow-[0_8px_20px_rgba(249,115,22,0.35),inset_0_2px_3px_rgba(255,255,255,0.4),inset_0_-3px_6px_rgba(0,0,0,0.2)] transition-transform duration-300 group-hover:scale-110">
                 {/* Top glossy highlight */}
                 <div className="absolute bottom-1 left-1/2 -translate-x-1/2 w-8 h-3 rounded-full bg-white/30 blur-sm" />
@@ -451,12 +452,10 @@ export default async function MainLayout({
 
                 {/* Content */}
                 <div className="relative z-10 flex h-full w-full items-center justify-center">
-                  {isAmbassadorRole && (
-                    <NotificationDropdown
-                      userName={user.fullName}
-                      referralCode={(user as any).referralCode || ""}
-                    />
-                  )}
+                  <NotificationDropdown
+                    userName={user.fullName}
+                    referralCode={(user as any).referralCode || ""}
+                  />
                 </div>
               </div>
             </div>
@@ -472,7 +471,7 @@ export default async function MainLayout({
         <div
           className={`flex-1 w-full ${
             isAmbassadorRole ? "max-w-[1400px]" : "max-w-[1800px]"
-          } flex flex-col pt-20 xl:pt-0 ${isAmbassadorRole ? "md:pt-0" : ""}`}
+          } flex flex-col pt-[var(--topbar-h)] xl:pt-0`}
         >
           {isAmbassadorRole && (
             <NotificationTicker
@@ -485,8 +484,8 @@ export default async function MainLayout({
             className={`flex-1 w-full px-3 sm:px-4 py-4 ${
               isAmbassadorRole ? "xl:px-8 xl:py-8" : "xl:px-4 xl:py-5"
             } ${
-              isAmbassadorRole ? "md:pt-16 pt-3" : "pt-2"
-            } xl:pt-5 pb-24 xl:pb-6 relative z-10`}
+              isAmbassadorRole ? "pt-3" : "pt-2"
+            } xl:pt-5 pb-[calc(6rem+env(safe-area-inset-bottom))] xl:pb-6 relative`}
           >
             {!isAmbassadorRole && (
               <header className="hidden xl:flex justify-end mb-4 absolute top-4 right-8 z-20">

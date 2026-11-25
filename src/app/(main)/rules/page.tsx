@@ -124,7 +124,7 @@ export default async function RulesPage() {
         </div>
 
         {/* How it Works - Unified Light Card */}
-        <PageItem className="bg-white border border-gray-200 rounded-xl p-8 relative overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 group">
+        <PageItem className="bg-white border border-gray-200 rounded-xl p-5 sm:p-8 relative overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 group">
           <div className="absolute top-0 left-0 w-full h-[1.5px] bg-gradient-to-r from-transparent via-[var(--primary-orange)]/20 to-transparent opacity-40" />
 
           <h2 className="text-lg font-black mb-6 text-slate-800 uppercase tracking-wider flex items-center gap-3 font-heading">

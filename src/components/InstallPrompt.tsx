@@ -64,20 +64,21 @@ export function InstallPrompt() {
     if (!showPrompt) return null
 
     return (
-        <div className="fixed top-20 left-6 right-6 md:left-auto md:right-6 md:max-w-md z-[200] animate-in slide-in-from-top duration-500">
+        <div className="fixed top-[calc(var(--topbar-h)+0.5rem)] xl:top-20 left-3 right-3 sm:left-6 sm:right-6 md:left-auto md:right-6 md:max-w-md max-h-[calc(100dvh-7rem)] overflow-y-auto overscroll-contain rounded-[32px] z-[200] animate-in slide-in-from-top duration-500">
             <div className="bg-white/95 backdrop-blur-xl rounded-[32px] shadow-[0_20px_50px_rgba(17,17,17,0.15)] border border-slate-200/80 p-6 text-slate-800 relative overflow-hidden">
                 {/* Visual Accent */}
                 <div className="absolute -top-24 -right-24 w-48 h-48 bg-[var(--primary-orange)]/10 blur-[80px] rounded-full" />
 
                 <button
                     onClick={handleDismiss}
-                    className="absolute top-4 right-4 p-2 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 transition-colors z-50"
+                    aria-label="Dismiss"
+                    className="absolute top-4 right-4 w-10 h-10 flex items-center justify-center rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 transition-colors z-50"
                 >
                     <X size={18} />
                 </button>
 
                 <div className="relative z-10">
-                    <div className="flex items-center gap-4 mb-6">
+                    <div className="flex items-center gap-4 mb-6 pr-10">
                         <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[var(--primary-orange)] to-amber-500 flex items-center justify-center shadow-lg shadow-orange-500/20 shrink-0">
                             <Smartphone size={24} className="text-white" />
                         </div>

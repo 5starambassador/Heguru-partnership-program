@@ -13,7 +13,7 @@ export default function RefundPage() {
             </div>
 
             <div className="space-y-6 text-gray-700 leading-relaxed">
-                <div className="bg-amber-50/50 border border-amber-250 rounded-3xl p-8 shadow-sm">
+                <div className="bg-amber-50/50 border border-amber-250 rounded-3xl p-5 sm:p-8 shadow-sm">
                     <h2 className="text-xl font-bold text-amber-950 mb-4 flex items-center gap-2">
                         <AlertCircle size={20} className="text-[var(--primary-orange)]" />
                         Registration Fees
@@ -26,7 +26,7 @@ export default function RefundPage() {
                     </p>
                 </div>
 
-                <section className="bg-white border border-gray-250/70 rounded-3xl p-8 shadow-sm">
+                <section className="bg-white border border-gray-250/70 rounded-3xl p-5 sm:p-8 shadow-sm">
                     <h2 className="text-lg font-bold text-gray-900 mb-2">Double Payments</h2>
                     <p className="text-gray-600 mb-4">
                         In the unlikely event of a technical error resulting in a duplicate payment for the same registration, please contact our support team immediately with your transaction reference numbers. We will verify and process a refund for the duplicate transaction within 5-7 business days.

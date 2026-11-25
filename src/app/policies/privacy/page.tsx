@@ -35,7 +35,7 @@ const serviceProviders = [
     { name: 'Cashfree and GrayQuest', use: 'Process payments, only where a payment is made.' },
 ]
 
-const sectionClass = 'bg-white border border-gray-250/70 rounded-3xl p-8 shadow-sm'
+const sectionClass = 'bg-white border border-gray-250/70 rounded-3xl p-5 sm:p-8 shadow-sm'
 const headingClass = 'text-xl font-bold text-gray-900 mb-4 flex items-center gap-2'
 
 export default function PrivacyPolicyPage() {
@@ -141,7 +141,7 @@ export default function PrivacyPolicyPage() {
                     </p>
                 </section>
 
-                <section id="delete-account" className="scroll-mt-24 bg-emerald-50 border-2 border-emerald-200 rounded-3xl p-8 shadow-sm">
+                <section id="delete-account" className="scroll-mt-24 bg-emerald-50 border-2 border-emerald-200 rounded-3xl p-5 sm:p-8 shadow-sm">
                     <h2 className={headingClass}>
                         <Trash2 size={20} className="text-emerald-600" />
                         Deleting Your Account

@@ -199,16 +199,16 @@ export function BenefitManagement({ initialSlabs }: Props) {
     if (!slabs.length) return <div className="p-20 text-center font-black uppercase tracking-widest text-slate-400">Loading Policy Data...</div>
 
     return (
-        <div className="min-h-screen bg-slate-50 text-gray-900 p-8 space-y-12 animate-in fade-in duration-1000">
+        <div className="min-h-screen bg-slate-50 text-gray-900 p-3 sm:p-8 space-y-12 animate-in fade-in duration-1000">
             {/* FUTURISTIC COMMAND HEADER */}
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 bg-slate-900 text-white p-10 rounded-[48px] border border-slate-800 shadow-2xl relative overflow-hidden group">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 bg-slate-900 text-white p-5 sm:p-10 rounded-[32px] sm:rounded-[48px] border border-slate-800 shadow-2xl relative overflow-hidden group">
                 <div className="absolute top-0 right-0 w-96 h-96 bg-blue-600/10 rounded-full blur-[120px] -mr-48 -mt-48 group-hover:bg-blue-600/20 transition-all duration-700" />
                 <div className="relative z-10 space-y-2">
                     <div className="flex items-center gap-3">
                         <div className="p-2 bg-blue-500 rounded-lg shadow-[0_0_20px_rgba(59,130,246,0.5)]">
                             <Cpu size={24} strokeWidth={2.5} className="animate-pulse" />
                         </div>
-                        <h1 className="text-4xl font-black tracking-tighter uppercase italic bg-gradient-to-r from-white via-white to-white/40 bg-clip-text text-transparent">
+                        <h1 className="text-2xl sm:text-4xl font-black tracking-tighter uppercase italic bg-gradient-to-r from-white via-white to-white/40 bg-clip-text text-transparent">
                             Policy Command Center
                         </h1>
                     </div>
@@ -217,21 +217,21 @@ export function BenefitManagement({ initialSlabs }: Props) {
                     </p>
                 </div>
 
-                <div className="relative z-10 flex items-center gap-6">
+                <div className="relative z-10 flex flex-wrap items-center gap-3 sm:gap-6">
                     {/* WING SWITCHER */}
                     <div className="flex bg-white/5 p-1.5 rounded-[28px] border border-white/10 backdrop-blur-xl">
                         {(['Standard', 'Long Term'] as const).map((wing) => (
                             <button
                                 key={wing}
                                 onClick={() => setActiveView(wing)}
-                                className={`px-8 py-3 rounded-[22px] text-[10px] font-black uppercase tracking-[0.15em] transition-all duration-500 ${activeView === wing ? 'bg-white text-slate-900 shadow-xl scale-[1.02]' : 'text-white/40 hover:text-white/60'}`}
+                                className={`px-4 sm:px-8 py-3 rounded-[22px] text-[10px] font-black uppercase tracking-[0.15em] transition-all duration-500 ${activeView === wing ? 'bg-white text-slate-900 shadow-xl scale-[1.02]' : 'text-white/40 hover:text-white/60'}`}
                             >
                                 {wing === 'Standard' ? 'Growth Core' : 'Legacy Vault'}
                             </button>
                         ))}
                     </div>
 
-                    <div className="h-10 w-[1px] bg-white/10 mx-2" />
+                    <div className="hidden sm:block h-10 w-[1px] bg-white/10 mx-2" />
 
                     <button
                         onClick={handleReset}

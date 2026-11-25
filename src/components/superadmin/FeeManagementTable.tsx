@@ -231,7 +231,7 @@ export function FeeManagementTable({ academicYears: initialAcademicYears = [] }:
             cell: (row: any) => (
                 <button
                     onClick={() => handleDeleteFee(row.id)}
-                    className="p-1 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
+                    className="p-2.5 xl:p-1 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
                     title="Delete Fee Structure"
                     aria-label={`Delete record for ${row.grade} at ${row.campus?.campusName || 'campus'}`}
                 >
@@ -244,7 +244,7 @@ export function FeeManagementTable({ academicYears: initialAcademicYears = [] }:
     return (
         <div className="space-y-6">
             <div className="flex flex-col md:flex-row justify-between gap-4 items-center">
-                <div className="flex gap-2 w-full md:w-auto">
+                <div className="flex flex-wrap gap-2 w-full md:w-auto">
                     <div className="flex flex-col gap-1">
                         <label htmlFor="filter-ay" className="sr-only">Academic Year</label>
                         <select

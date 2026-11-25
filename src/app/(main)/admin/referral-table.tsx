@@ -2,7 +2,8 @@
 
 
 import { CheckCircle, Filter, ChevronDown, Clock, AlertCircle, Phone, MapPin, User, Search, Square, CheckSquare, Trash, XCircle, Download, X, Pencil } from 'lucide-react'
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 
 import { toast } from 'sonner'
 import { bulkRejectReferrals, bulkDeleteReferrals } from '@/app/admin-actions'
@@ -30,6 +31,8 @@ export function ReferralTable({
     const [roleFilter, setRoleFilter] = useState<string>(initialRoleFilter || 'All')
     const [statusFilter, setStatusFilter] = useState<string>(initialStatusFilter || 'All')
     const [campusFilter, setCampusFilter] = useState<string>('All')
+    const [mounted, setMounted] = useState(false)
+    useEffect(() => setMounted(true), [])
     const [searchQuery, setSearchQuery] = useState<string>('')
 
     // Get unique values for filters
@@ -147,7 +150,7 @@ export function ReferralTable({
     }
 
     return (
-        <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+        <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 sm:p-6">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
                 <div className="flex items-center gap-3">
                     <div className="p-2.5 bg-red-50 text-red-600 rounded-xl">
@@ -171,7 +174,7 @@ export function ReferralTable({
             <div className="space-y-6">
                 {/* Filters */}
                 <div className="bg-gray-50/50 p-4 rounded-2xl border border-gray-100 flex flex-wrap gap-4">
-                    <div className="flex-1 min-w-[240px] relative">
+                    <div className="flex-1 min-w-0 basis-full sm:basis-auto sm:min-w-[240px] relative">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
                         <input
                             type="text"
@@ -329,7 +332,7 @@ export function ReferralTable({
                                                                 ERP: {r.admissionNumber}
                                                             </span>
                                                             {!isReadOnly && (
-                                                                <button onClick={() => handleConfirmClick(r.leadId, r.admissionNumber)} className="opacity-0 group-hover/edit:opacity-100 p-1 text-gray-400 hover:text-blue-600 transition-opacity">
+                                                                <button onClick={() => handleConfirmClick(r.leadId, r.admissionNumber)} aria-label="Edit ERP number" className="opacity-100 xl:opacity-0 xl:group-hover/edit:opacity-100 p-2 text-gray-400 hover:text-blue-600 transition-opacity">
                                                                     <Pencil size={10} />
                                                                 </button>
                                                             )}
@@ -376,35 +379,38 @@ export function ReferralTable({
             </div>
 
             {/* Floating Action Bar */}
-            {selectedIds.length > 0 && !isReadOnly && (
-                <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-40 animate-in slide-in-from-bottom-5 duration-300">
-                    <div className="bg-[#1e293b] text-white px-6 py-3 rounded-full shadow-2xl flex items-center gap-6 border border-gray-700">
-                        <div className="flex items-center gap-3 pr-6 border-r border-gray-600">
+            {selectedIds.length > 0 && !isReadOnly && mounted && createPortal(
+                <div className="fixed bottom-[calc(5.5rem+env(safe-area-inset-bottom))] xl:bottom-8 left-1/2 -translate-x-1/2 z-40 w-[calc(100vw-1.5rem)] sm:w-auto animate-in slide-in-from-bottom-5 duration-300">
+                    <div className="bg-[#1e293b] text-white px-3 sm:px-6 py-3 rounded-2xl sm:rounded-full shadow-2xl flex flex-wrap items-center justify-center gap-3 sm:gap-6 border border-gray-700">
+                        <div className="flex items-center gap-3 pr-3 sm:pr-6 border-r border-gray-600">
                             <div className="w-8 h-8 rounded-full bg-white text-gray-900 font-black flex items-center justify-center text-sm">
                                 {selectedIds.length}
                             </div>
-                            <span className="font-bold text-sm tracking-wide">Selected</span>
+                            <span className="hidden sm:inline font-bold text-sm tracking-wide">Selected</span>
                         </div>
 
                         <div className="flex items-center gap-2">
                             <button
                                 onClick={handleBulkReject}
-                                className="flex items-center gap-2 px-4 py-2 hover:bg-white/10 rounded-lg transition-colors text-sm font-bold text-red-400 hover:text-red-300"
+                                aria-label="Reject selected"
+                                className="flex items-center gap-2 px-3 sm:px-4 py-2 min-h-10 hover:bg-white/10 rounded-lg transition-colors text-sm font-bold text-red-400 hover:text-red-300"
                             >
                                 <XCircle size={18} />
-                                REJECT
+                                <span className="hidden sm:inline">REJECT</span>
                             </button>
                             <button
                                 onClick={handleBulkDelete}
-                                className="flex items-center gap-2 px-4 py-2 hover:bg-white/10 rounded-lg transition-colors text-sm font-bold text-red-400 hover:text-red-300"
+                                aria-label="Delete selected"
+                                className="flex items-center gap-2 px-3 sm:px-4 py-2 min-h-10 hover:bg-white/10 rounded-lg transition-colors text-sm font-bold text-red-400 hover:text-red-300"
                             >
                                 <Trash size={18} />
-                                DELETE
+                                <span className="hidden sm:inline">DELETE</span>
                             </button>
                         </div>
                         <button
                             onClick={() => setSelectedIds([])}
-                            className="ml-4 p-2 hover:bg-white/20 rounded-full transition-colors"
+                            aria-label="Clear selection"
+                            className="sm:ml-4 p-3 sm:p-2 hover:bg-white/20 rounded-full transition-colors"
                         >
                             <img
                                 src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 6 6 18'/%3E%3Cpath d='m6 6 18 12'/%3E%3C/svg%3E"
@@ -415,15 +421,16 @@ export function ReferralTable({
                             />
                         </button>
                     </div>
-                </div>
+                </div>,
+                document.body
             )}
 
 
             {/* Confirmation Modal */}
-            {confirmModalOpen && (
+            {confirmModalOpen && mounted && createPortal(
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 xl:pl-[280px]">
                     <div className="absolute inset-0 bg-slate-900/50 backdrop-blur-sm animate-in fade-in" onClick={() => setConfirmModalOpen(false)} />
-                    <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 animate-in zoom-in-95 duration-200">
+                    <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-md max-h-[calc(100dvh-2rem)] overflow-y-auto p-6 animate-in zoom-in-95 duration-200">
                         <div className="flex flex-col items-center text-center mb-6">
                             <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mb-4 text-green-600">
                                 <CheckCircle size={24} />
@@ -469,7 +476,8 @@ export function ReferralTable({
                             </button>
                         </div>
                     </div>
-                </div>
+                </div>,
+                document.body
             )}
             {/* Confirmation Modals */}
             <ConfirmDialog
